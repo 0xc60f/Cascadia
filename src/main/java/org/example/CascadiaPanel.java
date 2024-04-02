@@ -10,6 +10,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * The main panel for the Cascadia game. Currently, being used to test and debug tile setups, but will eventually be switched to orchestrate
+ * the game, and the end and start screen.
+ * @see JPanel
+ * @author 0xc60f
+ */
 public class CascadiaPanel extends JPanel implements MouseListener {
     private Polygon hexagon;
     public CascadiaPanel() {
@@ -27,7 +33,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         setForeground(Color.RED);
         BufferedImage img;
         try {
-            img = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/desert+swamp.png")));
+            img = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/02.png")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
