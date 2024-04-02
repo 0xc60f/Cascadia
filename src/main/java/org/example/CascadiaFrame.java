@@ -8,7 +8,7 @@ public class CascadiaFrame extends JFrame {
         setTitle("Cascadia");
         setSize(getWidth(), getHeight());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        add(new CascadiaPanel());
+        add(new StartPanel());
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
     }
