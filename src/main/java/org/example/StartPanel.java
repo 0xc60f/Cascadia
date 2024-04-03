@@ -1,0 +1,91 @@
+package org.example;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
+
+public class StartPanel extends JPanel implements MouseListener  {
+
+
+    private Polygon start,rules;
+    public StartPanel() {
+        addMouseListener(this);
+    }
+
+    public void paint(Graphics g) {
+        super.paint(g);
+        //Set the color of the hexagon
+        setForeground(Color.RED);
+        BufferedImage img;
+        try {
+            img = ImageIO.read(Objects.requireNonNull(StartPanel.class.getResource("/Menu/MainMenu.png")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        int xCenter = img.getWidth() / 2;
+        int yCenter = img.getHeight() / 2;
+        g.drawImage(img, xCenter - img.getWidth() / 2, yCenter - img.getHeight() / 2, this);
+
+
+        int debugRectWidth = getWidth()/4;
+        int debugRectHeight = getHeight()/7;
+        int debugXPos = getWidth()/2 - debugRectWidth/2;
+        int debugYPos = getHeight()/2 - debugRectHeight/2;
+
+        int debugRectWidth2 = getWidth()/4;
+        int debugRectHeight2 = getHeight()/7;
+        int debugXPos2 = getWidth()/2 - debugRectWidth/2;
+        int debugYPos2 = getHeight()/2 + debugRectHeight/2 + debugRectHeight/3;
+
+        int[] xPoints = {debugXPos, debugXPos, debugXPos+debugRectWidth, debugXPos+debugRectWidth};
+        int[] yPoints = {debugYPos+debugRectHeight, debugYPos, debugYPos, debugYPos+debugRectHeight};
+
+        start = new Polygon(xPoints, yPoints, 4);
+        g.drawPolygon(start);
+
+        int[] xPoints2 = {debugXPos2, debugXPos2, debugXPos2+debugRectWidth2, debugXPos2+debugRectWidth2};
+        int[] yPoints2 = {debugYPos2+debugRectHeight2, debugYPos2, debugYPos2, debugYPos2+debugRectHeight2};
+
+        rules = new Polygon(xPoints2, yPoints2, 4);
+        g.drawPolygon(rules);
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+
+        if (start.contains(x, y)) {
+
+        } else if (rules.contains(x, y)) {
+
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+}
