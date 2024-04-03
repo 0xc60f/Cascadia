@@ -20,6 +20,16 @@ public class Player {
         return numBiomes;
     }
 
+    public boolean natureTokenUsed(){
+        return natureTokenUsed;
+    }
+    public int numNatureTokens() {
+        return numNatureTokens;
+    }
+
+
+
+
 
 
 
