@@ -16,6 +16,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         add(new JLabel("Hello world!"));
         addMouseListener(this);
     }
+
     public void paint(Graphics g) {
         super.paint(g);
         hexagon = new Polygon();
