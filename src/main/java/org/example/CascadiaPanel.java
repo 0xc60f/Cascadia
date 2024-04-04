@@ -11,13 +11,93 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class CascadiaPanel extends JPanel implements MouseListener {
-    private Polygon hexagon;
+    private Polygon hexagon, start, rules;
+    private StartPanel Menu;
     public CascadiaPanel() {
         add(new JLabel("Hello world!"));
         addMouseListener(this);
+        Menu = new StartPanel();
     }
     public void paint(Graphics g) {
         super.paint(g);
+
+        if (Menu.getVisible()) {
+            StartPanelSetUp(g);
+            Menu.paint(g);
+        } else {
+            CascadiaPanelSetup(g);
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+
+        if (Menu.getVisible()) {
+            if (start.contains(x, y)) {
+                Menu.setVisible(false);
+                System.out.println("Game started");
+            } else if (rules.contains(x, y)) {
+                Menu.downloadRules();
+            }
+        } else {
+            if (hexagon.contains(x, y)) {
+                getGraphics().drawString("Clicked", 400, 200);
+            } else {
+                getGraphics().drawString("Not clicked", 400, 200);
+            }
+        }
+        repaint();
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    private void StartPanelSetUp(Graphics g) {
+
+        int debugRectWidth = getWidth()/4;
+        int debugRectHeight = getHeight()/7;
+        int debugXPos = getWidth()/2 - debugRectWidth/2;
+        int debugYPos = getHeight()/2 - debugRectHeight/2;
+
+        int debugRectWidth2 = getWidth()/4;
+        int debugRectHeight2 = getHeight()/7;
+        int debugXPos2 = getWidth()/2 - debugRectWidth/2;
+        int debugYPos2 = getHeight()/2 + debugRectHeight/2 + debugRectHeight/3;
+
+        int[] xPoints = {debugXPos, debugXPos, debugXPos+debugRectWidth, debugXPos+debugRectWidth};
+        int[] yPoints = {debugYPos+debugRectHeight, debugYPos, debugYPos, debugYPos+debugRectHeight};
+
+        start = new Polygon(xPoints, yPoints, 4);
+        g.drawPolygon(start);
+
+        int[] xPoints2 = {debugXPos2, debugXPos2, debugXPos2+debugRectWidth2, debugXPos2+debugRectWidth2};
+        int[] yPoints2 = {debugYPos2+debugRectHeight2, debugYPos2, debugYPos2, debugYPos2+debugRectHeight2};
+
+        rules = new Polygon(xPoints2, yPoints2, 4);
+        g.drawPolygon(rules);
+        System.out.println("check");
+    }
+
+    private void CascadiaPanelSetup(Graphics g) {
         hexagon = new Polygon();
         for (int i = 0; i < 6; i++) {
             hexagon.addPoint((int) (100 + 60 * Math.cos(i * 2 * Math.PI / 6)),
@@ -40,38 +120,6 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         //Draw the image on the hexagon
         g.drawImage(newImg, xCenter - newImg.getWidth() / 2, yCenter - newImg.getHeight() / 2, this);
         //g.drawPolygon(hexagon);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
-        if (hexagon.contains(x, y)) {
-            getGraphics().drawString("Clicked", 400, 200);
-        }
-        else {
-            getGraphics().drawString("Not clicked", 400, 200);
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
     }
 
     /**

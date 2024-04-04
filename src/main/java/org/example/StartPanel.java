@@ -15,7 +15,7 @@ public class StartPanel extends JPanel implements MouseListener  {
 
     private Polygon start,rules;
 
-    boolean isVisible = true;
+    private boolean isVisible = true;
     public StartPanel() {
         addMouseListener(this);
     }
@@ -59,6 +59,14 @@ public class StartPanel extends JPanel implements MouseListener  {
 
     }
 
+
+    public void setVisible(boolean val) {
+        isVisible = val;
+    }
+    public boolean getVisible() {
+        return isVisible;
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
@@ -66,6 +74,7 @@ public class StartPanel extends JPanel implements MouseListener  {
 
         if (start.contains(x, y)) {
             isVisible = false;
+            System.out.println("Game started");
         } else if (rules.contains(x, y)) {
             downloadRules();
         }
@@ -91,7 +100,7 @@ public class StartPanel extends JPanel implements MouseListener  {
 
     }
 
-    private void downloadRules() {
+    public void downloadRules() {
         String url = "https://www.alderac.com/wp-content/uploads/2021/08/Cascadia-Rules.pdf";
         String home = System.getProperty("user.home");
         System.out.println("Downloading Rules");
