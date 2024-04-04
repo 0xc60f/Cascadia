@@ -1,5 +1,7 @@
 package org.example;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -13,15 +15,18 @@ import java.util.Objects;
 /**
  * The main panel for the Cascadia game. Currently, being used to test and debug tile setups, but will eventually be switched to orchestrate
  * the game, and the end and start screen.
- * @see JPanel
+ *
  * @author 0xc60f
+ * @see JPanel
  */
 public class CascadiaPanel extends JPanel implements MouseListener {
-    private Polygon hexagon;
+    private Polygon hexagon, hexagon2;
+
     public CascadiaPanel() {
         add(new JLabel("Hello world!"));
         addMouseListener(this);
     }
+
     public void paint(Graphics g) {
         super.paint(g);
         hexagon = new Polygon();
@@ -31,21 +36,43 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         }
         //Set the color of the hexagon
         setForeground(Color.RED);
-        BufferedImage img;
+        BufferedImage img, animalTile, img2, animalTile2, animalTile3, img3;
         try {
             img = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/02.png")));
+            animalTile = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/1.png")));
+            img2 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/03.png")));
+            animalTile2 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/2.png")));
+            animalTile3 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/3.png")));
+            img3 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/08.png")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         //g.drawImage(img, getWidth()/2, getHeight()/2, this);
-        BufferedImage newImg = rotateImageByDegrees(img, 90);
         int x = hexagon.getBounds().x;
         int y = hexagon.getBounds().y;
         int xCenter = x + hexagon.getBounds().width / 2;
         int yCenter = y + hexagon.getBounds().height / 2;
         //Draw the image on the hexagon
-        g.drawImage(newImg, xCenter - newImg.getWidth() / 2, yCenter - newImg.getHeight() / 2, this);
+        g.drawImage(img, xCenter - img.getWidth() / 2, yCenter - img.getHeight() / 2, this);
         //g.drawPolygon(hexagon);
+        BufferedImage combined = drawTiles(img, animalTile);
+        BufferedImage combined2 = drawTiles(img2, animalTile2, animalTile3);
+        BufferedImage combined3 = drawTiles(img3, animalTile, animalTile2, animalTile3);
+        //g.drawImage(combined, getWidth() / 4, getHeight() / 4, null);
+        //g.drawImage(combined2, getWidth() / 2, getHeight() / 4, null);
+        //g.drawImage(combined3, getWidth() / 4, getHeight() / 2, null);
+        BufferedImage rotateCombined3 = rotateImageByDegrees(combined3, 60);
+        //g.drawImage(rotateCombined3, getWidth() / 7, getHeight() / 2, null);
+
+        BufferedImage occupiedTile = drawOccupiedTile(rotateCombined3, animalTile3);
+        g.drawImage(occupiedTile, getWidth() / 3, getHeight() / 3, null);
+        //Find the center of combined and make a polygon around it
+        hexagon2 = new Polygon();
+        for (int i = 0; i < 6; i++) {
+            hexagon2.addPoint((int) (getWidth() / 2 + 60 * Math.cos(i * 2 * Math.PI / 6)),
+                    (int) (getHeight() / 4 + 60 * Math.sin(i * 2 * Math.PI / 6)));
+        }
+
     }
 
     @Override
@@ -53,10 +80,13 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         int x = e.getX();
         int y = e.getY();
         if (hexagon.contains(x, y)) {
-            getGraphics().drawString("Clicked", 400, 200);
+            System.out.println("Clicked on the first hexagon");
         }
-        else {
-            getGraphics().drawString("Not clicked", 400, 200);
+        else{
+            System.out.println("Not clicked on the first hexagon");
+        }
+        if (hexagon2.contains(x, y)) {
+            System.out.println("Clicked on the second hexagon");
         }
     }
 
@@ -81,9 +111,138 @@ public class CascadiaPanel extends JPanel implements MouseListener {
     }
 
     /**
+     * Draws a single animal tile on top of a habitat tile. The animal tile is drawn so that it covers up the possible options for the habitat tile.
+     * This is used when a player places an animal tile on a habitat tile.
+     * @param habitatTile The <code>BufferedImage</code> of the habitat tile
+     * @param animalTile The <code>BufferedImage</code> of the animal tile that will be placed on top of the habitat tile
+     * @return A <code>BufferedImage</code> that is the result of drawing the animal tile on top of the habitat tile.
+     */
+    public BufferedImage drawOccupiedTile(BufferedImage habitatTile, BufferedImage animalTile) {
+        BufferedImage combined = new BufferedImage(habitatTile.getWidth(), habitatTile.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = combined.createGraphics();
+        g2d.drawImage(habitatTile, 0, 0, null);
+        //Draw the animal tile on top of the habitat tile in the center
+        //Resize animalTile so that it is half of the original size
+        animalTile = resizeImage(animalTile, (int) (animalTile.getWidth() / 1.1), (int) (animalTile.getHeight() / 1.1));
+        g2d.drawImage(animalTile, (habitatTile.getWidth() - animalTile.getWidth()) / 2, (habitatTile.getHeight() - animalTile.getHeight()) / 2, null);
+        return combined;
+    }
+
+    /**
+     * Draws a new hexagon at the edge of the current hexagon. The new hexagon is drawn so that it is touching the edge of the current hexagon.
+     * @param g The <code>Graphics</code> object that is used to draw the hexagon. Should be called with <code>getGraphics()</code>
+     * @param baseTilePolygon The <code>Polygon</code> of the base tile that the new tile will be drawn with respect to.
+     * @param tileToDrawPolygon The <code>Polygon</code> of the tile that will be drawn at the edge of the base tile.
+     * @param tileToDraw The <code>BufferedImage</code> of the tile that will be drawn at the edge of the base tile.
+     * @param edge The edge of the base tile that the new tile will be drawn on. Should be a value from 0 to 5.
+     *             0 is the top edge, and the edges are numbered clockwise.
+     */
+    public void drawTileAtEdge(Graphics g, Polygon baseTilePolygon, Polygon tileToDrawPolygon, BufferedImage tileToDraw, int edge){
+        Point center = getCenterOfHexagon(baseTilePolygon);
+        Point edgePoint = new Point(baseTilePolygon.xpoints[edge], baseTilePolygon.ypoints[edge]);
+
+    }
+
+    /**
+     * Draws a single animal tile on top of a habitat tile. The animal tile is resized to half of its original size, and then drawn in the center of the habitat tile.
+     * @param habitatTile A <code>BufferedImage</code> of the habitat tile
+     * @param animalTile A <code>BufferedImage</code> of the animal tile
+     * @return A <code>BufferedImage</code> that is the result of drawing the animal tile on top of the habitat tile.
+     */
+    private BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile) {
+        BufferedImage combined = new BufferedImage(habitatTile.getWidth(), habitatTile.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = combined.createGraphics();
+        g2d.drawImage(habitatTile, 0, 0, null);
+        //Draw the animal tile on top of the habitat tile in the center
+        //Resize animalTile so that it is half of the original size
+        animalTile = resizeImage(animalTile, animalTile.getWidth() / 2, animalTile.getHeight() / 2);
+        g2d.drawImage(animalTile, (habitatTile.getWidth() - animalTile.getWidth()) / 2, (habitatTile.getHeight() - animalTile.getHeight()) / 2, null);
+        return combined;
+    }
+
+    /**
+     * Finds the center of a hexagon by finding the center of the bounding rectangle of the hexagon.
+     * @param hexagon The <code>Polygon</code> that represents the hexagon
+     * @return A <code>Point</code> that represents the center of the hexagon. You can use getX() and getY() to get the x and y coordinates of the center.
+     */
+    private Point getCenterOfHexagon(Polygon hexagon) {
+        int x = hexagon.getBounds().x;
+        int y = hexagon.getBounds().y;
+        int xCenter = x + hexagon.getBounds().width / 2;
+        int yCenter = y + hexagon.getBounds().height / 2;
+        return new Point(xCenter, yCenter);
+    }
+
+    /**
+     * Draws a habitat tile with two animal tiles on top of it. The animal tiles are resized to half of their original size, and then drawn in the center of the habitat tile.
+     * The two animal tiles are slightly offset from each other in the center.
+     * @param habitatTile The <code>BufferedImage</code> of the habitat tile
+     * @param animalTile1 The <code>BufferedImage</code> of the first animal tile
+     * @param animalTile2 The <code>BufferedImage</code> of the second animal tile
+     * @return A <code>BufferedImage</code> that is the result of drawing the two animal tiles on top of the habitat tile.
+     */
+    private BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile1, BufferedImage animalTile2) {
+        BufferedImage combined = new BufferedImage(habitatTile.getWidth(), habitatTile.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = combined.createGraphics();
+        g2d.drawImage(habitatTile, 0, 0, null);
+        //Draw the animal tile on top of the habitat tile in the center
+        //Resize animalTile so that it is half of the original size
+        animalTile1 = resizeImage(animalTile1, animalTile1.getWidth() / 2, animalTile1.getHeight() / 2);
+        animalTile2 = resizeImage(animalTile2, animalTile2.getWidth() / 2, animalTile2.getHeight() / 2);
+        //Draw the two tiles in the middle of the habitat tile, slightly offset from each other
+        g2d.drawImage(animalTile1, (habitatTile.getWidth() - animalTile1.getWidth()) / 2 - 10, (habitatTile.getHeight() - animalTile1.getHeight()) / 2, null);
+        g2d.drawImage(animalTile2, (habitatTile.getWidth() - animalTile2.getWidth()) / 2 + 10, (habitatTile.getHeight() - animalTile2.getHeight()) / 2, null);
+        return combined;
+    }
+
+    /**
+     * Draws a habitat tile with three animal tiles on top of it. The animal tiles are resized to half of their original size, and then drawn in the center of the habitat tile.
+     * The three animal tiles are slightly offset from each other in the center to look like a triangle.
+     * @param habitatTile The <code>BufferedImage</code> of the habitat tile
+     * @param animalTile1 The <code>BufferedImage</code> of the first animal tile
+     * @param animalTile2 The <code>BufferedImage</code> of the second animal tile
+     * @param animalTile3 The <code>BufferedImage</code> of the third animal tile
+     * @return A <code>BufferedImage</code> that is the result of drawing the three animal tiles on top of the habitat tile.
+     */
+    private BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile1, BufferedImage animalTile2, BufferedImage animalTile3) {
+        BufferedImage combined = new BufferedImage(habitatTile.getWidth(), habitatTile.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = combined.createGraphics();
+        g2d.drawImage(habitatTile, 0, 0, null);
+        //Draw the animal tile on top of the habitat tile in the center
+        //Resize animalTile so that it is half of the original size
+        animalTile1 = resizeImage(animalTile1, animalTile1.getWidth() / 2, animalTile1.getHeight() / 2);
+        animalTile2 = resizeImage(animalTile2, animalTile2.getWidth() / 2, animalTile2.getHeight() / 2);
+        animalTile3 = resizeImage(animalTile3, animalTile3.getWidth() / 2, animalTile3.getHeight() / 2);
+        //Draw the two tiles in the middle of the habitat tile, slightly offset from each other
+        g2d.drawImage(animalTile1, (habitatTile.getWidth() - animalTile1.getWidth()) / 2 - 10, ((habitatTile.getHeight() - animalTile1.getHeight()) / 2) + 5, null);
+        g2d.drawImage(animalTile2, (habitatTile.getWidth() - animalTile2.getWidth()) / 2 + 10, ((habitatTile.getHeight() - animalTile2.getHeight()) / 2) + 5, null);
+        g2d.drawImage(animalTile3, (habitatTile.getWidth() - animalTile3.getWidth()) / 2, (habitatTile.getHeight() - animalTile3.getHeight()) / 2 - 15, null);
+        return combined;
+    }
+
+    /**
+     * Resizes an image to a specified width and height. Uses getScaledInstance to resize the image, and then draws the
+     * new image onto a BufferedImage. Returns the resized image.
+     * @param img The image to be resized as a <code>BufferedImage</code>
+     * @param width The width that the image should be resized to as an <code>int</code>
+     * @param height The height that the image should be resized to as an <code>int</code>
+     * @return A <code>BufferedImage</code> that is the result of resizing the original image
+     */
+    @NotNull
+    private BufferedImage resizeImage(BufferedImage img, int width, int height) {
+        Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resized.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+        return resized;
+    }
+
+    /**
      * Rotates an image by a specified number of degrees. Makes a copy of the original image, and then
      * uses an AffineTransform to rotate the copy. Returns the rotated copy.
-     * @param img The image to be rotated as a BufferedImage
+     *
+     * @param img   The image to be rotated as a BufferedImage
      * @param angle The angle that the image should be rotated, in degrees
      * @return A BufferedImage that is the result of rotating the original image
      * @see AffineTransform
