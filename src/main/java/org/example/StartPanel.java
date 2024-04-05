@@ -32,7 +32,7 @@ public class StartPanel extends JPanel implements MouseListener  {
         }
         int xCenter = img.getWidth() / 2;
         int yCenter = img.getHeight() / 2;
-        g.drawImage(img, xCenter - img.getWidth() / 2, yCenter - img.getHeight() / 2, this);
+        g.drawImage(img, xCenter - img.getWidth() / 2, yCenter - img.getHeight() / 2, null);
 
 
         int debugRectWidth = getWidth()/4;
