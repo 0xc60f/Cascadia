@@ -22,51 +22,24 @@ import java.util.Objects;
 public class CascadiaPanel extends JPanel implements MouseListener {
     private Polygon hexagon, start, rules;
     private StartPanel Menu;
+    private MainBoardPanel Board;
     public CascadiaPanel() {
         add(new JLabel("Hello world!"));
         addMouseListener(this);
         Menu = new StartPanel();
+        Board = new MainBoardPanel();
     }
 
     public void paint(Graphics g) {
         super.paint(g);
 
         if (Menu.getVisible()) {
-            StartPanelSetUp(g);
-            Menu.paint(g);
+            Menu.paint(g, getWidth(), getHeight());
+        } else if (Board.getVisible()) {
+            Board.paint(g, getWidth(), getHeight());
         } else {
             CascadiaPanelSetup(g);
         }
-        //Set the color of the hexagon
-        setForeground(Color.RED);
-        /*
-        //g.drawImage(img, getWidth()/2, getHeight()/2, this);
-        int x = hexagon.getBounds().x;
-        int y = hexagon.getBounds().y;
-        int xCenter = x + hexagon.getBounds().width / 2;
-        int yCenter = y + hexagon.getBounds().height / 2;
-        //Draw the image on the hexagon
-        g.drawImage(img, xCenter - img.getWidth() / 2, yCenter - img.getHeight() / 2, this);
-        //g.drawPolygon(hexagon);
-        BufferedImage combined = drawTiles(img, animalTile);
-        BufferedImage combined2 = drawTiles(img2, animalTile2, animalTile3);
-        BufferedImage combined3 = drawTiles(img3, animalTile, animalTile2, animalTile3);
-        //g.drawImage(combined, getWidth() / 4, getHeight() / 4, null);
-        //g.drawImage(combined2, getWidth() / 2, getHeight() / 4, null);
-        //g.drawImage(combined3, getWidth() / 4, getHeight() / 2, null);
-        BufferedImage rotateCombined3 = rotateImageByDegrees(combined3, 60);
-        //g.drawImage(rotateCombined3, getWidth() / 7, getHeight() / 2, null);
-
-        BufferedImage occupiedTile = drawOccupiedTile(rotateCombined3, animalTile3);
-        g.drawImage(occupiedTile, getWidth() / 3, getHeight() / 3, null);
-        //Find the center of combined and make a polygon around it
-        hexagon2 = new Polygon();
-        for (int i = 0; i < 6; i++) {
-            hexagon2.addPoint((int) (getWidth() / 2 + 60 * Math.cos(i * 2 * Math.PI / 6)),
-                    (int) (getHeight() / 4 + 60 * Math.sin(i * 2 * Math.PI / 6)));
-        }
-        */
-
     }
 
     @Override
@@ -75,12 +48,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         int y = e.getY();
 
         if (Menu.getVisible()) {
-            if (start.contains(x, y)) {
-                Menu.setVisible(false);
-                System.out.println("Game started");
-            } else if (rules.contains(x, y)) {
-                Menu.downloadRules();
-            }
+            Menu.mouseClicked(e);
         } else {
             if (hexagon.contains(x, y)) {
                 getGraphics().drawString("Clicked", 400, 200);
@@ -111,32 +79,6 @@ public class CascadiaPanel extends JPanel implements MouseListener {
 
     }
 
-    private void StartPanelSetUp(Graphics g) {
-
-        int debugRectWidth = getWidth()/4;
-        int debugRectHeight = getHeight()/7;
-        int debugXPos = getWidth()/2 - debugRectWidth/2;
-        int debugYPos = getHeight()/2 - debugRectHeight/2;
-
-        int debugRectWidth2 = getWidth()/4;
-        int debugRectHeight2 = getHeight()/7;
-        int debugXPos2 = getWidth()/2 - debugRectWidth/2;
-        int debugYPos2 = getHeight()/2 + debugRectHeight/2 + debugRectHeight/3;
-
-        int[] xPoints = {debugXPos, debugXPos, debugXPos+debugRectWidth, debugXPos+debugRectWidth};
-        int[] yPoints = {debugYPos+debugRectHeight, debugYPos, debugYPos, debugYPos+debugRectHeight};
-
-        start = new Polygon(xPoints, yPoints, 4);
-        g.drawPolygon(start);
-
-        int[] xPoints2 = {debugXPos2, debugXPos2, debugXPos2+debugRectWidth2, debugXPos2+debugRectWidth2};
-        int[] yPoints2 = {debugYPos2+debugRectHeight2, debugYPos2, debugYPos2, debugYPos2+debugRectHeight2};
-
-        rules = new Polygon(xPoints2, yPoints2, 4);
-        g.drawPolygon(rules);
-        System.out.println("check");
-    }
-
     private void CascadiaPanelSetup(Graphics g) {
         hexagon = new Polygon();
         for (int i = 0; i < 6; i++) {
@@ -147,7 +89,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         setForeground(Color.RED);
         BufferedImage img;
         try {
-            img = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/desert+swamp.png")));
+            img = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/02.png")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

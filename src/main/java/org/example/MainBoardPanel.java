@@ -10,13 +10,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class StartPanel extends JPanel implements MouseListener  {
 
-
+public class MainBoardPanel extends JPanel implements MouseListener   {
     private Polygon start,rules;
 
     private boolean isVisible = true;
-    public StartPanel() {
+    public MainBoardPanel() {
         addMouseListener(this);
     }
 
