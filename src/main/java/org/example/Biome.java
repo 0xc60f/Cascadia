@@ -1,7 +1,6 @@
 package org.example;
 
-public class Biome {
-    enum biome{
+public enum Biome {
         RIVER, MOUNTAIN, DESERT, PLAINS, FOREST
-    }
+
 }
