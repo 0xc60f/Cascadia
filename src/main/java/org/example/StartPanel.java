@@ -22,8 +22,6 @@ public class StartPanel extends JPanel implements MouseListener  {
 
     public void paint(Graphics g) {
         super.paint(g);
-        //Set the color of the hexagon
-        setForeground(Color.RED);
         BufferedImage img;
         try {
             img = ImageIO.read(Objects.requireNonNull(StartPanel.class.getResource("/Menu/MainMenu.png")));

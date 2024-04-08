@@ -20,11 +20,10 @@ import java.util.Objects;
  * @see JPanel
  */
 public class CascadiaPanel extends JPanel implements MouseListener {
-    private Polygon hexagon, start, rules;
-    private BufferedImage backgroundImage;
+    private Polygon start, rules;
+    private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
     private final StartPanel Menu;
     public CascadiaPanel() {
-        add(new JLabel("Hello world!"));
         addMouseListener(this);
         Menu = new StartPanel();
     }
@@ -36,7 +35,25 @@ public class CascadiaPanel extends JPanel implements MouseListener {
             StartPanelSetUp(g);
             Menu.paint(g);
         } else {
+            importImages();
             CascadiaPanelSetup(g);
+        }
+    }
+
+    /**
+     * Imports the images that are used in the game. The images are stored in the resources folder, and are imported using the ImageIO class.
+     */
+    private void importImages(){
+        try{
+            backgroundImage = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Menu/Background.jpg")));
+            bearScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/bear-small.jpg")));
+            hawkScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/hawk-small.jpg")));
+            salmonScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/salmon-small.jpg")));
+            elkScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/elk-small.jpg")));
+            foxScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/fox-small.jpg")));
+        }
+        catch (IOException e){
+            throw new RuntimeException(e);
         }
     }
 
@@ -76,6 +93,10 @@ public class CascadiaPanel extends JPanel implements MouseListener {
 
     }
 
+    /**
+     * Sets up the start panel for the game. Draws two polygons, one for the start button and one for the rules button.
+     * @param g The <code>Graphics</code> object that is used to draw the polygons. Should be called with <code>getGraphics()</code>
+     */
     private void StartPanelSetUp(Graphics g) {
 
         int debugRectWidth = getWidth()/4;
@@ -102,12 +123,12 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         //System.out.println("check");
     }
 
+    /**
+     * Sets up the main panel for the game. Draws the background image, the turn counter, and the player panel.
+     * Also draws the scoring sheets, the boxes for the tiles, and the buttons to check other players' boards.
+     * @param g The <code>Graphics</code> object that is used to draw the polygons. Should be called with <code>getGraphics()</code>
+     */
     private void CascadiaPanelSetup(Graphics g) {
-        try {
-            backgroundImage = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Menu/Background.jpg")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         g.drawImage(backgroundImage, 0, 0, null);
         Color beigeColor = new Color(255, 221, 122);
         g.setColor(beigeColor);
@@ -118,6 +139,12 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         g.drawRect(getWidth()-300, 0, 300, getHeight());
         g.setColor(beigeColor);
         g.fillRect(getWidth()-300, 0, 300, getHeight());
+        g.drawImage(bearScoring, getWidth() - 250, 10, null);
+        g.drawImage(hawkScoring, getWidth() - 250, 200, null);
+        g.drawImage(salmonScoring, getWidth() - 250, 420, null);
+        g.drawImage(elkScoring, getWidth() - 250, 640, null);
+        g.drawImage(foxScoring, getWidth() - 250, 860, null);
+        g.fillRect(0, getHeight()-200, getWidth()-300, 200);
 
     }
 
