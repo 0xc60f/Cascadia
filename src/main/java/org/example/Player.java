@@ -36,16 +36,12 @@ public class Player implements Comparable<Player>{
     }
 
     public boolean natureTokenUsed(){
-        if(!natureTokenUsed){
-            natureTokenUsed = true;
-        }else{
-            natureTokenUsed = false;
-        }
+        natureTokenUsed = !natureTokenUsed;
         return natureTokenUsed;
     }
     public int numNatureTokens() {
         //if statement when a wildlife token is placed on a key stone (numNatureTokens ++;)
-        if(natureTokenUsed() == true){
+        if(natureTokenUsed()){
             numNatureTokens--;
         }
         return numNatureTokens;
