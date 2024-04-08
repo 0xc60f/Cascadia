@@ -11,11 +11,20 @@ public class Player implements Comparable<Player>{
     private int numNatureTokens;
     private Boolean natureTokenUsed;
     private HashMap<String, Integer> numBiomes;
+    private HashMap<HabitatTile, WildlifeToken> playerTiles;
+
 
     public Player(int p){
         pNum = p;
         numBiomes = new HashMap<String, Integer>();
         natureTokenUsed = false ;
+        for(int i = 0; i < 3; i++){
+            playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken());
+        }
+    }
+
+    public HashMap<HabitatTile, WildlifeToken> getPlayerTiles(){
+        return playerTiles;
     }
     //finish later
     public void calcNumBiomes(){
@@ -27,16 +36,12 @@ public class Player implements Comparable<Player>{
     }
 
     public boolean natureTokenUsed(){
-        if(!natureTokenUsed){
-            natureTokenUsed = true;
-        }else{
-            natureTokenUsed = false;
-        }
+        natureTokenUsed = !natureTokenUsed;
         return natureTokenUsed;
     }
     public int numNatureTokens() {
         //if statement when a wildlife token is placed on a key stone (numNatureTokens ++;)
-        if(natureTokenUsed() == true){
+        if(natureTokenUsed()){
             numNatureTokens--;
         }
         return numNatureTokens;
@@ -46,10 +51,10 @@ public class Player implements Comparable<Player>{
 
         return;
     }
-    public int compareTo(Player p, Player p2){
+    /*public int compareTo(Player p, Player p2){
         return Integer.compare(p.numNatureTokens, p2.numNatureTokens);
     }
-
+    */
 
 
     @Override
@@ -60,30 +65,33 @@ public class Player implements Comparable<Player>{
         if (result == 0) {
             // If tied on victory points, use additional tiebreakers
             //result = compareTiebreakers(otherPlayer);
+
         }
 
         return result;
     }
 
-    /*private int compareTiebreakers(Player otherPlayer) {
+    /*private int compareTo(Player otherPlayer) {
         // Implement additional tiebreakers as needed
-        // Example: Compare based on research amount, marble amount, and file amount
+        // Example: Compare based on biome score, wildlifeToken score, and natureToken amount
 
-        int result = Integer.compare(this.researchAmt, otherPlayer.researchAmt);
+        int result = Integer.compare(this.bScore, otherPlayer.bScore);
 
         if (result == 0) {
-            result = Integer.compare(this.marbleAmt, otherPlayer.marbleAmt);
+            result = Integer.compare(this.wScore, otherPlayer.wScore);
         }
 
         if (result == 0) {
-            result = Integer.compare(this.fileAmt, otherPlayer.fileAmt);
+            result = Integer.compare(this.nScore, otherPlayer.nScore);
         }
+
 
         return result;
     }
-    public int getFileAmt() {return fileAmt;}
-    public int getResearchAmt() {return researchAmt;}
-    public int getMarbleAmt() {return marbleAmt;}
+    public int getBiomeScore() {return BiomeScore;}
+    public int getwildlifeTokenScore() {return wildlifeTokenScore;}
+    public int getnatureTokenAmt() {return natureTokenAmt;}
+    public int totalScore(){ int total = BiomeScore + wildlifeTokenScore + natureTokenAmt; return total;}
 
     public void clearEffects(){
         effects.clear();

@@ -6,21 +6,21 @@ public class HabitatTile {
     private WildlifeToken w = null;
     //Sides in relation to Biomes
     private ArrayList<WildlifeToken> possibleAnimals;
-    private String habitat1;
-    private String habitat2;
+    private Biome habitat1;
+    private Biome habitat2;
     private TreeMap<Integer, Biome> biomes;
     //Constructor for the Biomes of the HabitatTile
     private ArrayList<HabitatTile> neighbors;
     private int value;
     private List<Edge> edges;
-    public HabitatTile(String h1, String h2, ArrayList<WildlifeToken> availableAnimals){
+    public HabitatTile(Biome h1, Biome h2, ArrayList<WildlifeToken> availableAnimals){
         habitat1  = h1;
         habitat2 = h2;
         possibleAnimals = availableAnimals;
         neighbors = new ArrayList<HabitatTile>();
     }
     //Instantiates the HabitatTile as the Node class of the Cascadia Graph
-    public HabitatTile(WildlifeToken w){
+    public void setWildlifeToken(WildlifeToken w){
         this.w = w;
     }
     //Connects a HabitatTile to another
@@ -35,6 +35,9 @@ public class HabitatTile {
         return possibleAnimals.contains(w);
     }
 
+    public WildlifeToken getWildlifeToken(){
+        return w;
+    }
 
     /*function rotateTileClockwiseFunction() {
 	// find the currently chosen tile that is currently being placed, and store it's current rotation value into a variable
