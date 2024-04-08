@@ -21,7 +21,8 @@ import java.util.Objects;
  */
 public class CascadiaPanel extends JPanel implements MouseListener {
     private Polygon hexagon, start, rules;
-    private StartPanel Menu;
+    private BufferedImage backgroundImage;
+    private final StartPanel Menu;
     public CascadiaPanel() {
         add(new JLabel("Hello world!"));
         addMouseListener(this);
@@ -37,36 +38,6 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         } else {
             CascadiaPanelSetup(g);
         }
-        //Set the color of the hexagon
-        setForeground(Color.RED);
-        /*
-        //g.drawImage(img, getWidth()/2, getHeight()/2, this);
-        int x = hexagon.getBounds().x;
-        int y = hexagon.getBounds().y;
-        int xCenter = x + hexagon.getBounds().width / 2;
-        int yCenter = y + hexagon.getBounds().height / 2;
-        //Draw the image on the hexagon
-        g.drawImage(img, xCenter - img.getWidth() / 2, yCenter - img.getHeight() / 2, this);
-        //g.drawPolygon(hexagon);
-        BufferedImage combined = drawTiles(img, animalTile);
-        BufferedImage combined2 = drawTiles(img2, animalTile2, animalTile3);
-        BufferedImage combined3 = drawTiles(img3, animalTile, animalTile2, animalTile3);
-        //g.drawImage(combined, getWidth() / 4, getHeight() / 4, null);
-        //g.drawImage(combined2, getWidth() / 2, getHeight() / 4, null);
-        //g.drawImage(combined3, getWidth() / 4, getHeight() / 2, null);
-        BufferedImage rotateCombined3 = rotateImageByDegrees(combined3, 60);
-        //g.drawImage(rotateCombined3, getWidth() / 7, getHeight() / 2, null);
-
-        BufferedImage occupiedTile = drawOccupiedTile(rotateCombined3, animalTile3);
-        g.drawImage(occupiedTile, getWidth() / 3, getHeight() / 3, null);
-        //Find the center of combined and make a polygon around it
-        hexagon2 = new Polygon();
-        for (int i = 0; i < 6; i++) {
-            hexagon2.addPoint((int) (getWidth() / 2 + 60 * Math.cos(i * 2 * Math.PI / 6)),
-                    (int) (getHeight() / 4 + 60 * Math.sin(i * 2 * Math.PI / 6)));
-        }
-        */
-
     }
 
     @Override
@@ -77,15 +48,9 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         if (Menu.getVisible()) {
             if (start.contains(x, y)) {
                 Menu.setVisible(false);
-                System.out.println("Game started");
+                //System.out.println("Game started");
             } else if (rules.contains(x, y)) {
                 Menu.downloadRules();
-            }
-        } else {
-            if (hexagon.contains(x, y)) {
-                getGraphics().drawString("Clicked", 400, 200);
-            } else {
-                getGraphics().drawString("Not clicked", 400, 200);
             }
         }
         repaint();
@@ -134,32 +99,26 @@ public class CascadiaPanel extends JPanel implements MouseListener {
 
         rules = new Polygon(xPoints2, yPoints2, 4);
         g.drawPolygon(rules);
-        System.out.println("check");
+        //System.out.println("check");
     }
 
     private void CascadiaPanelSetup(Graphics g) {
-        hexagon = new Polygon();
-        for (int i = 0; i < 6; i++) {
-            hexagon.addPoint((int) (100 + 60 * Math.cos(i * 2 * Math.PI / 6)),
-                    (int) (100 + 60 * Math.sin(i * 2 * Math.PI / 6)));
-        }
-        //Set the color of the hexagon
-        setForeground(Color.RED);
-        BufferedImage img;
         try {
-            img = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/desert+swamp.png")));
+            backgroundImage = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Menu/Background.jpg")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        //g.drawImage(img, getWidth()/2, getHeight()/2, this);
-        BufferedImage newImg = rotateImageByDegrees(img, 90);
-        int x = hexagon.getBounds().x;
-        int y = hexagon.getBounds().y;
-        int xCenter = x + hexagon.getBounds().width / 2;
-        int yCenter = y + hexagon.getBounds().height / 2;
-        //Draw the image on the hexagon
-        g.drawImage(newImg, xCenter - newImg.getWidth() / 2, yCenter - newImg.getHeight() / 2, this);
-        //g.drawPolygon(hexagon);
+        g.drawImage(backgroundImage, 0, 0, null);
+        Color beigeColor = new Color(255, 221, 122);
+        g.setColor(beigeColor);
+        g.fillRoundRect(50, 50, 250, 100, 30, 30);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.drawString("Turn: 1", 130, 105);
+        g.drawRect(getWidth()-300, 0, 300, getHeight());
+        g.setColor(beigeColor);
+        g.fillRect(getWidth()-300, 0, 300, getHeight());
+
     }
 
     /**
