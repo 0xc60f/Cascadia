@@ -11,11 +11,20 @@ public class Player implements Comparable<Player>{
     private int numNatureTokens;
     private Boolean natureTokenUsed;
     private HashMap<String, Integer> numBiomes;
+    private HashMap<HabitatTile, WildlifeToken> playerTiles;
+
 
     public Player(int p){
         pNum = p;
         numBiomes = new HashMap<String, Integer>();
         natureTokenUsed = false ;
+        for(int i = 0; i < 3; i++){
+            playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken());
+        }
+    }
+
+    public HashMap<HabitatTile, WildlifeToken> getPlayerTiles(){
+        return playerTiles;
     }
     //finish later
     public void calcNumBiomes(){

@@ -11,11 +11,11 @@ public class ScoringCharts {
         return 0;
     }
 
-    private Map<String, String> allPlacedTokens;
+    private HashMap<HabitatTile, WildlifeToken> allPlacedTokens;
     private Map<Integer, Integer> bearScoringValues;
     private int confirmedBearPairs;
-    private ArrayList<String> potentialTokenIDs;
-    private List<String> usedTokenIDs;
+    private ArrayList<HabitatTile> potentialBears;
+    private ArrayList<HabitatTile> usedTokenIDs;
 
     public void BearScoring() {
         bearScoringValues = new HashMap<>();
@@ -24,62 +24,63 @@ public class ScoringCharts {
         bearScoringValues.put(3, 19);
         bearScoringValues.put(4, 27);
 
-        potentialTokenIDs = new ArrayList<>();
+        potentialBears = new ArrayList<HabitatTile>();
         usedTokenIDs = new ArrayList<>();
     }
 
-    /*public void calculateBearTokenScoring() {
-        allPlacedTokens = new HashMap<>(); // Initialize or assign the allPlacedTokens map
+    public void calculateBearTokenScoring(int player) {
+
+        Player p = new Player(player);
+
+        allPlacedTokens = p.getPlayerTiles(); // Initialize or assign the allPlacedTokens map
 
         confirmedBearPairs = 0;
 
-        Set<String> tokenIDs = allPlacedTokens.keySet();
+        HashSet<HabitatTile> HabitatTiles = (HashSet<HabitatTile>) allPlacedTokens.keySet();
 
-        for (String tokenID : tokenIDs) {
-            potentialTokenIDs = new ArrayList<>();
+        for (HabitatTile tokenID : HabitatTiles) {
+            if (allPlacedTokens.get(tokenID).equals(WildlifeToken.BEAR) && !usedTokenIDs.contains(tokenID)) {
 
-            if (allPlacedTokens.get(tokenID).equals("bear") && !usedTokenIDs.contains(tokenID)) {
-
-                List<HabitatTile> neighboringTiles = graph.getNeighboringTiles(allPlacedTokens.get(tokenID));
+                List<HabitatTile> neighboringTiles = Graph.getNeighbors(tokenID);
 
                 for (HabitatTile neighborTile : neighboringTiles) {
                     if (allPlacedTokens.containsKey(neighborTile.getWildlifeToken())) {
-                        // The neighboring tile exists and has a placed token on it!
+                        // The neighboring tile exists and has a placed token on it
                         // Continue with the specified scoring process for this wildlife'
-                        if (allPlacedTokens.get(neighborTile.getID()).equals("bear") && neighborTile.getColor().equals(allPlacedTokens.get(tokenID).getColor())) {
-                            potentialTokenIDs.add(neighborTile);
+                        if (allPlacedTokens.get(neighborTile.getWildlifeToken()).equals(WildlifeToken.BEAR) && neighborTile.getWildlifeToken().equals(allPlacedTokens.get(tokenID))) {
+                            potentialBears.add(neighborTile);
                         }
                     }
                 }
 
-                if (potentialTokenIDs.size() == 1) {
+                if (potentialBears.size() == 1) {
                     // Only one neighboring bear means it only has the pair and could qualify for scoring!
                     // Need to now make sure there's no bears touching the matched neighbor tile before locking it in for scoring
 
-                    List<HabitatTile> potentialBearPairNeighbourTiles = graph.getNeighboringTiles(potentialTokenIDs.get(0));
+                    List<HabitatTile> potentialBearPairNeighbourTiles = Graph.getNeighbors(potentialBears.get(0));
                     for (HabitatTile potentialBearPairNeighbourTile : potentialBearPairNeighbourTiles) {
-                        if (allPlacedTokens.containsKey(potentialBearPairNeighbourTile.getID())) {
+                        if (allPlacedTokens.containsKey(potentialBearPairNeighbourTile.getWildlifeToken())) {
                             // The neighboring tile exists and has a placed token on it!
                             // Continue with the specified scoring process for this wildlife'
 
-                            if (allPlacedTokens.get(potentialBearPairNeighbourTile.getID()).equals("bear") && potentialBearPairNeighbourTile.getColor().equals(allPlacedTokens.get(tokenID).getColor())) {
-                                potentialTokenIDs.add(potentialBearPairNeighbourTile);
+                            if (allPlacedTokens.get(potentialBearPairNeighbourTile.getWildlifeToken()).equals(WildlifeToken.BEAR) && potentialBearPairNeighbourTile.getWildlifeToken().equals(allPlacedTokens.get(tokenID))) {
+                                potentialBears.add(potentialBearPairNeighbourTile);
                             }
                         }
                     }
-                    if (potentialTokenIDs.size() == 2) {
+                    if (potentialBears.size() == 2) {
                         if (confirmedBearPairs <= 4) {
                             confirmedBearPairs++;
                         }
                     }
                 }
-                usedTokenIDs.addAll(potentialTokenIDs);
+                usedTokenIDs.addAll(potentialBears);
             }
         }
 
         if (confirmedBearPairs != 0) {
-            // Assuming tokenScoring is an object with a bear.totalScore property
-            tokenScoring.bear.totalScore = bearScoringValues.get(confirmedBearPairs);
+            //tokenScoring.bear.totalScore = bearScoringValues.get(confirmedBearPairs);
+            //gotta make the token scoring method that will hold all scoring values
         }
     }
 
@@ -88,40 +89,5 @@ public class ScoringCharts {
         // Implement this method based on your requirements
         return new ArrayList<>();
     }
-    /*function setupFinalScoring() {
 
-	$('#natureTokensScoringInput').html(natureCubesNum);
-
-	$('#mapHiddenOverlay .mapTileContainer .placedWildlifeToken').each(function(){
-		let tokenWildlife = $(this).attr('wildlife');
-		$(this).attr('src', `img/tokens/${tokenWildlife}.png`);
-	})
-
-	checkForBlanks();
-	processPlacedTilesAndTokens();
-
-	calculateBearTokenScoring();
-	calculateElkTokenScoring();
-	calculateFoxTokenScoring();
-	calculateHawkTokenScoring();
-	calculateSalmonTokenScoring();
-
-	const allWildlife = Object.keys(tokenScoring);
-
-	for (const currentWildlife of allWildlife) {
-		$('#wildlifeScoringTable.finalScoringTable .scoreCell #' + currentWildlife + '-wildlifeScoringInput').html(tokenScoring[currentWildlife].totalScore);
-
-		$('#tileTokenContainer.finalScoring .finalScoringItem #' + currentWildlife + '-individualWildlifeScoringInput .individualPointsNum').html(tokenScoring[currentWildlife].totalScore);
-		if(tokenScoring[currentWildlife].totalScore == 1) {
-			$('#tileTokenContainer.finalScoring .finalScoringItem #' + currentWildlife + '-individualWildlifeScoringInput .pluralPoints').hide();
-		} else {
-			$('#tileTokenContainer.finalScoring .finalScoringItem #' + currentWildlife + '-individualWildlifeScoringInput .pluralPoints').show();
-		}
-
-	}
-
-	updateAllSubtotals();
-
-}
-*/
 }

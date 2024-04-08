@@ -13,7 +13,7 @@ public abstract class Graph {
         hTiles = new LinkedList<>();
         edges = new LinkedList<>();
     }
-    public List<HabitatTile> getNeighbors(HabitatTile tile) {
+    public static List<HabitatTile> getNeighbors(HabitatTile tile) {
         return tile.getNeighbors();
     }
 
