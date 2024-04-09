@@ -10,49 +10,41 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class StartPanel extends JPanel implements MouseListener  {
 
-
+public class MainBoardPanel extends JPanel implements MouseListener   {
     private Polygon start,rules;
 
+    private BufferedImage backgroundImage;
     private boolean isVisible = true;
-    public StartPanel() {
-        addMouseListener(this);
-    }
+    public MainBoardPanel() {
 
-    public void paint(Graphics g, int width, int height) {
-        super.paint(g);
-        BufferedImage img;
+        addMouseListener(this);
         try {
-            img = ImageIO.read(Objects.requireNonNull(StartPanel.class.getResource("/Menu/MainMenu.png")));
+            backgroundImage = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Menu/MainMenu.png")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        int xCenter = img.getWidth() / 2;
-        int yCenter = img.getHeight() / 2;
-        g.drawImage(img, xCenter - img.getWidth() / 2, yCenter - img.getHeight() / 2, width, height, null);
+    }
 
-        int debugRectWidth = width/4;
-        int debugRectHeight = height/7;
-        int debugXPos = width/2 - debugRectWidth/2;
-        int debugYPos = height/2 - (debugRectHeight / 7) * 5;
+    public void paint(Graphics g, int width, int height) {
+        try {
+            backgroundImage = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Menu/Background.jpg")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        g.drawImage(backgroundImage, 0, 0, null);
+        Color beigeColor = new Color(255, 221, 122);
+        g.setColor(beigeColor);
+        g.fillRoundRect(width/100, height/100, width/8, height/14, 30, 30);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, width/90));
+        g.drawString("Turn: 1", width/19, height/19);
 
-        int debugRectWidth2 = width/4;
-        int debugRectHeight2 = height/7;
-        int debugXPos2 = width/2 - debugRectWidth/2;
-        int debugYPos2 = height/2 + debugRectHeight/3 + debugRectHeight/5;
+        int div = 5;
 
-        int[] xPoints = {debugXPos, debugXPos, debugXPos+debugRectWidth, debugXPos+debugRectWidth};
-        int[] yPoints = {debugYPos+debugRectHeight, debugYPos, debugYPos, debugYPos+debugRectHeight};
-
-        start = new Polygon(xPoints, yPoints, 4);
-        g.drawPolygon(start);
-
-        int[] xPoints2 = {debugXPos2, debugXPos2, debugXPos2+debugRectWidth2, debugXPos2+debugRectWidth2};
-        int[] yPoints2 = {debugYPos2+debugRectHeight2, debugYPos2, debugYPos2, debugYPos2+debugRectHeight2};
-
-        rules = new Polygon(xPoints2, yPoints2, 4);
-        g.drawPolygon(rules);
+        g.drawRect(width-width/div, 0, width/div, height);
+        g.setColor(beigeColor);
+        g.fillRect(width-width/div, 0, width/div, height);
 
     }
 
@@ -68,7 +60,6 @@ public class StartPanel extends JPanel implements MouseListener  {
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
-        System.out.println("Whst");
         if (start.contains(x, y)) {
             isVisible = false;
             System.out.println("Game started");

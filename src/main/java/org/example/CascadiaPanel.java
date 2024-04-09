@@ -23,20 +23,21 @@ public class CascadiaPanel extends JPanel implements MouseListener {
     private Polygon start, rules;
     private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
     private final StartPanel Menu;
+    private final MainBoardPanel MainBoard;
     public CascadiaPanel() {
         addMouseListener(this);
         Menu = new StartPanel();
+        MainBoard = new MainBoardPanel();
     }
 
     public void paint(Graphics g) {
         super.paint(g);
 
         if (Menu.getVisible()) {
-            StartPanelSetUp(g);
-            Menu.paint(g);
-        } else {
+            Menu.paint(g, getWidth(), getHeight());
+        } else if (MainBoard.getVisible()) {
             importImages();
-            CascadiaPanelSetup(g);
+            MainBoard.paint(g, getWidth(), getHeight());
         }
     }
 
@@ -59,16 +60,9 @@ public class CascadiaPanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
 
         if (Menu.getVisible()) {
-            if (start.contains(x, y)) {
-                Menu.setVisible(false);
-                //System.out.println("Game started");
-            } else if (rules.contains(x, y)) {
-                Menu.downloadRules();
-            }
+            Menu.mouseClicked(e);
         }
         repaint();
     }
@@ -90,61 +84,6 @@ public class CascadiaPanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
-
-    }
-
-    /**
-     * Sets up the start panel for the game. Draws two polygons, one for the start button and one for the rules button.
-     * @param g The <code>Graphics</code> object that is used to draw the polygons. Should be called with <code>getGraphics()</code>
-     */
-    private void StartPanelSetUp(Graphics g) {
-
-        int debugRectWidth = getWidth()/4;
-        int debugRectHeight = getHeight()/7;
-        int debugXPos = getWidth()/2 - debugRectWidth/2;
-        int debugYPos = getHeight()/2 - debugRectHeight/2;
-
-        int debugRectWidth2 = getWidth()/4;
-        int debugRectHeight2 = getHeight()/7;
-        int debugXPos2 = getWidth()/2 - debugRectWidth/2;
-        int debugYPos2 = getHeight()/2 + debugRectHeight/2 + debugRectHeight/3;
-
-        int[] xPoints = {debugXPos, debugXPos, debugXPos+debugRectWidth, debugXPos+debugRectWidth};
-        int[] yPoints = {debugYPos+debugRectHeight, debugYPos, debugYPos, debugYPos+debugRectHeight};
-
-        start = new Polygon(xPoints, yPoints, 4);
-        g.drawPolygon(start);
-
-        int[] xPoints2 = {debugXPos2, debugXPos2, debugXPos2+debugRectWidth2, debugXPos2+debugRectWidth2};
-        int[] yPoints2 = {debugYPos2+debugRectHeight2, debugYPos2, debugYPos2, debugYPos2+debugRectHeight2};
-
-        rules = new Polygon(xPoints2, yPoints2, 4);
-        g.drawPolygon(rules);
-        //System.out.println("check");
-    }
-
-    /**
-     * Sets up the main panel for the game. Draws the background image, the turn counter, and the player panel.
-     * Also draws the scoring sheets, the boxes for the tiles, and the buttons to check other players' boards.
-     * @param g The <code>Graphics</code> object that is used to draw the polygons. Should be called with <code>getGraphics()</code>
-     */
-    private void CascadiaPanelSetup(Graphics g) {
-        g.drawImage(backgroundImage, 0, 0, null);
-        Color beigeColor = new Color(255, 221, 122);
-        g.setColor(beigeColor);
-        g.fillRoundRect(50, 50, 250, 100, 30, 30);
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.BOLD, 20));
-        g.drawString("Turn: 1", 130, 105);
-        g.drawRect(getWidth()-300, 0, 300, getHeight());
-        g.setColor(beigeColor);
-        g.fillRect(getWidth()-300, 0, 300, getHeight());
-        g.drawImage(bearScoring, getWidth() - 250, 10, null);
-        g.drawImage(hawkScoring, getWidth() - 250, 200, null);
-        g.drawImage(salmonScoring, getWidth() - 250, 420, null);
-        g.drawImage(elkScoring, getWidth() - 250, 640, null);
-        g.drawImage(foxScoring, getWidth() - 250, 860, null);
-        g.fillRect(0, getHeight()-200, getWidth()-300, 200);
 
     }
 
