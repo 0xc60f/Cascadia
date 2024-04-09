@@ -6,7 +6,7 @@ public class CascadiaFrame extends JFrame {
 
     public CascadiaFrame() {
         setTitle("Cascadia");
-        setSize(getWidth(), getHeight());
+        setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         add(new CascadiaPanel());
         setExtendedState(JFrame.MAXIMIZED_BOTH);
