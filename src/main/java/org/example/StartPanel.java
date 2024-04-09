@@ -70,7 +70,7 @@ public class StartPanel extends JPanel implements MouseListener  {
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
-
+        System.out.println("Whst");
         if (start.contains(x, y)) {
             isVisible = false;
             System.out.println("Game started");

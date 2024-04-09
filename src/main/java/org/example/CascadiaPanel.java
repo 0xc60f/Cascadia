@@ -21,37 +21,29 @@ import java.util.Objects;
  */
 public class CascadiaPanel extends JPanel implements MouseListener {
     private Polygon hexagon, start, rules;
-    private BufferedImage backgroundImage;
     private final StartPanel Menu;
+    private final MainBoardPanel MainBoard;
     public CascadiaPanel() {
-        add(new JLabel("Hello world!"));
         addMouseListener(this);
         Menu = new StartPanel();
+        MainBoard = new MainBoardPanel();
     }
 
     public void paint(Graphics g) {
         super.paint(g);
 
         if (Menu.getVisible()) {
-            StartPanelSetUp(g);
-            Menu.paint(g);
-        } else {
-            CascadiaPanelSetup(g);
+            Menu.paint(g, getWidth(), getHeight());
+        } else if (MainBoard.getVisible()) {
+            MainBoard.paint(g, getWidth(), getHeight());
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
 
         if (Menu.getVisible()) {
-            if (start.contains(x, y)) {
-                Menu.setVisible(false);
-                //System.out.println("Game started");
-            } else if (rules.contains(x, y)) {
-                Menu.downloadRules();
-            }
+            Menu.mouseClicked(e);
         }
         repaint();
     }
@@ -73,51 +65,6 @@ public class CascadiaPanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
-
-    }
-
-    private void StartPanelSetUp(Graphics g) {
-
-        int debugRectWidth = getWidth()/4;
-        int debugRectHeight = getHeight()/7;
-        int debugXPos = getWidth()/2 - debugRectWidth/2;
-        int debugYPos = getHeight()/2 - debugRectHeight/2;
-
-        int debugRectWidth2 = getWidth()/4;
-        int debugRectHeight2 = getHeight()/7;
-        int debugXPos2 = getWidth()/2 - debugRectWidth/2;
-        int debugYPos2 = getHeight()/2 + debugRectHeight/2 + debugRectHeight/3;
-
-        int[] xPoints = {debugXPos, debugXPos, debugXPos+debugRectWidth, debugXPos+debugRectWidth};
-        int[] yPoints = {debugYPos+debugRectHeight, debugYPos, debugYPos, debugYPos+debugRectHeight};
-
-        start = new Polygon(xPoints, yPoints, 4);
-        g.drawPolygon(start);
-
-        int[] xPoints2 = {debugXPos2, debugXPos2, debugXPos2+debugRectWidth2, debugXPos2+debugRectWidth2};
-        int[] yPoints2 = {debugYPos2+debugRectHeight2, debugYPos2, debugYPos2, debugYPos2+debugRectHeight2};
-
-        rules = new Polygon(xPoints2, yPoints2, 4);
-        g.drawPolygon(rules);
-        //System.out.println("check");
-    }
-
-    private void CascadiaPanelSetup(Graphics g) {
-        try {
-            backgroundImage = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Menu/Background.jpg")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        g.drawImage(backgroundImage, 0, 0, null);
-        Color beigeColor = new Color(255, 221, 122);
-        g.setColor(beigeColor);
-        g.fillRoundRect(50, 50, 250, 100, 30, 30);
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.BOLD, 20));
-        g.drawString("Turn: 1", 130, 105);
-        g.drawRect(getWidth()-300, 0, 300, getHeight());
-        g.setColor(beigeColor);
-        g.fillRect(getWidth()-300, 0, 300, getHeight());
 
     }
 
