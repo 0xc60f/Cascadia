@@ -127,6 +127,57 @@ public class ScoringCharts {
         }
     }
 
+        private Map<Integer, Integer> hawkScoringValues;
+
+        public void HawkScoring() {
+            hawkScoringValues = new HashMap<>();
+            hawkScoringValues.put(0, 0);
+            hawkScoringValues.put(1, 2);
+            hawkScoringValues.put(2, 5);
+            hawkScoringValues.put(3, 8);
+            hawkScoringValues.put(4, 11);
+            hawkScoringValues.put(5, 14);
+            hawkScoringValues.put(6, 18);
+            hawkScoringValues.put(7, 22);
+            hawkScoringValues.put(8, 26);
+        }
+
+        public void calculateHawkTokenScoring(Player p) {
+            allPlacedTokens = p.getPlayerTiles();
+            ArrayList<HabitatTile> tokenIDs = new ArrayList<>(allPlacedTokens.keySet());
+
+            int numIsolatedHawks = 0;
+
+            for (HabitatTile tokenID : tokenIDs) {
+                WildlifeToken token = allPlacedTokens.get(tokenID);
+                if (token == WildlifeToken.HAWK) {
+
+                    List<HabitatTile> neighbourTiles = Graph.getNeighbors(tokenID);
+
+                    boolean neighbouringHawks = false;
+
+                    for (HabitatTile neighbourTile : neighbourTiles) {
+                        WildlifeToken neighbourToken = allPlacedTokens.get(neighbourTile);
+                        if (neighbourToken != null && neighbourToken == WildlifeToken.HAWK) {
+                            neighbouringHawks = true;
+                        }
+                    }
+                    if (!neighbouringHawks) {
+                        numIsolatedHawks++;
+                    }
+                }
+            }
+
+            if (numIsolatedHawks > 8) {
+                numIsolatedHawks = 8;
+            }
+
+            //tokenScoring.hawk.totalScore = hawkScoringValues.get(numIsolatedHawks);
+            //token scoring method needs to be created
+        }
+
+
+
     // Assuming neighbourTileIDs is a method that returns a list of neighbouring tile IDs
     private List<String> neighbourTileIDs(String tokenID) {
         // Implement this method based on your requirements
