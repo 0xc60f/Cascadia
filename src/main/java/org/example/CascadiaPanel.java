@@ -20,8 +20,6 @@ import java.util.Objects;
  * @see JPanel
  */
 public class CascadiaPanel extends JPanel implements MouseListener {
-    private Polygon start, rules;
-    private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
     private final StartPanel Menu;
     private final MainBoardPanel MainBoard;
     public CascadiaPanel() {
@@ -36,7 +34,6 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         if (Menu.getVisible()) {
             Menu.paint(g, getWidth(), getHeight());
         } else if (MainBoard.getVisible()) {
-            importImages();
             MainBoard.paint(g, getWidth(), getHeight());
         }
     }
@@ -206,7 +203,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @return A <code>BufferedImage</code> that is the result of resizing the original image
      */
     @NotNull
-    private BufferedImage resizeImage(BufferedImage img, int width, int height) {
+    protected static BufferedImage resizeImage(BufferedImage img, int width, int height) {
         Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = resized.createGraphics();
