@@ -15,10 +15,14 @@ public class Player implements Comparable<Player>{
     public Player(int p){
         pNum = p;
         numBiomes = new HashMap<String, Integer>();
+        numNatureTokens = 0; // Initialize to zero, assuming nature tokens need to be added.
         natureTokenUsed = false ;
+        playerTiles = new HashMap<>();
+        this.initialThree = initialThree;
         for(int i = 0; i < 3; i++){
             playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken());
         }
+        totalScore = 0;
     }
 
     public HashMap<HabitatTile, WildlifeToken> getPlayerTiles(){
@@ -44,7 +48,6 @@ public class Player implements Comparable<Player>{
     }
 
     public void addTile(HabitatTile h){
-
         return;
     }
 
@@ -89,7 +92,7 @@ public class Player implements Comparable<Player>{
             addpt = 1;
             t += addpt;
         }
-        int Wresult = Integer.compare(this.totalScore, otherPlayer.totalScore);
+        int Wresult = Integer.compare(t, o);
 
         return Wresult;
     }
