@@ -46,7 +46,7 @@ public abstract class Graph {
         return false;
     }
 
-    public boolean adjacent(HabitatTile a, HabitatTile b) {
+    public static boolean adjacent(HabitatTile a, HabitatTile b) {
         for (HabitatTile neighbor : a.getNeighbors()) {
             if (neighbor == b) {
                 return true;
@@ -54,5 +54,24 @@ public abstract class Graph {
         }
         return false;
     }
+
+    public static ArrayList<HabitatTile> searchNeighbourTilesForWildlife(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile tileID, WildlifeToken type) {
+        return new ArrayList<>();
+    }
+
+    public static ArrayList<HabitatTile> neighbourTiles(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile tileID) {
+        // Implement this method based on  reqs
+        return new ArrayList<>();
+    }
+
+    // Implement the forwardsAndBackwardsSalmonRun and salmonTokensInRun methods in the SalmonScoring class
+    public static ArrayList<HabitatTile> forwardsAndBackwardsSalmonRun(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile firstTile, List<HabitatTile> startingTiles) {
+        return new ArrayList<>();
+    }
+
+    public static ArrayList<HabitatTile> salmonTokensInRun(Map<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile startID, WildlifeToken thisWildlife) {
+        return new ArrayList<>();
+    }
+
 
 }
