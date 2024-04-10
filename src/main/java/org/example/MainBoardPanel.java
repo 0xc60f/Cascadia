@@ -13,8 +13,8 @@ import org.example.CascadiaPanel.*;
 
 
 public class MainBoardPanel extends JPanel implements MouseListener   {
-    private Polygon viewB1, viewB2;
-
+    private Polygon viewB1, viewB2, viewPage;
+    private boolean viewVis = false;
     private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
     private boolean isVisible = true;
     public MainBoardPanel() {
@@ -75,6 +75,24 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
 
         viewB2 = new Polygon(xPoints2, yPoints2, 4);
 
+        int playAreaWidth = (width - width/div);
+        int playAreaHeight = (height - height/div);
+
+        int debugRectWidth3 = playAreaWidth/2 + playAreaWidth/3;
+        int debugRectHeight3 = playAreaHeight/2 + playAreaHeight/3;
+        int debugXPos3 = (playAreaWidth/2 + playAreaWidth/3)/10;
+        int debugYPos3 = (playAreaHeight/2 + playAreaHeight/3)/10;
+
+        int[] xPoints3 = {debugXPos3, debugXPos3, debugXPos3+debugRectWidth3, debugXPos3+debugRectWidth3};
+        int[] yPoints3 = {debugYPos3+debugRectHeight3, debugYPos3, debugYPos3, debugYPos3+debugRectHeight3};
+
+        viewPage = new Polygon(xPoints3, yPoints3, 4);
+
+        if (viewVis) {
+            g.setColor(beigeColor);
+            g.fillPolygon(viewPage);
+        }
+
         //g.drawPolygon(viewB2);
     }
     /**
@@ -133,9 +151,11 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         int x = e.getX();
         int y = e.getY();
         if (viewB1.contains(x, y)) {
-            System.out.println("B1 Clicked");
+            viewVis = true;
         } else if (viewB2.contains(x, y)) {
-            System.out.println("B2 Clicked");
+            viewVis = true;
+        } else if (viewPage.contains(x,y)) {
+            viewVis = false;
         }
     }
 
