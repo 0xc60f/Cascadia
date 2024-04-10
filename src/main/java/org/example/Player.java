@@ -109,7 +109,6 @@ public class Player implements Comparable<Player>{
         return total;
     }
 
-    public
 /*
    //public int getnatureTokenAmt() {return natureTokenAmt;}
     public void clearEffects(){
