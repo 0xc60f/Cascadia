@@ -20,8 +20,6 @@ import java.util.Objects;
  * @see JPanel
  */
 public class CascadiaPanel extends JPanel implements MouseListener {
-    private Polygon start, rules;
-    private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
     private final StartPanel Menu;
     private final MainBoardPanel MainBoard;
     public CascadiaPanel() {
@@ -36,33 +34,18 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         if (Menu.getVisible()) {
             Menu.paint(g, getWidth(), getHeight());
         } else if (MainBoard.getVisible()) {
-            importImages();
             MainBoard.paint(g, getWidth(), getHeight());
         }
     }
 
-    /**
-     * Imports the images that are used in the game. The images are stored in the resources folder, and are imported using the ImageIO class.
-     */
-    private void importImages(){
-        try{
-            backgroundImage = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Menu/Background.jpg")));
-            bearScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/bear-small.jpg")));
-            hawkScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/hawk-small.jpg")));
-            salmonScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/salmon-small.jpg")));
-            elkScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/elk-small.jpg")));
-            foxScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/fox-small.jpg")));
-        }
-        catch (IOException e){
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     public void mouseClicked(MouseEvent e) {
 
         if (Menu.getVisible()) {
             Menu.mouseClicked(e);
+        } else if (MainBoard.getVisible()) {
+            MainBoard.mouseClicked(e);
         }
         repaint();
     }
@@ -206,7 +189,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @return A <code>BufferedImage</code> that is the result of resizing the original image
      */
     @NotNull
-    private BufferedImage resizeImage(BufferedImage img, int width, int height) {
+    protected static BufferedImage resizeImage(BufferedImage img, int width, int height) {
         Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = resized.createGraphics();
