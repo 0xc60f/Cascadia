@@ -55,7 +55,8 @@ public class Player implements Comparable<Player>{
         // Compare based on total score
         //int result = Integer.compare(this.numNatureTokens, otherPlayer.numNatureTokens);
         //int result = compareTiebreakers(otherPlayer);
-        int result = Integer.compare(this.totalScore, otherPlayer.totalScore);
+        int result = Integer.compare(this.totalScore(), otherPlayer.totalScore());
+
 
         if (result == 0) {
             // If tied on total points, use natureTokens as tiebreakers
@@ -104,8 +105,8 @@ public class Player implements Comparable<Player>{
     public int getwildlifeTokenScore() {
         int WLTS = 0;
         return WLTS;}
-   public int totalScore(Player p){
-        int total = p.getBiomeScore() + p.getwildlifeTokenScore() + numNatureTokens;
+   public int totalScore(){
+        int total = this.getBiomeScore() + this.getwildlifeTokenScore() + numNatureTokens;
         return total;
     }
 
