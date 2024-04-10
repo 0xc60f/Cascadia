@@ -34,6 +34,9 @@ public class Player implements Comparable<Player>{
         return numBiomes;
     }
 
+    public void addTile(HabitatTile h){
+        return;
+    }
     public boolean natureTokenUsed(){
         natureTokenUsed = !natureTokenUsed;
         return natureTokenUsed;
@@ -44,10 +47,6 @@ public class Player implements Comparable<Player>{
             numNatureTokens--;
         }
         return numNatureTokens;
-    }
-
-    public void addTile(HabitatTile h){
-        return;
     }
 
     @Override
