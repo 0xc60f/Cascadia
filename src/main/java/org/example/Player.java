@@ -18,7 +18,6 @@ public class Player implements Comparable<Player>{
         numNatureTokens = 0; // Initialize to zero, assuming nature tokens need to be added.
         natureTokenUsed = false ;
         playerTiles = new HashMap<>();
-        this.initialThree = initialThree;
         for(int i = 0; i < 3; i++){
             playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken());
         }
@@ -30,8 +29,8 @@ public class Player implements Comparable<Player>{
     }
     //finish later
     public void calcNumBiomes(){ return;}
-    public HashMap<String, Integer> getNumBiomes(){
 
+    public HashMap<String, Integer> getNumBiomes(){
         return numBiomes;
     }
 
@@ -54,8 +53,8 @@ public class Player implements Comparable<Player>{
     @Override
     public int compareTo(Player otherPlayer) {
         // Compare based on total score
-        //int result = compareTiebreakers(otherPlayer);
         //int result = Integer.compare(this.numNatureTokens, otherPlayer.numNatureTokens);
+        //int result = compareTiebreakers(otherPlayer);
         int result = Integer.compare(this.totalScore, otherPlayer.totalScore);
 
         if (result == 0) {
@@ -67,15 +66,15 @@ public class Player implements Comparable<Player>{
         return result;
     }
 
-    public int compareTiebreaker(Player otherPlayer) {
+    public int compareTiebreakers(Player otherPlayer) {
         // Implement additional tiebreakers as needed
         // Example: Compare based on biome score, wildlifeToken score, and natureToken amount
 
         int addpt =0;
         int result = 0;//Integer.compare(this.calcNumBiomes(), otherPlayer.calcNumBiomes());
 
-        int t = this.totalScore;
-        int o = otherPlayer.totalScore;
+        int t = this.getBiomeScore();
+        int o = otherPlayer.getBiomeScore();
 
         if (result == 0) {
             addpt = 2;
@@ -92,17 +91,27 @@ public class Player implements Comparable<Player>{
             addpt = 1;
             t += addpt;
         }
+
         int Wresult = Integer.compare(t, o);
 
         return Wresult;
     }
 
-/*
-   public int getBiomeScore() {return BiomeScore;}
-   public int getwildlifeTokenScore() {return wildlifeTokenScore;}
-   public int getnatureTokenAmt() {return natureTokenAmt;}
-   public int totalScore(){ int total = BiomeScore + wildlifeTokenScore + natureTokenAmt; return total;}
+   public int getBiomeScore() {
+        int BS =0;
+        return BS;
+    }
+    public int getwildlifeTokenScore() {
+        int WLTS = 0;
+        return WLTS;}
+   public int totalScore(Player p){
+        int total = p.getBiomeScore() + p.getwildlifeTokenScore() + numNatureTokens;
+        return total;
+    }
 
+    public
+/*
+   //public int getnatureTokenAmt() {return natureTokenAmt;}
     public void clearEffects(){
         effects.clear();
     }
