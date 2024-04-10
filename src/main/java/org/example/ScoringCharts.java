@@ -1,5 +1,7 @@
 package org.example;
 import java.util.*;
+import java.util.stream.*;
+
 public class ScoringCharts {
     private int totalScore;
     public int calcWildlifeScore(Player p){
@@ -175,6 +177,99 @@ public class ScoringCharts {
             //tokenScoring.hawk.totalScore = hawkScoringValues.get(numIsolatedHawks);
             //token scoring method needs to be created
         }
+
+        private Map<Integer, Integer> salmonScoringValues;
+
+        public void SalmonScoring() {
+            salmonScoringValues = new HashMap<>();
+            salmonScoringValues.put(1, 2);
+            salmonScoringValues.put(2, 4);
+            salmonScoringValues.put(3, 7);
+            salmonScoringValues.put(4, 11);
+            salmonScoringValues.put(5, 15);
+            salmonScoringValues.put(6, 20);
+            salmonScoringValues.put(7, 26);
+        }
+
+        public void calculateSalmonTokenScoring(Player p) {
+            allPlacedTokens = p.getPlayerTiles();
+            HashSet<HabitatTile> possibleSalmons = (HashSet<HabitatTile>) allPlacedTokens.keySet();
+
+            ArrayList<HabitatTile> allSalmonTiles = new ArrayList<>();
+
+            for (HabitatTile hToken : possibleSalmons) {
+                WildlifeToken token = allPlacedTokens.get(hToken);
+                if (token == WildlifeToken.SALMON) {
+                    allSalmonTiles.add(hToken);
+                }
+            }
+
+            List<HabitatTile> validSalmonTiles = new ArrayList<>();
+
+            for (HabitatTile salmonTile : allSalmonTiles) {
+                ArrayList<HabitatTile> neighbouringSalmon = Graph.searchNeighbourTilesForWildlife(allPlacedTokens, salmonTile, WildlifeToken.SALMON);
+                if (neighbouringSalmon.size() <= 2) {
+                    validSalmonTiles.add(salmonTile);
+                }
+            }
+
+            List<List<HabitatTile>> confirmedSalmonRuns = new ArrayList<>();
+            List<HabitatTile> usedSalmonTokenIDs = new ArrayList<>();
+            for (HabitatTile validSalmonTile : validSalmonTiles) {
+
+                ArrayList<HabitatTile> potentialSalmonTokenIDs = new ArrayList<>();
+
+                if (!usedSalmonTokenIDs.contains(validSalmonTile)) {
+
+                    List<HabitatTile> potentialNeighbourSalmon = Graph.searchNeighbourTilesForWildlife(allPlacedTokens, validSalmonTile, WildlifeToken.SALMON);
+                    List<HabitatTile> confirmedNeighbourSalmon = new ArrayList<>();
+
+                    for (HabitatTile potentialSalmon : potentialNeighbourSalmon) {
+                        if (!usedSalmonTokenIDs.contains(potentialSalmon)) {
+                            confirmedNeighbourSalmon.add(potentialSalmon);
+                            usedSalmonTokenIDs.add(potentialSalmon);
+                        }
+                    }
+
+                    if (confirmedNeighbourSalmon.size() == 2) {
+                        List<HabitatTile> tilesToCheck = new ArrayList<HabitatTile>();
+                        tilesToCheck.add(validSalmonTile);
+                        tilesToCheck.addAll(confirmedNeighbourSalmon);
+
+                        ArrayList<HabitatTile> firstNeighbourTiles = Graph.neighbourTiles(allPlacedTokens, confirmedNeighbourSalmon.get(0));
+                        ArrayList<HabitatTile> secondNeighbourTiles = Graph.neighbourTiles(allPlacedTokens, confirmedNeighbourSalmon.get(1));
+
+                        if (!firstNeighbourTiles.contains(confirmedNeighbourSalmon.get(1)) && !secondNeighbourTiles.contains(confirmedNeighbourSalmon.get(0))) {
+                            ArrayList<HabitatTile> forwardsAndBackwardsSalmonRunIDs = Graph.forwardsAndBackwardsSalmonRun(allPlacedTokens, validSalmonTile, confirmedNeighbourSalmon);
+                            potentialSalmonTokenIDs.addAll(forwardsAndBackwardsSalmonRunIDs);
+                        } else {
+                            potentialSalmonTokenIDs.addAll(tilesToCheck);
+                            usedSalmonTokenIDs.addAll(tilesToCheck);
+                        }
+                    } else if (confirmedNeighbourSalmon.size() < 2) {
+                        potentialSalmonTokenIDs.add(validSalmonTile);
+                        ArrayList<HabitatTile> salmonRunIDs = Graph.salmonTokensInRun(allPlacedTokens, validSalmonTile, WildlifeToken.SALMON);
+                        potentialSalmonTokenIDs.addAll(salmonRunIDs);
+                    }
+                    confirmedSalmonRuns.add(potentialSalmonTokenIDs);
+                }
+            }
+
+            confirmedSalmonRuns.sort((a, b) -> b.size() - a.size());
+
+            for (List<HabitatTile> confirmedSalmonRun : confirmedSalmonRuns) {
+                List<HabitatTile> uniqueSalmonIDs = confirmedSalmonRun.stream().distinct().collect(Collectors.toList());
+                int salmonInRunNum = uniqueSalmonIDs.size();
+                if (salmonInRunNum > 7) {
+                    salmonInRunNum = 7;
+                }
+                //tokenScoring.salmon.totalScore += salmonScoringValues.get(salmonInRunNum);
+
+                //gotta fix
+            }
+        }
+
+
 
 
 
