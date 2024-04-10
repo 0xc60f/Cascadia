@@ -13,7 +13,7 @@ import org.example.CascadiaPanel.*;
 
 
 public class MainBoardPanel extends JPanel implements MouseListener   {
-    private Polygon start,rules;
+    private Polygon viewB1, viewB2;
 
     private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
     private boolean isVisible = true;
@@ -35,12 +35,47 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         int div = 5;
 
         g.drawRect(width-width/div, 0, width/div, height);
+        g.fillRoundRect(width/2 + width/6, height/100, width/8, height/14, 10, 10);
+        g.fillRoundRect(width/2 + width/6, height/100 + height/14 + height/100, width/8, height/14, 10, 10);
         g.setColor(beigeColor);
         g.fillRect(width-width/div, 0, width/div, height);
         //Draw a large rectangle covering the bottom of the screen
         g.fillRect(0, height-height/div, width, height/div);
         drawScoring(g, width, height);
 
+        g.fillRoundRect(width/2 + width/6, height/100, width/8, height/14, 30, 30);
+
+        g.fillRoundRect(width/2 + width/6, height/100 + height/14 + height/100, width/8, height/14, 30, 30);
+
+        g.setColor(Color.BLACK);
+        int text = width/2 + width/6 + width/23;
+
+        g.drawString("Player 2", text, height/19); // Change text to change with turn
+        g.drawString("Player 3", text, height/19 + height/14 + height/100);
+
+        int debugRectWidth = width/8;
+        int debugRectHeight = height/14;
+        int debugXPos = width/2 + width/6;
+        int debugYPos = height/100 + height/14 + height/100;
+
+        int[] xPoints = {debugXPos, debugXPos, debugXPos+debugRectWidth, debugXPos+debugRectWidth};
+        int[] yPoints = {debugYPos+debugRectHeight, debugYPos, debugYPos, debugYPos+debugRectHeight};
+
+        viewB1 = new Polygon(xPoints, yPoints, 4);
+
+        //g.drawPolygon(viewB1);
+
+        int debugRectWidth2 = width/8;
+        int debugRectHeight2 = height/14;
+        int debugXPos2 = width/2 + width/6;
+        int debugYPos2 = height/100;
+
+        int[] xPoints2 = {debugXPos2, debugXPos2, debugXPos2+debugRectWidth2, debugXPos2+debugRectWidth2};
+        int[] yPoints2 = {debugYPos2+debugRectHeight2, debugYPos2, debugYPos2, debugYPos2+debugRectHeight2};
+
+        viewB2 = new Polygon(xPoints2, yPoints2, 4);
+
+        //g.drawPolygon(viewB2);
     }
     /**
      * Imports the images that are used in the game. The images are stored in the resources folder, and are imported using the ImageIO class.
@@ -97,11 +132,10 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
-        if (start.contains(x, y)) {
-            isVisible = false;
-            System.out.println("Game started");
-        } else if (rules.contains(x, y)) {
-            downloadRules();
+        if (viewB1.contains(x, y)) {
+            System.out.println("B1 Clicked");
+        } else if (viewB2.contains(x, y)) {
+            System.out.println("B2 Clicked");
         }
     }
 

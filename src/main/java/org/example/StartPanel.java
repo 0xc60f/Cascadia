@@ -46,13 +46,13 @@ public class StartPanel extends JPanel implements MouseListener  {
         int[] yPoints = {debugYPos+debugRectHeight, debugYPos, debugYPos, debugYPos+debugRectHeight};
 
         start = new Polygon(xPoints, yPoints, 4);
-        g.drawPolygon(start);
+        //g.drawPolygon(start);
 
         int[] xPoints2 = {debugXPos2, debugXPos2, debugXPos2+debugRectWidth2, debugXPos2+debugRectWidth2};
         int[] yPoints2 = {debugYPos2+debugRectHeight2, debugYPos2, debugYPos2, debugYPos2+debugRectHeight2};
 
         rules = new Polygon(xPoints2, yPoints2, 4);
-        g.drawPolygon(rules);
+        //g.drawPolygon(rules);
 
     }
 
@@ -68,10 +68,8 @@ public class StartPanel extends JPanel implements MouseListener  {
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
-        System.out.println("Whst");
         if (start.contains(x, y)) {
             isVisible = false;
-            System.out.println("Game started");
         } else if (rules.contains(x, y)) {
             downloadRules();
         }

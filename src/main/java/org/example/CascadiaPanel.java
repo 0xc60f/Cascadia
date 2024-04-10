@@ -44,6 +44,8 @@ public class CascadiaPanel extends JPanel implements MouseListener {
 
         if (Menu.getVisible()) {
             Menu.mouseClicked(e);
+        } else if (MainBoard.getVisible()) {
+            MainBoard.mouseClicked(e);
         }
         repaint();
     }
