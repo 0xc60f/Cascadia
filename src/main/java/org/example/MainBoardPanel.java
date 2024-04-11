@@ -17,6 +17,8 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
     private boolean viewVis = false;
     private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
     private boolean isVisible = true;
+
+    private String prompt = "test";
     public MainBoardPanel() {
 
         addMouseListener(this);
@@ -24,15 +26,18 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
     }
 
     public void paint(Graphics g, int width, int height) {
+
+        int div = 5;
+        int BottomButtonY = 3 * height/div + height/12;
+
         g.drawImage(backgroundImage, 0, 0, null);
         Color beigeColor = new Color(255, 221, 122);
         g.setColor(beigeColor);
         g.fillRoundRect(width/100, height/100, width/8, height/14, 30, 30);
+
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, width/90));
         g.drawString("Turn: 1", width/19, height/19);
-
-        int div = 5;
 
         g.drawRect(width-width/div, 0, width/div, height);
         g.fillRoundRect(width/2 + width/6, height/100, width/8, height/14, 10, 10);
@@ -47,11 +52,18 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
 
         g.fillRoundRect(width/2 + width/6, height/100 + height/14 + height/100, width/8, height/14, 30, 30);
 
+
+        int actionHeight = height/10;
+
+        g.fillRoundRect(width/100, BottomButtonY, width/8, height/10, 30, 30);
         g.setColor(Color.BLACK);
+        g.drawString(prompt, width/100, BottomButtonY); // Action Prompt Text
+
         int text = width/2 + width/6 + width/23;
 
         g.drawString("Player 2", text, height/19); // Change text to change with turn
         g.drawString("Player 3", text, height/19 + height/14 + height/100);
+
 
         int debugRectWidth = width/8;
         int debugRectHeight = height/14;
@@ -153,9 +165,13 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         if (viewB1.contains(x, y)) {
             viewVis = true;
         } else if (viewB2.contains(x, y)) {
-            viewVis = true;
+            if (!viewVis) {
+                viewVis = true;
+            }
         } else if (viewPage.contains(x,y)) {
-            viewVis = false;
+            if (viewVis) {
+                viewVis = false;
+            }
         }
     }
 
