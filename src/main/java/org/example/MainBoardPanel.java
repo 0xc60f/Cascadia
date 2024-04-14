@@ -1,5 +1,7 @@
 package org.example;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -8,12 +10,13 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.TreeMap;
 
 
 public class MainBoardPanel extends JPanel implements MouseListener   {
     private Polygon viewB1, viewB2, viewPage, downMove, upMove, leftMove, rightMove;
     private boolean viewVis = false;
-    private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring, natureToken;
+    private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring, natureToken, testingTile1, testingTile2, testBaseTile, testingTile3;
     private BufferedImage dd, dl, ds, fd, ff, fl, fs, ll, lm, md, mf, mm, ms, sl, ss;
     private BufferedImage bear, elk, fox, hawk, salmon;
     private boolean isVisible = true;
@@ -47,6 +50,7 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
 
 
         drawScoring(g, width, height, div);
+
         //Draw the Player 2 and Player 3 buttons
         g.fillRoundRect(width/2 + width/6, height/100, width/8, height/14, 10, 10);
         g.fillRoundRect(width/2 + width/6, height/100 + height/14 + height/100, width/8, height/14, 10, 10);
@@ -106,21 +110,24 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         //Draw a vertical line 150 pixels dividing the bottom rectangle into a square and long rectangle
         g.drawLine(width-width/div, 0, width-width/div, height);
         g.drawLine(width/div - 75, height-height/div, width/div - 75, height);
-        //Draw 4 nature tokens in each corner of the square in the bottom left corner
-        g.drawImage(natureToken, 0, height - height/div, null);
-        g.drawImage(natureToken, 0, height - 50, null);
-        g.drawImage(natureToken, width/div - 140, height - 50, null);
-        g.drawImage(natureToken, width/div - 140, height - height/div, null);
 
-        //Draw the player's nature tokens in the bottom right corner in the center
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.BOLD, 25));
-        g.drawString("0", width/div - 235, height - height/div + height/div/2 + 5);
+        drawNatureTokenCount(g, 0, width, height, div);
 
         int debugRectWidth4 = playAreaWidth;
         int debugRectHeight4 = playAreaHeight/4;
         int debugXPos4 = 0;
         int debugYPos4 = 0;
+        //Draw 4 lines that evenly divide the rest of the bottom rectangle
+        g.drawLine(width/div + 240, height-height/div, width/div + 240, height);
+        g.drawLine(width/div + 555, height-height/div, width/div + 555, height);
+        g.drawLine(width/div + 845, height-height/div, width/div + 845, height);
+        drawScoring(g, width, height, div);
+        g.drawImage(testBaseTile, width/2, height/2, null);
+        Polygon polygon1 = CascadiaPanel.createHexagon(width/2, height/2, testBaseTile);
+        g.drawPolygon(polygon1);
+        Point testingTile1Map = CascadiaPanel.getCoordsAdjacentHexagon(polygon1, 0);
+        Polygon polygon2 = CascadiaPanel.createHexagon(testingTile1Map.x, testingTile1Map.y, testingTile1);
+        g.drawPolygon(polygon2);
 
         int[] xPoints4 = {debugXPos4, debugXPos4, debugXPos4+debugRectWidth4, debugXPos4+debugRectWidth4};
         int[] yPoints4 = {debugYPos4+debugRectHeight4, debugYPos4, debugYPos4, debugYPos4+debugRectHeight4};
@@ -129,6 +136,7 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         debugRectHeight4 = playAreaHeight/4;
         debugXPos4 = 0;
         debugYPos4 = playAreaHeight-playAreaHeight/4;
+
 
         int[] xPoints5 = {debugXPos4, debugXPos4, debugXPos4+debugRectWidth4, debugXPos4+debugRectWidth4};
         int[] yPoints5 = {debugYPos4+debugRectHeight4, debugYPos4, debugYPos4, debugYPos4+debugRectHeight4};
@@ -195,15 +203,19 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
             salmon = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
 
 
+            testBaseTile = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/dd.png")));
+            testingTile1 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/fd.png")));
+            testingTile2 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/ff.png")));
+            testingTile3 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/ss.png")));
         }
         catch (IOException e){
             throw new RuntimeException(e);
         }
-        bearScoring = CascadiaPanel.resizeImage(bearScoring, 160, 160);
-        hawkScoring = CascadiaPanel.resizeImage(hawkScoring, 160, 160);
-        salmonScoring = CascadiaPanel.resizeImage(salmonScoring, 160, 160);
-        elkScoring = CascadiaPanel.resizeImage(elkScoring, 160, 160);
-        foxScoring = CascadiaPanel.resizeImage(foxScoring, 160, 160);
+        bearScoring = CascadiaPanel.resizeImage(bearScoring, 190, 190);
+        hawkScoring = CascadiaPanel.resizeImage(hawkScoring, 190, 190);
+        salmonScoring = CascadiaPanel.resizeImage(salmonScoring, 190, 190);
+        elkScoring = CascadiaPanel.resizeImage(elkScoring, 190, 190);
+        foxScoring = CascadiaPanel.resizeImage(foxScoring, 190, 190);
     }
 
     /**
@@ -228,6 +240,28 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         g.drawImage(foxScoring, x, y, null);
     }
 
+    /**
+     * Draws the nature token count in the bottom left corner of the screen.
+     * Drawn with 4 nature token images in each corner of the square, and the player's nature token count in the center.
+     * @param g The <code>Graphics</code> object that is used to draw the nature token count.
+     * @param numTokens The number of nature tokens that the player has.
+     * @param width The width of the screen.
+     * @param height The height of the screen.
+     * @param div The number of divisions that the screen is divided into.
+     */
+    private void drawNatureTokenCount(Graphics g, int numTokens, int width, int height, int div){
+        //Draw 4 nature tokens in each corner of the square in the bottom left corner
+        g.drawImage(natureToken, 0, height - height/div, null);
+        g.drawImage(natureToken, 0, height - 50, null);
+        g.drawImage(natureToken, width/div - 140, height - 50, null);
+        g.drawImage(natureToken, width/div - 140, height - height/div, null);
+
+        //Draw the player's nature tokens in the bottom right corner in the center
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 25));
+        g.drawString(String.valueOf(numTokens), width/div - 230, height - height/div + height/div/2 + 5);
+    }
+
 
     public void setVisible(boolean val) {
         isVisible = val;
@@ -240,6 +274,7 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
+        System.out.println("X: " + x + " Y: " + y);
         if (viewB1.contains(x, y)) {
             viewVis = true;
         } else if (viewB2.contains(x, y)) {
