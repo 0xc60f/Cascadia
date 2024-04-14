@@ -1,6 +1,6 @@
 package org.example;
 
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,6 +19,7 @@ import java.util.Objects;
  * @author 0xc60f
  * @see JPanel
  */
+
 public class CascadiaPanel extends JPanel implements MouseListener {
     private final StartPanel Menu;
     private final MainBoardPanel MainBoard;
@@ -103,13 +104,32 @@ public class CascadiaPanel extends JPanel implements MouseListener {
 
     }
 
+
+    /**
+     * Calls the appropriate drawTiles method based on the size of the list of buffered images.
+     */
+    public static BufferedImage drawTiles(BufferedImage[] bufferedList) {
+        BufferedImage combined;
+
+        if (bufferedList.length == 2) {
+            combined = drawTiles(bufferedList[0], bufferedList[1]);
+        } else if (bufferedList.length == 3) {
+            combined = drawTiles(bufferedList[0], bufferedList[1], bufferedList[2]);
+        } else {
+            combined = drawTiles(bufferedList[0], bufferedList[1], bufferedList[2], bufferedList[3]);
+        }
+        return combined;
+    }
+
     /**
      * Draws a single animal tile on top of a habitat tile. The animal tile is resized to half of its original size, and then drawn in the center of the habitat tile.
      * @param habitatTile A <code>BufferedImage</code> of the habitat tile
      * @param animalTile A <code>BufferedImage</code> of the animal tile
      * @return A <code>BufferedImage</code> that is the result of drawing the animal tile on top of the habitat tile.
      */
-    private BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile) {
+
+
+    private static BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile) {
         BufferedImage combined = new BufferedImage(habitatTile.getWidth(), habitatTile.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = combined.createGraphics();
         g2d.drawImage(habitatTile, 0, 0, null);
@@ -125,7 +145,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param hexagon The <code>Polygon</code> that represents the hexagon
      * @return A <code>Point</code> that represents the center of the hexagon. You can use getX() and getY() to get the x and y coordinates of the center.
      */
-    private Point getCenterOfHexagon(Polygon hexagon) {
+    private static Point getCenterOfHexagon(Polygon hexagon) {
         int x = hexagon.getBounds().x;
         int y = hexagon.getBounds().y;
         int xCenter = x + hexagon.getBounds().width / 2;
@@ -141,7 +161,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param animalTile2 The <code>BufferedImage</code> of the second animal tile
      * @return A <code>BufferedImage</code> that is the result of drawing the two animal tiles on top of the habitat tile.
      */
-    private BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile1, BufferedImage animalTile2) {
+    private static BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile1, BufferedImage animalTile2) {
         BufferedImage combined = new BufferedImage(habitatTile.getWidth(), habitatTile.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = combined.createGraphics();
         g2d.drawImage(habitatTile, 0, 0, null);
@@ -164,7 +184,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param animalTile3 The <code>BufferedImage</code> of the third animal tile
      * @return A <code>BufferedImage</code> that is the result of drawing the three animal tiles on top of the habitat tile.
      */
-    private BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile1, BufferedImage animalTile2, BufferedImage animalTile3) {
+    private static BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile1, BufferedImage animalTile2, BufferedImage animalTile3) {
         BufferedImage combined = new BufferedImage(habitatTile.getWidth(), habitatTile.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = combined.createGraphics();
         g2d.drawImage(habitatTile, 0, 0, null);
@@ -188,7 +208,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param height The height that the image should be resized to as an <code>int</code>
      * @return A <code>BufferedImage</code> that is the result of resizing the original image
      */
-    @NotNull
+    //@NotNull
     protected static BufferedImage resizeImage(BufferedImage img, int width, int height) {
         Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
