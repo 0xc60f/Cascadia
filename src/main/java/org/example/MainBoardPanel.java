@@ -125,7 +125,7 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         g.drawImage(testBaseTile, width/2, height/2, null);
         Polygon polygon1 = CascadiaPanel.createHexagon(width/2, height/2, testBaseTile);
         g.drawPolygon(polygon1);
-        Point testingTile1Map = CascadiaPanel.getCoordsAdjacentHexagon(polygon1, 0);
+        Point testingTile1Map = CascadiaPanel.getCoordsAdjacentHexagon(polygon1, 1);
         Polygon polygon2 = CascadiaPanel.createHexagon(testingTile1Map.x, testingTile1Map.y, testingTile1);
         g.drawPolygon(polygon2);
 
@@ -197,10 +197,10 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
             sl = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/sl.png")));
             ss = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/ss.png")));
             bear = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
-            elk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
-            fox = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
-            hawk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
-            salmon = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
+            elk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/ELK.png")));
+            fox = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/FOX.png")));
+            hawk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/HAWK.png")));
+            salmon = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/SALMON.png")));
 
 
             testBaseTile = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/dd.png")));

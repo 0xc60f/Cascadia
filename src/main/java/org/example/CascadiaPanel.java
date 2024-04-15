@@ -87,6 +87,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         //Resize animalTile so that it is half of the original size
         animalTile = resizeImage(animalTile, (int) (animalTile.getWidth() / 1.1), (int) (animalTile.getHeight() / 1.1));
         g2d.drawImage(animalTile, (habitatTile.getWidth() - animalTile.getWidth()) / 2, (habitatTile.getHeight() - animalTile.getHeight()) / 2, null);
+        g2d.dispose();
         return combined;
     }
 
@@ -94,38 +95,44 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * Gets the coordinates of where the image for the adjacent hexagon should be drawn. The coordinates are based on the edge of the base hexagon that the adjacent hexagon is connected to.
      * @param baseHexagon The <code>Polygon</code> that represents the base hexagon
      * @param edge The edge of the base hexagon that the adjacent hexagon is connected to. 0 is the top edge, and then goes clockwise.
-     * @return A <code>TreeMap</code> that contains the x and y coordinates of where the image for the adjacent hexagon should be drawn.
+     * @throws IllegalArgumentException if the edge is not between 0 and 5
+     * @return A <code>Point</code> that contains the x and y coordinates of where the image for the adjacent hexagon should be drawn.
      * The x and y coordinates should be used as the top-left corner of the image, where java draws images.
      * The x coordinate is the key, and the y coordinate is the value.
      */
     public static Point getCoordsAdjacentHexagon(Polygon baseHexagon, int edge){
-        Point center = getCenterOfHexagon(baseHexagon);
-        int radius = baseHexagon.getBounds().height / 2;
-        int height = 2 * radius;
-        int width = (int) (Math.sqrt(3) * radius);
-        Point coords = new Point();
-        switch (edge){
-            case 0:
-                coords.setLocation(center.x - width / 2, center.y);
-                break;
-            case 1:
-                coords.setLocation(center.x - width / 4, center.y - height / 2);
-                break;
-            case 2:
-                coords.setLocation(center.x + width / 4, center.y - height / 2);
-                break;
-            case 3:
-                coords.setLocation(center.x + width / 2, center.y);
-                break;
-            case 4:
-                coords.setLocation(center.x + width / 4, center.y + height / 2);
-                break;
-            case 5:
-                coords.setLocation(center.x - width / 4, center.y + height / 2);
-                break;
-        }
-        return coords;
+        int boundingBoxHeight = baseHexagon.getBounds().height;
+        int radius = boundingBoxHeight / 2;
+        int height = (int) (Math.sqrt(3) * radius);
+        int width = 2 * radius;
+        return switch (edge) {
+            case 0 -> new Point(baseHexagon.getBounds().x, baseHexagon.getBounds().y - boundingBoxHeight);
+            case 1 -> new Point(baseHexagon.getBounds().x + baseHexagon.getBounds().width/2, baseHexagon.getBounds().y - height / 2);
+            case 2 -> new Point(baseHexagon.getBounds().x + width, baseHexagon.getBounds().y + height / 2);
+            case 3 -> new Point(baseHexagon.getBounds().x + width / 2, baseHexagon.getBounds().y + height);
+            case 4 -> new Point(baseHexagon.getBounds().x, baseHexagon.getBounds().y + height / 2);
+            case 5 -> new Point(baseHexagon.getBounds().x, baseHexagon.getBounds().y - height / 2);
+            default -> throw new IllegalArgumentException("Edge must be between 0 and 5");
+        };
     }
+
+    /**
+     * Creates a hexagon with the specified x and y coordinates, and then draws the image on top of the hexagon.
+     * Also creates a silent hexagon that is used to determine where the adjacent hexagon should be drawn.
+     * @param x The x coordinate of the top-left corner of the image
+     * @param y The y coordinate of the top-left corner of the image
+     * @param imageUsed The <code>BufferedImage</code> that is used to create the hexagon
+     * @param g The <code>Graphics</code> object that is used to draw the hexagon. Should be called with <code>getGraphics()</code>
+     *          from the panel class that is using it.
+     */
+    public static void createAndDrawHexagon(int x, int y, BufferedImage imageUsed, Graphics g) {
+        Polygon hexagon = createHexagon(x, y, imageUsed);
+        g.drawImage(imageUsed, x, y, null);
+    }
+
+
+
+
 
 
     /**
