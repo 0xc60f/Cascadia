@@ -1,6 +1,6 @@
 package org.example;
 
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,6 +11,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * The main panel for the Cascadia game. Currently, being used to test and debug tile setups, but will eventually be switched to orchestrate
@@ -19,6 +20,7 @@ import java.util.Objects;
  * @author 0xc60f
  * @see JPanel
  */
+
 public class CascadiaPanel extends JPanel implements MouseListener {
     private final StartPanel Menu;
     private final MainBoardPanel MainBoard;
@@ -89,18 +91,57 @@ public class CascadiaPanel extends JPanel implements MouseListener {
     }
 
     /**
-     * Draws a new hexagon at the edge of the current hexagon. The new hexagon is drawn so that it is touching the edge of the current hexagon.
-     * @param g The <code>Graphics</code> object that is used to draw the hexagon. Should be called with <code>getGraphics()</code>
-     * @param baseTilePolygon The <code>Polygon</code> of the base tile that the new tile will be drawn with respect to.
-     * @param tileToDrawPolygon The <code>Polygon</code> of the tile that will be drawn at the edge of the base tile.
-     * @param tileToDraw The <code>BufferedImage</code> of the tile that will be drawn at the edge of the base tile.
-     * @param edge The edge of the base tile that the new tile will be drawn on. Should be a value from 0 to 5.
-     *             0 is the top edge, and the edges are numbered clockwise.
+     * Gets the coordinates of where the image for the adjacent hexagon should be drawn. The coordinates are based on the edge of the base hexagon that the adjacent hexagon is connected to.
+     * @param baseHexagon The <code>Polygon</code> that represents the base hexagon
+     * @param edge The edge of the base hexagon that the adjacent hexagon is connected to. 0 is the top edge, and then goes clockwise.
+     * @return A <code>TreeMap</code> that contains the x and y coordinates of where the image for the adjacent hexagon should be drawn.
+     * The x and y coordinates should be used as the top-left corner of the image, where java draws images.
+     * The x coordinate is the key, and the y coordinate is the value.
      */
-    public void drawTileAtEdge(Graphics g, Polygon baseTilePolygon, Polygon tileToDrawPolygon, BufferedImage tileToDraw, int edge){
-        Point center = getCenterOfHexagon(baseTilePolygon);
-        Point edgePoint = new Point(baseTilePolygon.xpoints[edge], baseTilePolygon.ypoints[edge]);
+    public static Point getCoordsAdjacentHexagon(Polygon baseHexagon, int edge){
+        Point center = getCenterOfHexagon(baseHexagon);
+        int radius = baseHexagon.getBounds().height / 2;
+        int height = 2 * radius;
+        int width = (int) (Math.sqrt(3) * radius);
+        Point coords = new Point();
+        switch (edge){
+            case 0:
+                coords.setLocation(center.x - width / 2, center.y);
+                break;
+            case 1:
+                coords.setLocation(center.x - width / 4, center.y - height / 2);
+                break;
+            case 2:
+                coords.setLocation(center.x + width / 4, center.y - height / 2);
+                break;
+            case 3:
+                coords.setLocation(center.x + width / 2, center.y);
+                break;
+            case 4:
+                coords.setLocation(center.x + width / 4, center.y + height / 2);
+                break;
+            case 5:
+                coords.setLocation(center.x - width / 4, center.y + height / 2);
+                break;
+        }
+        return coords;
+    }
 
+
+    /**
+     * Calls the appropriate drawTiles method based on the size of the list of buffered images.
+     */
+    public static BufferedImage drawTiles(BufferedImage[] bufferedList) {
+        BufferedImage combined;
+
+        if (bufferedList.length == 2) {
+            combined = drawTiles(bufferedList[0], bufferedList[1]);
+        } else if (bufferedList.length == 3) {
+            combined = drawTiles(bufferedList[0], bufferedList[1], bufferedList[2]);
+        } else {
+            combined = drawTiles(bufferedList[0], bufferedList[1], bufferedList[2], bufferedList[3]);
+        }
+        return combined;
     }
 
     /**
@@ -109,7 +150,9 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param animalTile A <code>BufferedImage</code> of the animal tile
      * @return A <code>BufferedImage</code> that is the result of drawing the animal tile on top of the habitat tile.
      */
-    private BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile) {
+
+
+    private static BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile) {
         BufferedImage combined = new BufferedImage(habitatTile.getWidth(), habitatTile.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = combined.createGraphics();
         g2d.drawImage(habitatTile, 0, 0, null);
@@ -125,7 +168,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param hexagon The <code>Polygon</code> that represents the hexagon
      * @return A <code>Point</code> that represents the center of the hexagon. You can use getX() and getY() to get the x and y coordinates of the center.
      */
-    private Point getCenterOfHexagon(Polygon hexagon) {
+    private static Point getCenterOfHexagon(Polygon hexagon) {
         int x = hexagon.getBounds().x;
         int y = hexagon.getBounds().y;
         int xCenter = x + hexagon.getBounds().width / 2;
@@ -141,7 +184,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param animalTile2 The <code>BufferedImage</code> of the second animal tile
      * @return A <code>BufferedImage</code> that is the result of drawing the two animal tiles on top of the habitat tile.
      */
-    private BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile1, BufferedImage animalTile2) {
+    private static BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile1, BufferedImage animalTile2) {
         BufferedImage combined = new BufferedImage(habitatTile.getWidth(), habitatTile.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = combined.createGraphics();
         g2d.drawImage(habitatTile, 0, 0, null);
@@ -164,7 +207,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param animalTile3 The <code>BufferedImage</code> of the third animal tile
      * @return A <code>BufferedImage</code> that is the result of drawing the three animal tiles on top of the habitat tile.
      */
-    private BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile1, BufferedImage animalTile2, BufferedImage animalTile3) {
+    private static BufferedImage drawTiles(BufferedImage habitatTile, BufferedImage animalTile1, BufferedImage animalTile2, BufferedImage animalTile3) {
         BufferedImage combined = new BufferedImage(habitatTile.getWidth(), habitatTile.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = combined.createGraphics();
         g2d.drawImage(habitatTile, 0, 0, null);
@@ -188,7 +231,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param height The height that the image should be resized to as an <code>int</code>
      * @return A <code>BufferedImage</code> that is the result of resizing the original image
      */
-    @NotNull
+    //@NotNull
     protected static BufferedImage resizeImage(BufferedImage img, int width, int height) {
         Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -196,6 +239,25 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         g2d.drawImage(tmp, 0, 0, null);
         g2d.dispose();
         return resized;
+    }
+
+    /**
+     * Makes a new polygon based on the x and y coordinates of the top-left corner of the image (not the hexagon), and the size of the hexagon.
+     * @param x The x coordinate of the top-left corner of the image being drawn
+     * @param y The y coordinate of the top-left corner of the image being drawn
+     * @param imageUsed The <code>BufferedImage</code> that is used to create the hexagon. The size is used to determine where the vertices are.
+     * @return A <code>Polygon</code> that is the result of creating a hexagon with the specified x and y coordinates.
+     */
+    protected static Polygon createHexagon(int x, int y, BufferedImage imageUsed) {
+        //Get the center of the image based on the size of the image and the x and y coords
+        int xCenter = x + imageUsed.getWidth() / 2;
+        int yCenter = y + imageUsed.getHeight() / 2;
+        Polygon hexagon = new Polygon();
+        for (int i = 0; i < 6; i++) {
+            hexagon.addPoint((int) (xCenter + 55 * Math.cos(i * 2 * Math.PI / 6)),
+                    (int) (yCenter + 55 * Math.sin(i * 2 * Math.PI / 6)));
+        }
+        return hexagon;
     }
 
     /**
