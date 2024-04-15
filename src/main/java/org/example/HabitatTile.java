@@ -1,11 +1,15 @@
 package org.example;
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class HabitatTile {
     private WildlifeToken w = null;
     //Sides in relation to Biomes
     private ArrayList<WildlifeToken> possibleAnimals;
+    private BufferedImage image;
+    private int x;
+    private int y;
     private Biome habitat1;
     private Biome habitat2;
     private TreeMap<Integer, Biome> biomes;
@@ -13,6 +17,23 @@ public class HabitatTile {
     private ArrayList<HabitatTile> neighbors;
     private int value;
     private List<Edge> edges;
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public HabitatTile(Biome h1, Biome h2, ArrayList<WildlifeToken> availableAnimals){
         habitat1  = h1;
         habitat2 = h2;
