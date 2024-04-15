@@ -55,13 +55,16 @@ public class Player implements Comparable<Player>{
         //int result = Integer.compare(this.numNatureTokens, otherPlayer.numNatureTokens);
         //int result = compareTiebreakers(otherPlayer);
         int result = Integer.compare(this.totalScore(), otherPlayer.totalScore());
-
+        String winner = null;
 
         if (result == 0) {
             // If tied on total points, use natureTokens as tiebreakers
             result = Integer.compare(this.numNatureTokens, otherPlayer.numNatureTokens);
+            if (result >0){
+                           }
 
         }
+
 
         return result;
     }
@@ -102,13 +105,13 @@ public class Player implements Comparable<Player>{
         return BS;
     }
     public int getwildlifeTokenScore() {
+        //calculateBearTokenScoring(p) + calculateFoxTokenScoring(p) + calculateHawkTokenScoring(p);
         int WLTS = 0;
         return WLTS;}
    public int totalScore(){
         int total = this.getBiomeScore() + this.getwildlifeTokenScore() + numNatureTokens;
         return total;
     }
-
 /*
    //public int getnatureTokenAmt() {return natureTokenAmt;}
     public void clearEffects(){

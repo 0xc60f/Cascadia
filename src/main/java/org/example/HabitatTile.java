@@ -41,6 +41,8 @@ public class HabitatTile {
         neighbors = new ArrayList<HabitatTile>();
     }
     //Instantiates the HabitatTile as the Node class of the Cascadia Graph
+    // BufferedReader
+
     public void setWildlifeToken(WildlifeToken w){
         this.w = w;
     }
