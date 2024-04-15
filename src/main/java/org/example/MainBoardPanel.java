@@ -5,20 +5,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
-import org.example.CascadiaPanel.*;
 
 
 public class MainBoardPanel extends JPanel implements MouseListener   {
     private Polygon viewB1, viewB2, viewPage;
     private boolean viewVis = false;
-    private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
+    private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring, natureToken;
     private boolean isVisible = true;
-
-    private String prompt = "test";
     public MainBoardPanel() {
 
         addMouseListener(this);
@@ -26,44 +22,32 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
     }
 
     public void paint(Graphics g, int width, int height) {
-
-        int div = 5;
-        int BottomButtonY = 3 * height/div + height/12;
-
         g.drawImage(backgroundImage, 0, 0, null);
         Color beigeColor = new Color(255, 221, 122);
         g.setColor(beigeColor);
         g.fillRoundRect(width/100, height/100, width/8, height/14, 30, 30);
-
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, width/90));
         g.drawString("Turn: 1", width/19, height/19);
 
-        g.drawRect(width-width/div, 0, width/div, height);
+        int div = 5;
+        drawScoring(g, width, height, div);
+        //Draw the Player 2 and Player 3 buttons
         g.fillRoundRect(width/2 + width/6, height/100, width/8, height/14, 10, 10);
         g.fillRoundRect(width/2 + width/6, height/100 + height/14 + height/100, width/8, height/14, 10, 10);
         g.setColor(beigeColor);
         g.fillRect(width-width/div, 0, width/div, height);
         //Draw a large rectangle covering the bottom of the screen
         g.fillRect(0, height-height/div, width, height/div);
-        drawScoring(g, width, height);
-
         g.fillRoundRect(width/2 + width/6, height/100, width/8, height/14, 30, 30);
 
         g.fillRoundRect(width/2 + width/6, height/100 + height/14 + height/100, width/8, height/14, 30, 30);
 
-
-        int actionHeight = height/10;
-
-        g.fillRoundRect(width/100, BottomButtonY, width/8, height/10, 30, 30);
         g.setColor(Color.BLACK);
-        g.drawString(prompt, width/100, BottomButtonY); // Action Prompt Text
-
         int text = width/2 + width/6 + width/23;
 
         g.drawString("Player 2", text, height/19); // Change text to change with turn
         g.drawString("Player 3", text, height/19 + height/14 + height/100);
-
 
         int debugRectWidth = width/8;
         int debugRectHeight = height/14;
@@ -104,8 +88,23 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
             g.setColor(beigeColor);
             g.fillPolygon(viewPage);
         }
+        //Draw a vertical line 150 pixels dividing the bottom rectangle into a square and long rectangle
+        g.drawLine(width-width/div, 0, width-width/div, height);
+        g.drawLine(width/div - 75, height-height/div, width/div - 75, height);
+        //Draw 4 nature tokens in each corner of the square in the bottom left corner
+        g.drawImage(natureToken, 0, height - height/div, null);
+        g.drawImage(natureToken, 0, height - 50, null);
+        g.drawImage(natureToken, width/div - 140, height - 50, null);
+        g.drawImage(natureToken, width/div - 140, height - height/div, null);
 
-        //g.drawPolygon(viewB2);
+        //Draw the player's nature tokens in the bottom right corner in the center
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 25));
+        g.drawString("0", width/div - 235, height - height/div + height/div/2 + 5);
+
+
+
+
     }
     /**
      * Imports the images that are used in the game. The images are stored in the resources folder, and are imported using the ImageIO class.
@@ -118,6 +117,7 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
             salmonScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/salmon-small.jpg")));
             elkScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/elk-small.jpg")));
             foxScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/fox-small.jpg")));
+            natureToken = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/nature-token.png")));
         }
         catch (IOException e){
             throw new RuntimeException(e);
@@ -134,9 +134,10 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
      * @param g The <code>Graphics</code> object that is used to draw the scoring.
      * @param width The width of the screen.
      * @param height The height of the screen.
+     * @param div The number of divisions that the screen is divided into.
      */
-    private void drawScoring(Graphics g, int width, int height){
-        int div = 5;
+    private void drawScoring(Graphics g, int width, int height, int div){
+        g.drawRect(width-width/div, 0, width/div, height);
         int x = width - width/div + width/div/2 - bearScoring.getWidth()/2;
         int y = height/div/2 - bearScoring.getHeight()/2;
         g.drawImage(bearScoring, x, y, null);
@@ -165,13 +166,9 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         if (viewB1.contains(x, y)) {
             viewVis = true;
         } else if (viewB2.contains(x, y)) {
-            if (!viewVis) {
-                viewVis = true;
-            }
+            viewVis = true;
         } else if (viewPage.contains(x,y)) {
-            if (viewVis) {
-                viewVis = false;
-            }
+            viewVis = false;
         }
     }
 
@@ -195,14 +192,4 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
 
     }
 
-    public void downloadRules() {
-        String url = "https://www.alderac.com/wp-content/uploads/2021/08/Cascadia-Rules.pdf";
-        String home = System.getProperty("user.home");
-        System.out.println("Downloading Rules");
-        try {
-            java.awt.Desktop.getDesktop().browse(java.net.URI.create("https://www.alderac.com/wp-content/uploads/2021/08/Cascadia-Rules.pdf"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
