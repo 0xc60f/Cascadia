@@ -6,9 +6,11 @@ public class Player implements Comparable<Player>{
     private int pNum;
     private ArrayList<HabitatTile> initialThree;
     private int numNatureTokens;
+    private String winner;
     private Boolean natureTokenUsed;
     private HashMap<String, Integer> numBiomes;
     private HashMap<HabitatTile, WildlifeToken> playerTiles;
+    private int total;
     private int totalScore;
 
 
@@ -54,18 +56,12 @@ public class Player implements Comparable<Player>{
         // Compare based on total score
         //int result = Integer.compare(this.numNatureTokens, otherPlayer.numNatureTokens);
         //int result = compareTiebreakers(otherPlayer);
-        int result = Integer.compare(this.totalScore(), otherPlayer.totalScore());
-        String winner = null;
+        int result = Integer.compare(this.totalScore, otherPlayer.totalScore);
 
         if (result == 0) {
             // If tied on total points, use natureTokens as tiebreakers
             result = Integer.compare(this.numNatureTokens, otherPlayer.numNatureTokens);
-            if (result >0){
-                           }
-
         }
-
-
         return result;
     }
 
@@ -74,10 +70,10 @@ public class Player implements Comparable<Player>{
         // Example: Compare based on biome score, wildlifeToken score, and natureToken amount
 
         int addpt =0;
-        int result = 0;//Integer.compare(this.calcNumBiomes(), otherPlayer.calcNumBiomes());
+        int result = Integer.compare(0, 1);//this.calcNumBiomes(), otherPlayer.calcNumBiomes());
 
-        int t = this.getBiomeScore();
-        int o = otherPlayer.getBiomeScore();
+        int t = 0;//getBiomeScore();
+        int o = getBiomeScore(otherPlayer);
 
         if (result == 0) {
             addpt = 2;
@@ -100,16 +96,17 @@ public class Player implements Comparable<Player>{
         return Wresult;
     }
 
-   public int getBiomeScore() {
+   public int getBiomeScore(Player p) {
         int BS =0;
         return BS;
     }
-    public int getwildlifeTokenScore() {
+    public int getwildlifeTokenScore(Player p) {
         //calculateBearTokenScoring(p) + calculateFoxTokenScoring(p) + calculateHawkTokenScoring(p);
         int WLTS = 0;
         return WLTS;}
-   public int totalScore(){
-        int total = this.getBiomeScore() + this.getwildlifeTokenScore() + numNatureTokens;
+   public int totalScore(Player p){
+        total = getBiomeScore(p) + getwildlifeTokenScore(p) + numNatureTokens;
+        int result = compareTiebreakers(p);
         return total;
     }
 /*
