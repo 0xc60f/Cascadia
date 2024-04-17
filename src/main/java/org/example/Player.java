@@ -10,6 +10,8 @@ public class Player implements Comparable<Player>{
     private HashMap<String, Integer> numBiomes;
     private HashMap<HabitatTile, WildlifeToken> playerTiles;
     private int totalScore;
+    private ArrayList<Integer> playerHabitatScores;
+
 
 
     public Player(int p){
