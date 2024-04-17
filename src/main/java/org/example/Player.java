@@ -12,6 +12,8 @@ public class Player implements Comparable<Player>{
     private HashMap<HabitatTile, WildlifeToken> playerTiles;
     private int total;
     private int totalScore;
+    private ArrayList<Integer> playerHabitatScores;
+
 
 
     public Player(int p){
