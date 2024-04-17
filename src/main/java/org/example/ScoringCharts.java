@@ -11,13 +11,27 @@ public class ScoringCharts {
         //return totalScore;
         return 0;
     }
+    //SCORING ARRAYLIST GOES IN MOUNTAIN FOREST DESERT MARSH RIVER.
 
     private HashMap<HabitatTile, WildlifeToken> allPlacedTokens;
-    private Map<Integer, Integer> bearScoringValues;
+    private HashMap<Integer, Integer> bearScoringValues;
     private int confirmedBearPairs;
     private ArrayList<HabitatTile> potentialBears;
     private ArrayList<HabitatTile> usedTokenIDs;
     private HashMap<Integer, Integer> foxScoringValues;
+    private Map<Biome, Integer> habitatMatches;
+    private Player p1 = new Player(1);
+    private Player p2 = new Player(2);
+    private Player p3 = new Player(3);
+    private Player p4 = new Player(4);
+
+    public ScoringCharts() {
+        habitatMatches = new HashMap<>();
+        bearScoringValues = new HashMap<>();
+        foxScoringValues = new HashMap<>();
+        hawkScoringValues = new HashMap<>();
+        salmonScoringValues = new HashMap<>();
+    }
     public void BearScoring() {
         bearScoringValues = new HashMap<>();
         bearScoringValues.put(1, 4);
@@ -267,6 +281,35 @@ public class ScoringCharts {
 
                 //gotta fix
             }
+        }
+
+
+        public void calculateHabitatScoring(Player p) {
+            for (Biome currentHabitat : habitatMatches.keySet()) {
+                int largestGroupNum = habitatMatches.get(currentHabitat);
+                System.out.println("Habitat " + currentHabitat + " has a largest group size of " + largestGroupNum);
+
+            }
+        }
+
+        public int finalScoring(){
+            int p1Score = 0;
+            int p2Score = 0;
+            int p3Score = 0;
+            int p4Score = 0;
+
+            p1Score += p1.getwildlifeTokenScore();
+            p2Score += p2.getwildlifeTokenScore();
+            p3Score += p3.getwildlifeTokenScore();
+            p4Score += p4.getwildlifeTokenScore();
+
+
+            return 0;
+        }
+
+
+        public void processAllHabitats(){
+
         }
 
 
