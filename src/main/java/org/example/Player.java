@@ -103,13 +103,13 @@ public class Player implements Comparable<Player>{
         int BS =0;
         return BS;
     }
-    public int getwildlifeTokenScore(Player p) {
+    public int getwildlifeTokenScore() {
         //calculateBearTokenScoring(p) + calculateFoxTokenScoring(p) + calculateHawkTokenScoring(p);
         int WLTS = 0;
         return WLTS;
     }
    public int totalScore(Player p){
-        total += getwildlifeTokenScore(p) + numNatureTokens;
+        total += numNatureTokens;
         return total;
     }
 /*
