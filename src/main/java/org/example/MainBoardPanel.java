@@ -137,7 +137,7 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
 
         int dpadCenterx = playAreaWidth-playAreaWidth/16;
         int dpadCentery = playAreaHeight-playAreaHeight/7;
-        int xsync = -195;
+        int xsync = -172;
         int ysync = 200;
         int ydis = 20;
         int xdis = 20;
@@ -183,12 +183,15 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         upMove = new Polygon(xPoints6, yPoints6, 4);
         downMove = new Polygon(xPoints7, yPoints7, 4);
 
-        /*
+        Color darkBeigeColor = new Color(0, 0, 0, 129);
+
+        g.setColor(darkBeigeColor);
+
         g.drawPolygon(rightMove);
         g.drawPolygon(leftMove);
         g.drawPolygon(upMove);
         g.drawPolygon(downMove);
-        */
+
 
         ///// Move Tiles polygons end
 
