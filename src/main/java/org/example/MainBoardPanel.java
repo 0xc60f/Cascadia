@@ -17,6 +17,7 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
     private Polygon viewB1, viewB2, viewPage, downMove, upMove, leftMove, rightMove;
     private boolean viewVis = false;
     private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring, natureToken, testingTile1, testingTile2, testBaseTile, testingTile3;
+    private BufferedImage arrUp, arrDown, arrLeft, arrRight;
     private BufferedImage dd, dl, ds, fd, ff, fl, fs, ll, lm, md, mf, mm, ms, sl, ss;
     private BufferedImage bear, elk, fox, hawk, salmon;
     private boolean isVisible = true;
@@ -33,21 +34,26 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
 
         int div = 5;
 
+        int playAreaWidth = (width - width/div);
+        int playAreaHeight = (height - height/div);
+
         int boardCenterx = ((div-1)/2) * (width/div);
         int boardCentery = ((div-1)/2) * (height/div);
 
         g.drawImage(backgroundImage, 0, 0, null);
-        Color beigeColor = new Color(255, 221, 122);
-        g.setColor(beigeColor);
-        g.fillRoundRect(width/100, height/100, width/8, height/14, 30, 30);
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.BOLD, width/90));
-        g.drawString("Turn: 1", width/19, height/19);
 
         BufferedImage[] buffList = {ss, bear};
         BufferedImage test = CascadiaPanel.drawTiles(buffList);
         g.drawImage(test, boardCenterx+offsetx, boardCentery+offsety, null);
 
+        Color beigeColor = new Color(255, 221, 122);
+        g.setColor(beigeColor);
+        g.fillRoundRect(width/100, height/100, width/8, height/14, 30, 30); // turn counter
+        g.fillRoundRect(width/100, playAreaHeight-height/100-height/10, width/8, height/10, 30, 30); // action prompt
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, width/90));
+        g.drawString("Turn: 1", width/19, height/19);
+        g.drawString("Action Prompt Test", width/60, playAreaHeight-height/40-(height/10)/2);
 
         drawScoring(g, width, height, div);
 
@@ -90,8 +96,6 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
 
         viewB2 = new Polygon(xPoints2, yPoints2, 4);
 
-        int playAreaWidth = (width - width/div);
-        int playAreaHeight = (height - height/div);
 
         int debugRectWidth3 = playAreaWidth/2 + playAreaWidth/3;
         int debugRectHeight3 = playAreaHeight/2 + playAreaHeight/3;
@@ -113,10 +117,6 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
 
         drawNatureTokenCount(g, 0, width, height, div);
 
-        int debugRectWidth4 = playAreaWidth;
-        int debugRectHeight4 = playAreaHeight/4;
-        int debugXPos4 = 0;
-        int debugYPos4 = 0;
         //Draw 4 lines that evenly divide the rest of the bottom rectangle
         g.drawLine(width/div + 240, height-height/div, width/div + 240, height);
         g.drawLine(width/div + 555, height-height/div, width/div + 555, height);
@@ -129,44 +129,71 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         Polygon polygon2 = CascadiaPanel.createHexagon(testingTile1Map.x, testingTile1Map.y, testingTile1);
         g.drawPolygon(polygon2);
 
+
+
+        ///// Move Tiles polygons start
+
+        int regSize = 3;
+
+        int dpadCenterx = playAreaWidth-playAreaWidth/16;
+        int dpadCentery = playAreaHeight-playAreaHeight/7;
+        int xsync = -172;
+        int ysync = 200;
+        int ydis = 20;
+        int xdis = 20;
+        g.drawImage(arrUp, dpadCenterx, (dpadCentery-height/ydis), null);
+        g.drawImage(arrDown, dpadCenterx, (dpadCentery+height/ydis), null);
+        g.drawImage(arrLeft, (dpadCenterx-height/xdis) + height/xsync, dpadCentery + height/ysync, null);
+        g.drawImage(arrRight, (dpadCenterx+height/xdis) + height/xsync, dpadCentery + height/ysync, null);
+
+        int debugRectWidth4 = xdis*2;
+        int debugRectHeight4 = xdis*4 + ydis*3;
+        int debugXPos4 = (dpadCenterx+height/xdis) + height/xsync;
+        int debugYPos4 = (dpadCentery-height/ydis);
+
         int[] xPoints4 = {debugXPos4, debugXPos4, debugXPos4+debugRectWidth4, debugXPos4+debugRectWidth4};
         int[] yPoints4 = {debugYPos4+debugRectHeight4, debugYPos4, debugYPos4, debugYPos4+debugRectHeight4};
 
-        debugRectWidth4 = playAreaWidth;
-        debugRectHeight4 = playAreaHeight/4;
-        debugXPos4 = 0;
-        debugYPos4 = playAreaHeight-playAreaHeight/4;
-
+        debugRectWidth4 = xdis*2;
+        debugRectHeight4 = xdis*4 + ydis*3;
+        debugXPos4 = (dpadCenterx-height/xdis) + height/xsync;
+        debugYPos4 = (dpadCentery-height/ydis);
 
         int[] xPoints5 = {debugXPos4, debugXPos4, debugXPos4+debugRectWidth4, debugXPos4+debugRectWidth4};
         int[] yPoints5 = {debugYPos4+debugRectHeight4, debugYPos4, debugYPos4, debugYPos4+debugRectHeight4};
 
-        debugRectWidth4 = playAreaWidth/4;
-        debugRectHeight4 = playAreaHeight;
-        debugXPos4 = 0;
-        debugYPos4 = 0;
+        debugRectWidth4 = xdis*4 + ydis*3;
+        debugRectHeight4 = xdis*2;
+        debugXPos4 = (dpadCenterx-height/xdis) + height/xsync;
+        debugYPos4 = (dpadCentery-height/ydis);
 
         int[] xPoints6 = {debugXPos4, debugXPos4, debugXPos4+debugRectWidth4, debugXPos4+debugRectWidth4};
         int[] yPoints6 = {debugYPos4+debugRectHeight4, debugYPos4, debugYPos4, debugYPos4+debugRectHeight4};
 
-        debugRectWidth4 = playAreaWidth/4;
-        debugRectHeight4 = playAreaHeight;
-        debugXPos4 = playAreaWidth-playAreaWidth/4;
-        debugYPos4 = 0;
+        debugRectWidth4 = xdis*4 + ydis*3;
+        debugRectHeight4 = xdis*2;
+        debugXPos4 = (dpadCenterx-height/xdis) + height/xsync;
+        debugYPos4 = (dpadCentery+height/ydis);
 
         int[] xPoints7 = {debugXPos4, debugXPos4, debugXPos4+debugRectWidth4, debugXPos4+debugRectWidth4};
         int[] yPoints7 = {debugYPos4+debugRectHeight4, debugYPos4, debugYPos4, debugYPos4+debugRectHeight4};
 
-        upMove = new Polygon(xPoints4, yPoints4, 4);
-        downMove = new Polygon(xPoints5, yPoints5, 4);
-        leftMove = new Polygon(xPoints6, yPoints6, 4);
-        rightMove = new Polygon(xPoints7, yPoints7, 4);
+        rightMove = new Polygon(xPoints4, yPoints4, 4);
+        leftMove = new Polygon(xPoints5, yPoints5, 4);
+        upMove = new Polygon(xPoints6, yPoints6, 4);
+        downMove = new Polygon(xPoints7, yPoints7, 4);
 
+        Color darkBeigeColor = new Color(0, 0, 0, 129);
+
+        g.setColor(darkBeigeColor);
+
+        g.drawPolygon(rightMove);
+        g.drawPolygon(leftMove);
         g.drawPolygon(upMove);
         g.drawPolygon(downMove);
-        g.drawPolygon(leftMove);
-        g.drawPolygon(rightMove);
 
+
+        ///// Move Tiles polygons end
 
     }
     /**
@@ -202,6 +229,10 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
             hawk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
             salmon = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
 
+            arrUp = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrowup.png")));
+            arrDown = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrowdown.png")));
+            arrLeft = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrowleft.png")));
+            arrRight = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrowright.png")));
 
             testBaseTile = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/dd.png")));
             testingTile1 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/fd.png")));
@@ -279,21 +310,21 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
             viewVis = true;
         } else if (viewB2.contains(x, y)) {
             viewVis = true;
-        } else if (viewPage.contains(x,y)) {
+        } else if (viewPage.contains(x,y) && viewVis) {
             viewVis = false;
-        }
-
-        if (upMove.contains(x, y)) {
-            offsety = offsety-10;
-        }
-        if (downMove.contains(x, y)) {
-            offsety = offsety+10;
-        }
-        if (leftMove.contains(x, y)) {
-            offsetx = offsetx-10;
-        }
-        if (rightMove.contains(x, y)) {
-            offsetx = offsetx+10;
+        } else {
+            if (upMove.contains(x, y)) {
+                offsety = offsety+10;
+            }
+            if (downMove.contains(x, y)) {
+                offsety = offsety-10;
+            }
+            if (leftMove.contains(x, y)) {
+                offsetx = offsetx+10;
+            }
+            if (rightMove.contains(x, y)) {
+                offsetx = offsetx-10;
+            }
         }
 
 
