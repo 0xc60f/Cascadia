@@ -1,24 +1,20 @@
 package org.example;
 
-//import org.jetbrains.annotations.NotNull;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Objects;
-import java.util.TreeMap;
 
 /**
- * The main panel for the Cascadia game. Currently, being used to test and debug tile setups, but will eventually be switched to orchestrate
- * the game, and the end and start screen.
- *
+ * The main panel for the Cascadia game. This manages all the interactions with mouse clicks and interactions with the game. However, it delegates the actual drawing of the game to the other panels.
+ * This panel is responsible for drawing the three main panels in the game. It also manages switching between the three panels.
+ * In addition, the panel also holds many utility static methods that are used to draw the hexagons and tiles in the game.
+ * This is so that the functions can be called in multiple panels without the need to rewrite the logic.
  * @author 0xc60f
- * @see JPanel
+ * @see MainBoardPanel
+ * @see StartPanel
  */
 
 public class CascadiaPanel extends JPanel implements MouseListener {
@@ -87,6 +83,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         //Resize animalTile so that it is half of the original size
         animalTile = resizeImage(animalTile, (int) (animalTile.getWidth() / 1.1), (int) (animalTile.getHeight() / 1.1));
         g2d.drawImage(animalTile, (habitatTile.getWidth() - animalTile.getWidth()) / 2, (habitatTile.getHeight() - animalTile.getHeight()) / 2, null);
+        g2d.dispose();
         return combined;
     }
 
@@ -94,54 +91,81 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * Gets the coordinates of where the image for the adjacent hexagon should be drawn. The coordinates are based on the edge of the base hexagon that the adjacent hexagon is connected to.
      * @param baseHexagon The <code>Polygon</code> that represents the base hexagon
      * @param edge The edge of the base hexagon that the adjacent hexagon is connected to. 0 is the top edge, and then goes clockwise.
-     * @return A <code>TreeMap</code> that contains the x and y coordinates of where the image for the adjacent hexagon should be drawn.
+     * @param newImage The <code>BufferedImage</code> that is used to create the hexagon. The size is used to determine where the vertices are.
+     * @throws IllegalArgumentException if the edge is not between 0 and 5
+     * @return A <code>Point</code> that contains the x and y coordinates of where the image for the adjacent hexagon should be drawn.
      * The x and y coordinates should be used as the top-left corner of the image, where java draws images.
      * The x coordinate is the key, and the y coordinate is the value.
      */
-    public static Point getCoordsAdjacentHexagon(Polygon baseHexagon, int edge){
+    public static Point getCoordsAdjacentHexagon(Polygon baseHexagon, int edge, BufferedImage newImage){
+        int boundingBoxWidth = newImage.getWidth();
+        int boundingBoxHeight = newImage.getHeight();
+        int radius = boundingBoxHeight / 2;
+        int height = (int) (Math.sqrt(3) * radius);
+        int horizontalDistance = (int) (boundingBoxWidth * 0.75);
         Point center = getCenterOfHexagon(baseHexagon);
-        int radius = baseHexagon.getBounds().height / 2;
-        int height = 2 * radius;
-        int width = (int) (Math.sqrt(3) * radius);
-        Point coords = new Point();
-        switch (edge){
-            case 0:
-                coords.setLocation(center.x - width / 2, center.y);
-                break;
-            case 1:
-                coords.setLocation(center.x - width / 4, center.y - height / 2);
-                break;
-            case 2:
-                coords.setLocation(center.x + width / 4, center.y - height / 2);
-                break;
-            case 3:
-                coords.setLocation(center.x + width / 2, center.y);
-                break;
-            case 4:
-                coords.setLocation(center.x + width / 4, center.y + height / 2);
-                break;
-            case 5:
-                coords.setLocation(center.x - width / 4, center.y + height / 2);
-                break;
+
+        int xCoord = center.x;
+        int yCoord = center.y;
+
+        switch (edge) {
+            case 0 -> yCoord -= height + 20; // Adjusted for better alignment
+            case 1 -> {
+                xCoord += horizontalDistance; // Adjusted for better alignment
+                yCoord -= (height / 2) + 13;
+            }
+            case 2 -> {
+                xCoord += horizontalDistance + 1; // Adjusted for better alignment
+                yCoord += (height / 2) + 2;
+            }
+            case 3 -> yCoord += height + 8; // Adjusted for better alignment
+            case 4 -> {
+                xCoord -= horizontalDistance -1; // Adjusted for better alignment
+                yCoord += (height / 2) + 2;
+            }
+            case 5 -> {
+                xCoord -= horizontalDistance; // Adjusted for better alignment
+                yCoord -= (height / 2) + 12;
+            }
+            default -> throw new IllegalArgumentException("Edge must be between 0 and 5");
         }
-        return coords;
+        return new Point(xCoord - boundingBoxWidth / 2, yCoord - height / 2);
     }
+
+
+
+    /**
+     * Creates a hexagon with the specified x and y coordinates, and then draws the image on top of the hexagon.
+     * Also creates a silent hexagon that is used to determine where the adjacent hexagon should be drawn.
+     * @param x The x coordinate of the top-left corner of the image
+     * @param y The y coordinate of the top-left corner of the image
+     * @param imageUsed The <code>BufferedImage</code> that is used to create the hexagon
+     * @param g The <code>Graphics</code> object that is used to draw the hexagon. Should be called with <code>getGraphics()</code>
+     *          from the panel class that is using it.
+     */
+    public static void createAndDrawHexagon(int x, int y, BufferedImage imageUsed, Graphics g) {
+        Polygon hexagon = createHexagon(x, y, imageUsed);
+        g.drawImage(imageUsed, x, y, null);
+    }
+
+
+
+
 
 
     /**
      * Calls the appropriate drawTiles method based on the size of the list of buffered images.
+     * @param bufferedList An array of <code>BufferedImage</code> objects that will be drawn on top of each other. The size of the array determines which drawTiles method is called.
+     * @return A <code>BufferedImage</code> that is the result of drawing the possible animal tiles on top of the habitat tile.
+     * @throws IllegalStateException if the size of the list is not 2, 3, or 4
      */
     public static BufferedImage drawTiles(BufferedImage[] bufferedList) {
-        BufferedImage combined;
-
-        if (bufferedList.length == 2) {
-            combined = drawTiles(bufferedList[0], bufferedList[1]);
-        } else if (bufferedList.length == 3) {
-            combined = drawTiles(bufferedList[0], bufferedList[1], bufferedList[2]);
-        } else {
-            combined = drawTiles(bufferedList[0], bufferedList[1], bufferedList[2], bufferedList[3]);
-        }
-        return combined;
+        return switch (bufferedList.length) {
+            case 2 -> drawTiles(bufferedList[0], bufferedList[1]);
+            case 3 -> drawTiles(bufferedList[0], bufferedList[1], bufferedList[2]);
+            case 4 -> drawTiles(bufferedList[0], bufferedList[1], bufferedList[2], bufferedList[3]);
+            default -> throw new IllegalStateException("Unexpected value: " + bufferedList.length + " tiles\n Must be 2, 3, or 4 tiles");
+        };
     }
 
     /**
@@ -232,7 +256,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @return A <code>BufferedImage</code> that is the result of resizing the original image
      */
     //@NotNull
-    protected static BufferedImage resizeImage(BufferedImage img, int width, int height) {
+    public static BufferedImage resizeImage(BufferedImage img, int width, int height) {
         Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = resized.createGraphics();
@@ -248,14 +272,14 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param imageUsed The <code>BufferedImage</code> that is used to create the hexagon. The size is used to determine where the vertices are.
      * @return A <code>Polygon</code> that is the result of creating a hexagon with the specified x and y coordinates.
      */
-    protected static Polygon createHexagon(int x, int y, BufferedImage imageUsed) {
+    public static Polygon createHexagon(int x, int y, BufferedImage imageUsed) {
         //Get the center of the image based on the size of the image and the x and y coords
         int xCenter = x + imageUsed.getWidth() / 2;
         int yCenter = y + imageUsed.getHeight() / 2;
         Polygon hexagon = new Polygon();
         for (int i = 0; i < 6; i++) {
-            hexagon.addPoint((int) (xCenter + 55 * Math.cos(i * 2 * Math.PI / 6)),
-                    (int) (yCenter + 55 * Math.sin(i * 2 * Math.PI / 6)));
+            hexagon.addPoint((int) (xCenter + 59 * Math.cos(i * 2 * Math.PI / 6)),
+                    (int) (yCenter + 58 * Math.sin(i * 2 * Math.PI / 6)));
         }
         return hexagon;
     }
@@ -263,33 +287,30 @@ public class CascadiaPanel extends JPanel implements MouseListener {
     /**
      * Rotates an image by a specified number of degrees. Makes a copy of the original image, and then
      * uses an AffineTransform to rotate the copy. Returns the rotated copy.
-     *
+     * The point of rotation is the center of the image.
      * @param img   The image to be rotated as a BufferedImage
      * @param angle The angle that the image should be rotated, in degrees
      * @return A BufferedImage that is the result of rotating the original image
      * @see AffineTransform
      */
-    public BufferedImage rotateImageByDegrees(@org.jetbrains.annotations.NotNull BufferedImage img, double angle) {
+    public static BufferedImage rotateImage(BufferedImage img, double angle) {
         double rads = Math.toRadians(angle);
-        double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
         int w = img.getWidth();
         int h = img.getHeight();
-        int newWidth = (int) Math.floor(w * cos + h * sin);
-        int newHeight = (int) Math.floor(h * cos + w * sin);
+        BufferedImage rotatedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = rotatedImage.createGraphics();
 
-        BufferedImage rotated = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = rotated.createGraphics();
-        AffineTransform at = new AffineTransform();
-        at.translate((double) (newWidth - w) / 2, (double) (newHeight - h) / 2);
+        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        // Translate to the center of the image
+        graphics.translate(w / 2, h / 2);
+        // Rotate the image
+        graphics.rotate(rads);
+        // Translate back from the center
+        graphics.translate(-w / 2, -h / 2);
+        graphics.drawImage(img, 0, 0, null);
+        graphics.dispose();
 
-        int x = w / 2;
-        int y = h / 2;
-
-        at.rotate(rads, x, y);
-        g2d.setTransform(at);
-        g2d.drawImage(img, 0, 0, this);
-        g2d.dispose();
-
-        return rotated;
+        return rotatedImage;
     }
+
 }

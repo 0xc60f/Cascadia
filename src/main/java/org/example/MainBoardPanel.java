@@ -1,7 +1,5 @@
 package org.example;
 
-import org.jetbrains.annotations.NotNull;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +8,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.TreeMap;
+import java.util.stream.IntStream;
 
 
 public class MainBoardPanel extends JPanel implements MouseListener   {
@@ -20,6 +18,7 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
     private BufferedImage arrUp, arrDown, arrLeft, arrRight;
     private BufferedImage dd, dl, ds, fd, ff, fl, fs, ll, lm, md, mf, mm, ms, sl, ss;
     private BufferedImage bear, elk, fox, hawk, salmon;
+    private BufferedImage arrowRight, arrowLeft;
     private boolean isVisible = true;
     private int offsetx, offsety = 0;
 
@@ -124,10 +123,12 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         drawScoring(g, width, height, div);
         g.drawImage(testBaseTile, width/2, height/2, null);
         Polygon polygon1 = CascadiaPanel.createHexagon(width/2, height/2, testBaseTile);
-        g.drawPolygon(polygon1);
-        Point testingTile1Map = CascadiaPanel.getCoordsAdjacentHexagon(polygon1, 0);
-        Polygon polygon2 = CascadiaPanel.createHexagon(testingTile1Map.x, testingTile1Map.y, testingTile1);
-        g.drawPolygon(polygon2);
+        BufferedImage[] buffList2 = {dd, dl, ds, fd, ff, fl, fs, ll, lm, md, mf, mm, ms, sl, ss};
+        //g.drawPolygon(polygon1);
+        for (int i = 0; i < 6; i++) {
+            Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(polygon1, i, dd);
+            CascadiaPanel.createAndDrawHexagon(drawPoint.x, drawPoint.y, buffList2[i + 2], g);
+        }
 
 
 
@@ -192,6 +193,8 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         g.drawPolygon(upMove);
         g.drawPolygon(downMove);
 
+        IntStream.range(0, 4).forEach(i -> drawArrows(width, height, div, i, g));
+
 
         ///// Move Tiles polygons end
 
@@ -224,10 +227,10 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
             sl = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/sl.png")));
             ss = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/ss.png")));
             bear = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
-            elk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
-            fox = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
-            hawk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
-            salmon = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/BEAR.png")));
+            elk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/ELK.png")));
+            fox = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/FOX.png")));
+            hawk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/HAWK.png")));
+            salmon = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/SALMON.png")));
 
             arrUp = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrowup.png")));
             arrDown = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrowdown.png")));
@@ -238,6 +241,11 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
             testingTile1 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/fd.png")));
             testingTile2 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/ff.png")));
             testingTile3 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/ss.png")));
+
+            arrowRight = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrow.png")));
+            arrowRight = CascadiaPanel.resizeImage(arrowRight, 50, 50);
+            arrowRight = CascadiaPanel.rotateImage(arrowRight, 90);
+            arrowLeft = CascadiaPanel.rotateImage(arrowRight, 180);
         }
         catch (IOException e){
             throw new RuntimeException(e);
@@ -294,6 +302,8 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
     }
 
 
+
+
     public void setVisible(boolean val) {
         isVisible = val;
     }
@@ -348,6 +358,38 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    /**
+     * Draws the arrows on the screen. The arrows are drawn in the center of the boxes holding the tiles and tokes, and
+     * are used to rotate the tiles before locking their position,
+     * @param width The width of the screen.
+     * @param height The height of the screen.
+     * @param div The number of divisions that the screen is divided into.
+     * @param numBox Which box the arrows are being drawn in. 0 is the first box, 1 is the second box, 2 is the third box, and 3 is the fourth box.
+     * @throws IllegalArgumentException If numBox is not between 0 and 3.
+     */
+    private void drawArrows(int width, int height, int div, int numBox, Graphics g) {
+        switch (numBox) {
+            case 0:
+                g.drawImage(arrowRight, width/div + 190, height-height/div + height/div/2 - 25, null);
+                g.drawImage(arrowLeft, width/div - 75, height-height/div + height/div/2 - 25, null);
+                break;
+            case 1:
+                g.drawImage(arrowRight, width/div + 505, height-height/div + height/div/2 - 25, null);
+                g.drawImage(arrowLeft, width/div + 240, height-height/div + height/div/2 - 25, null);
+                break;
+            case 2:
+                g.drawImage(arrowRight, width/div + 795, height-height/div + height/div/2 - 25, null);
+                g.drawImage(arrowLeft, width/div + 555, height-height/div + height/div/2 - 25, null);
+                break;
+            case 3:
+                g.drawImage(arrowRight, width/div + 1100, height-height/div + height/div/2 - 25, null);
+                g.drawImage(arrowLeft, width/div + 845, height-height/div + height/div/2 - 25, null);
+                break;
+            default:
+                throw new IllegalArgumentException("numBox must be between 0 and 3.");
+        }
     }
 
 }

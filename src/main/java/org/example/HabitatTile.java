@@ -1,13 +1,16 @@
 package org.example;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
 
 public class HabitatTile {
     private WildlifeToken w = null;
     //Sides in relation to Biomes
     private ArrayList<WildlifeToken> possibleAnimals;
     private BufferedImage image;
+    private Polygon polygon;
     private int x;
     private int y;
     private Biome habitat1;
