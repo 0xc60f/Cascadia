@@ -34,13 +34,48 @@ public class HabitatTile {
         this.y = y;
     }
 
-    public HabitatTile(Biome h1, Biome h2, ArrayList<WildlifeToken> availableAnimals){
-        habitat1  = h1;
-        habitat2 = h2;
-        possibleAnimals = availableAnimals;
+    public HabitatTile(String h1, String h2, int animal1, int animal2, int animal3){
+        switch (h1) {
+            case "d" -> habitat1 = Biome.DESERT;
+            case "l" -> habitat1 = Biome.LAKE;
+            case "s" -> habitat1 = Biome.SWAMP;
+            case "f" -> habitat1 = Biome.FOREST;
+            case "m" -> habitat1 = Biome.MOUNTAIN;
+        }
+        switch (h2) {
+            case "d" -> habitat2 = Biome.DESERT;
+            case "l" -> habitat2 = Biome.LAKE;
+            case "s" -> habitat2 = Biome.SWAMP;
+            case "f" -> habitat2 = Biome.FOREST;
+            case "m" -> habitat2 = Biome.MOUNTAIN;
+        }
+
+        switch(animal1){
+            case 1 -> possibleAnimals.add(WildlifeToken.ELK);
+            case 2 -> possibleAnimals.add(WildlifeToken.HAWK);
+            case 3 -> possibleAnimals.add(WildlifeToken.BEAR);
+            case 4 -> possibleAnimals.add(WildlifeToken.SALMON);
+            case 5 -> possibleAnimals.add(WildlifeToken.FOX);
+        }
+        switch(animal2){
+            case 1 -> possibleAnimals.add(WildlifeToken.ELK);
+            case 2 -> possibleAnimals.add(WildlifeToken.HAWK);
+            case 3 -> possibleAnimals.add(WildlifeToken.BEAR);
+            case 4 -> possibleAnimals.add(WildlifeToken.SALMON);
+            case 5 -> possibleAnimals.add(WildlifeToken.FOX);
+        }
+        switch(animal3){
+            case 1 -> possibleAnimals.add(WildlifeToken.ELK);
+            case 2 -> possibleAnimals.add(WildlifeToken.HAWK);
+            case 3 -> possibleAnimals.add(WildlifeToken.BEAR);
+            case 4 -> possibleAnimals.add(WildlifeToken.SALMON);
+            case 5 -> possibleAnimals.add(WildlifeToken.FOX);
+        }
         neighbors = new ArrayList<HabitatTile>();
     }
     //Instantiates the HabitatTile as the Node class of the Cascadia Graph
+    // BufferedReader
+
     public void setWildlifeToken(WildlifeToken w){
         this.w = w;
     }

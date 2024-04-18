@@ -6,16 +6,20 @@ public class Player implements Comparable<Player>{
     private int pNum;
     private ArrayList<HabitatTile> initialThree;
     private int numNatureTokens;
+    private String winner;
     private Boolean natureTokenUsed;
     private HashMap<String, Integer> numBiomes;
     private HashMap<HabitatTile, WildlifeToken> playerTiles;
+    private int total;
     private int totalScore;
+    private ArrayList<Integer> playerHabitatScores;
+
 
 
     public Player(int p){
         pNum = p;
         numBiomes = new HashMap<String, Integer>();
-        numNatureTokens = 0; // Initialize to zero, assuming nature tokens need to be added.
+        numNatureTokens = 0; // Initialize to zero, assuming start of game, nature tokens need to be added.
         natureTokenUsed = false ;
         playerTiles = new HashMap<>();
         for(int i = 0; i < 3; i++){
@@ -34,6 +38,9 @@ public class Player implements Comparable<Player>{
         return numBiomes;
     }
 
+    public void addTile(HabitatTile h){
+        return;
+    }
     public boolean natureTokenUsed(){
         natureTokenUsed = !natureTokenUsed;
         return natureTokenUsed;
@@ -46,35 +53,30 @@ public class Player implements Comparable<Player>{
         return numNatureTokens;
     }
 
-    public void addTile(HabitatTile h){
-        return;
-    }
-
     @Override
     public int compareTo(Player otherPlayer) {
         // Compare based on total score
         //int result = Integer.compare(this.numNatureTokens, otherPlayer.numNatureTokens);
-        //int result = compareTiebreakers(otherPlayer);
+        //int result = compareTiebreakers(otherPlayer, player2);
         int result = Integer.compare(this.totalScore, otherPlayer.totalScore);
 
         if (result == 0) {
             // If tied on total points, use natureTokens as tiebreakers
             result = Integer.compare(this.numNatureTokens, otherPlayer.numNatureTokens);
-
         }
-
         return result;
     }
 
-    public int compareTiebreakers(Player otherPlayer) {
+    public int compareTiebreakers(Player otherPlayer, Player player2) { //check for all three player
         // Implement additional tiebreakers as needed
         // Example: Compare based on biome score, wildlifeToken score, and natureToken amount
 
-        int addpt =0;
-        int result = 0;//Integer.compare(this.calcNumBiomes(), otherPlayer.calcNumBiomes());
-
         int t = this.getBiomeScore();
         int o = otherPlayer.getBiomeScore();
+        //int p = player2.getBiomeScore();
+
+        int addpt =0;
+        int result = Integer.compare(0,1);//p.calcNumBiomes(), otherPlayer.calcNumBiomes(), player.calcNumBiome()); check through each biome
 
         if (result == 0) {
             addpt = 2;
@@ -92,9 +94,9 @@ public class Player implements Comparable<Player>{
             t += addpt;
         }
 
-        int Wresult = Integer.compare(t, o);
+        total+= t;
 
-        return Wresult;
+        return total;
     }
 
    public int getBiomeScore() {
@@ -102,13 +104,14 @@ public class Player implements Comparable<Player>{
         return BS;
     }
     public int getwildlifeTokenScore() {
+        //calculateBearTokenScoring(p) + calculateFoxTokenScoring(p) + calculateHawkTokenScoring(p);
         int WLTS = 0;
-        return WLTS;}
+        return WLTS;
+    }
    public int totalScore(Player p){
-        int total = p.getBiomeScore() + p.getwildlifeTokenScore() + numNatureTokens;
+        total += numNatureTokens;
         return total;
     }
-
 /*
    //public int getnatureTokenAmt() {return natureTokenAmt;}
     public void clearEffects(){

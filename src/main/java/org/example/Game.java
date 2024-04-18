@@ -1,30 +1,42 @@
 package org.example;
 
+import java.io.*;
 import java.util.*;
 
 public class Game {
     //holds the habitatTile and wildlifeToken that are currently displayed in relation to each other.
-    private HashMap<HabitatTile, WildlifeToken> displayed;
+    private ArrayList<HabitatTile> displayed;
     private ArrayList<WildlifeToken> possibleWildlife;
     private ArrayList<HabitatTile> possibleHabitatTiles;
+
+
+
+    private String data;
     //make this the construcotr for the actual game so the 4 displayed and make another one for the player class. Add to graph as well
     public Game(){
-        int i = 0;
-        displayed = new HashMap<HabitatTile, WildlifeToken>();
+        displayed = new ArrayList<HabitatTile>();
         possibleWildlife = new ArrayList<WildlifeToken>();
         possibleHabitatTiles = new ArrayList<HabitatTile>();
-        while(i < 60){
-     //instantiate all the pssible habitatTiles
-            HabitatTile h = new HabitatTile(Biome.MOUNTAIN, Biome.RIVER, possibleWildlife);
-            i++;
+        try {
+            Scanner reader = new Scanner(new File("MainTiles.txt"));
+            while(reader.hasNextLine()){
+                data = reader.nextLine();
+                possibleHabitatTiles.add(new HabitatTile(data.substring(0,1), data.substring(1,2), Integer.parseInt(data.substring(2,3)), Integer.parseInt(data.substring(3,4)), Integer.parseInt(data.substring(4,5))));
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
-        possibleWildlife.add(WildlifeToken.SALMON);
-        possibleWildlife.add(WildlifeToken.HAWK);
-        possibleWildlife.add(WildlifeToken.BEAR);
-        possibleWildlife.add(WildlifeToken.ELK);
-        possibleWildlife.add(WildlifeToken.FOX);
-        //for(int j = 0; j < displayed.size(); j++){
+        displayed = new ArrayList<>();
+        for(int i = 4; i < 0; i++){
+            displayed.add(possibleHabitatTiles.remove((int) (Math.random() * possibleHabitatTiles.size())));
+        }
 
-        //}
     }
+    //Call this method when repainting
+    public void addTile(){
+        displayed.add(possibleHabitatTiles.remove((int) (Math.random() * possibleHabitatTiles.size())));
+    }
+
+
+
 }
