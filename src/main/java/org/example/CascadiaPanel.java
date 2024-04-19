@@ -24,10 +24,12 @@ import java.util.TreeMap;
 public class CascadiaPanel extends JPanel implements MouseListener {
     private final StartPanel Menu;
     private final MainBoardPanel MainBoard;
+    private final WinnerPanel WinnerScreen;
     public CascadiaPanel() {
         addMouseListener(this);
         Menu = new StartPanel();
         MainBoard = new MainBoardPanel();
+        WinnerScreen = new WinnerPanel();
     }
 
     public void paint(Graphics g) {
@@ -37,6 +39,8 @@ public class CascadiaPanel extends JPanel implements MouseListener {
             Menu.paint(g, getWidth(), getHeight());
         } else if (MainBoard.getVisible()) {
             MainBoard.paint(g, getWidth(), getHeight());
+        } else if (WinnerScreen.getVisible()) {
+            WinnerScreen.paint(g, getWidth(), getHeight());
         }
     }
 
@@ -48,6 +52,8 @@ public class CascadiaPanel extends JPanel implements MouseListener {
             Menu.mouseClicked(e);
         } else if (MainBoard.getVisible()) {
             MainBoard.mouseClicked(e);
+        } else if (WinnerScreen.getVisible()) {
+            WinnerScreen.mouseClicked(e);
         }
         repaint();
     }
