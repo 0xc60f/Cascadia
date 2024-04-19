@@ -24,7 +24,7 @@ public class ScoringCharts {
     public Player p2 = new Player(2);
     public Player p3 = new Player(3);
     public Player p4 = new Player(4);
-    private ArrayList<Integer> scoringVals;
+    public ArrayList<Integer> scoringVals;
 
     public ScoringCharts() {
         habitatMatches = new HashMap<>();
