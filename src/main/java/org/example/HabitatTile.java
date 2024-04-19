@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.List;
 
 public class HabitatTile {
-    private WildlifeToken w = null;
+    public WildlifeToken w = null;
     //Sides in relation to Biomes
     private ArrayList<WildlifeToken> possibleAnimals;
     private BufferedImage image;
