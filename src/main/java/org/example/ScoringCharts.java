@@ -26,6 +26,11 @@ public class ScoringCharts {
     public Player p4 = new Player(4);
     public ArrayList<Integer> scoringVals;
 
+    public ArrayList<Integer> bearscoringVals;
+    public ArrayList<Integer> foxscoringVals;
+    public ArrayList<Integer> hawkscoringVals;
+    public ArrayList<Integer> salmonscoringVals;
+
     public ScoringCharts() {
         habitatMatches = new HashMap<>();
         bearScoringValues = new HashMap<>();
@@ -33,6 +38,10 @@ public class ScoringCharts {
         hawkScoringValues = new HashMap<>();
         salmonScoringValues = new HashMap<>();
         scoringVals = new ArrayList<>();
+        bearscoringVals = new ArrayList<Integer>();
+        foxscoringVals = new ArrayList<Integer>();
+        hawkscoringVals = new ArrayList<Integer>();
+        salmonscoringVals = new ArrayList<Integer>();
     }
     public void BearScoring() {
         bearScoringValues = new HashMap<>();
@@ -100,6 +109,7 @@ public class ScoringCharts {
 
         if (confirmedBearPairs != 0) {
             scoringVals.add(bearScoringValues.get(confirmedBearPairs));
+            bearscoringVals.add(bearScoringValues.get(confirmedBearPairs));
             //gotta make the token scoring method that will hold all scoring values
         }
     }
@@ -139,6 +149,7 @@ public class ScoringCharts {
                     int numUniqueWildlife = uniqueWildlife.size();
 
                     scoringVals.add(foxScoringValues.get(numUniqueWildlife));
+                    foxscoringVals.add(foxScoringValues.get(numUniqueWildlife));
                     //gotta make token scoring class to add stuff together
                 }
             }
@@ -191,6 +202,7 @@ public class ScoringCharts {
             }
 
             scoringVals.add(hawkScoringValues.get(numIsolatedHawks));
+            hawkscoringVals.add(hawkScoringValues.get(numIsolatedHawks));
             //token scoring method needs to be created
         }
 
@@ -280,6 +292,7 @@ public class ScoringCharts {
                     salmonInRunNum = 7;
                 }
                 scoringVals.add(salmonScoringValues.get(salmonInRunNum));
+                salmonscoringVals.add(salmonScoringValues.get(salmonInRunNum));
 
                 //gotta fix
             }
