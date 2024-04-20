@@ -20,10 +20,16 @@ public class ScoringCharts {
     private ArrayList<HabitatTile> usedTokenIDs;
     private HashMap<Integer, Integer> foxScoringValues;
     private Map<Biome, Integer> habitatMatches;
-    private Player p1 = new Player(1);
-    private Player p2 = new Player(2);
-    private Player p3 = new Player(3);
-    private Player p4 = new Player(4);
+    public Player p1 = new Player(1);
+    public Player p2 = new Player(2);
+    public Player p3 = new Player(3);
+    public Player p4 = new Player(4);
+    public ArrayList<Integer> scoringVals;
+
+    public ArrayList<Integer> bearscoringVals;
+    public ArrayList<Integer> foxscoringVals;
+    public ArrayList<Integer> hawkscoringVals;
+    public ArrayList<Integer> salmonscoringVals;
 
     public ScoringCharts() {
         habitatMatches = new HashMap<>();
@@ -31,6 +37,11 @@ public class ScoringCharts {
         foxScoringValues = new HashMap<>();
         hawkScoringValues = new HashMap<>();
         salmonScoringValues = new HashMap<>();
+        scoringVals = new ArrayList<>();
+        bearscoringVals = new ArrayList<Integer>();
+        foxscoringVals = new ArrayList<Integer>();
+        hawkscoringVals = new ArrayList<Integer>();
+        salmonscoringVals = new ArrayList<Integer>();
     }
     public void BearScoring() {
         bearScoringValues = new HashMap<>();
@@ -97,7 +108,8 @@ public class ScoringCharts {
         }
 
         if (confirmedBearPairs != 0) {
-            //tokenScoring.bear.totalScore = bearScoringValues.get(confirmedBearPairs);
+            scoringVals.add(bearScoringValues.get(confirmedBearPairs));
+            bearscoringVals.add(bearScoringValues.get(confirmedBearPairs));
             //gotta make the token scoring method that will hold all scoring values
         }
     }
@@ -136,7 +148,8 @@ public class ScoringCharts {
 
                     int numUniqueWildlife = uniqueWildlife.size();
 
-                    //tokenScoring.fox.totalScore += foxScoringValues.get(numUniqueWildlife);
+                    scoringVals.add(foxScoringValues.get(numUniqueWildlife));
+                    foxscoringVals.add(foxScoringValues.get(numUniqueWildlife));
                     //gotta make token scoring class to add stuff together
                 }
             }
@@ -188,7 +201,8 @@ public class ScoringCharts {
                 numIsolatedHawks = 8;
             }
 
-            //tokenScoring.hawk.totalScore = hawkScoringValues.get(numIsolatedHawks);
+            scoringVals.add(hawkScoringValues.get(numIsolatedHawks));
+            hawkscoringVals.add(hawkScoringValues.get(numIsolatedHawks));
             //token scoring method needs to be created
         }
 
@@ -277,7 +291,8 @@ public class ScoringCharts {
                 if (salmonInRunNum > 7) {
                     salmonInRunNum = 7;
                 }
-                //tokenScoring.salmon.totalScore += salmonScoringValues.get(salmonInRunNum);
+                scoringVals.add(salmonScoringValues.get(salmonInRunNum));
+                salmonscoringVals.add(salmonScoringValues.get(salmonInRunNum));
 
                 //gotta fix
             }

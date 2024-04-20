@@ -9,6 +9,8 @@ public class Game {
     private ArrayList<WildlifeToken> possibleWildlife;
     private ArrayList<HabitatTile> possibleHabitatTiles;
 
+    private int numTurns;
+
 
 
     private String data;
@@ -35,6 +37,28 @@ public class Game {
     //Call this method when repainting
     public void addTile(){
         displayed.add(possibleHabitatTiles.remove((int) (Math.random() * possibleHabitatTiles.size())));
+    }
+
+    public boolean addWildlife(HabitatTile h, WildlifeToken wild){
+        if(h.canPlace(wild)){
+            h.w = wild;
+            return true;
+        }
+        return false;
+    }
+
+    public void cntTurns(){
+        if(numTurns <= 19) {
+            numTurns++;
+        }else{
+            endGame();
+        }
+    }
+
+    //GOTTA FIX THIS TO MAKE IT COMPARE
+    public void endGame(){
+        ScoringCharts sc = new ScoringCharts();
+
     }
 
 
