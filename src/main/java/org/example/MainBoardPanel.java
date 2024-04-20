@@ -1,5 +1,8 @@
 package org.example;
 
+import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.css.Rect;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -7,12 +10,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
 
 public class MainBoardPanel extends JPanel implements MouseListener   {
-    private Polygon viewB1, viewB2, viewPage, downMove, upMove, leftMove, rightMove;
+    private Polygon viewB1, viewB2, viewPage, downMove, upMove, leftMove, rightMove, endGame;
     private boolean viewVis = false;
     private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring, natureToken, testingTile1, testingTile2, testBaseTile, testingTile3;
     private BufferedImage arrUp, arrDown, arrLeft, arrRight;
@@ -21,6 +25,7 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
     private BufferedImage arrowRight, arrowLeft;
     private boolean isVisible = true;
     private int offsetx, offsety = 0;
+    private String turn = "Turn: 1" , action = "Action Prompt";
 
     public MainBoardPanel() {
 
@@ -39,7 +44,10 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         int boardCenterx = ((div-1)/2) * (width/div);
         int boardCentery = ((div-1)/2) * (height/div);
 
+        Font defFont = new Font("Arial", Font.BOLD, width/90);
+
         g.drawImage(backgroundImage, 0, 0, null);
+        g.setFont(defFont);
 
         BufferedImage[] buffList = {ss, bear};
         BufferedImage test = CascadiaPanel.drawTiles(buffList);
@@ -48,17 +56,28 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         Color beigeColor = new Color(255, 221, 122);
         g.setColor(beigeColor);
         g.fillRoundRect(width/100, height/100, width/8, height/14, 30, 30); // turn counter
+
+        Rectangle turnAlign = new Rectangle(width/100, height/100, width/8, height/14);
+
         g.fillRoundRect(width/100, playAreaHeight-height/100-height/10, width/8, height/10, 30, 30); // action prompt
+
+        Rectangle actionPromptAlign = new Rectangle(width/100, playAreaHeight-height/100-height/10, width/8, height/10);
+
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, width/90));
-        g.drawString("Turn: 1", width/19, height/19);
-        g.drawString("Action Prompt Test", width/60, playAreaHeight-height/40-(height/10)/2);
+
+        drawCenteredString(g, turn, turnAlign, defFont);
+        drawCenteredString(g, action, actionPromptAlign, defFont);
 
         drawScoring(g, width, height, div);
 
         //Draw the Player 2 and Player 3 buttons
         g.fillRoundRect(width/2 + width/6, height/100, width/8, height/14, 10, 10);
         g.fillRoundRect(width/2 + width/6, height/100 + height/14 + height/100, width/8, height/14, 10, 10);
+
+        Rectangle p2Align = new Rectangle(width/2 + width/6, height/100, width/8, height/14);
+        Rectangle p3Align = new Rectangle(width/2 + width/6, height/100 + height/14 + height/100, width/8, height/14);
+
         g.setColor(beigeColor);
         g.fillRect(width-width/div, 0, width/div, height);
         //Draw a large rectangle covering the bottom of the screen
@@ -70,8 +89,9 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         g.setColor(Color.BLACK);
         int text = width/2 + width/6 + width/23;
 
-        g.drawString("Player 2", text, height/19); // Change text to change with turn
-        g.drawString("Player 3", text, height/19 + height/14 + height/100);
+        drawCenteredString(g, "Player 2", p2Align, defFont);
+        drawCenteredString(g, "Player 3", p3Align, defFont);
+
 
         int debugRectWidth = width/8;
         int debugRectHeight = height/14;
@@ -188,12 +208,31 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
 
         g.setColor(darkBeigeColor);
 
+        /*
         g.drawPolygon(rightMove);
         g.drawPolygon(leftMove);
         g.drawPolygon(upMove);
         g.drawPolygon(downMove);
+        */
 
         IntStream.range(0, 4).forEach(i -> drawArrows(width, height, div, i, g));
+
+        /**
+         * Following Polygon is for debugging - clicking it ends the game automatically
+         */
+
+        g.setColor(Color.red);
+        int debugRectWidth5 = 100;
+        int debugRectHeight5 = 100;
+        int debugXPos5 = 800;
+        int debugYPos5 = 200;
+
+        int[] xPoints8 = {debugXPos5, debugXPos5, debugXPos5+debugRectWidth5, debugXPos5+debugRectWidth5};
+        int[] yPoints8 = {debugYPos5+debugRectHeight5, debugYPos5, debugYPos5, debugYPos5+debugRectHeight5};
+
+        endGame = new Polygon(xPoints8, yPoints8, 4);
+
+        g.drawPolygon(endGame);
 
 
         ///// Move Tiles polygons end
@@ -301,6 +340,18 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
         g.drawString(String.valueOf(numTokens), width/div - 230, height - height/div + height/div/2 + 5);
     }
 
+    public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
+        // Get the FontMetrics
+        FontMetrics metrics = g.getFontMetrics(font);
+        // Determine the X coordinate for the text
+        int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+        // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
+        int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
+        // Set the font
+        g.setFont(font);
+        // Draw the String
+        g.drawString(text, x, y);
+    }
 
 
 
@@ -322,6 +373,8 @@ public class MainBoardPanel extends JPanel implements MouseListener   {
             viewVis = true;
         } else if (viewPage.contains(x,y) && viewVis) {
             viewVis = false;
+        } else if (endGame.contains(x,y)) {
+            setVisible(false);
         } else {
             if (upMove.contains(x, y)) {
                 offsety = offsety+10;
