@@ -285,7 +285,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         Polygon hexagon = new Polygon();
         for (int i = 0; i < 6; i++) {
             hexagon.addPoint((int) (xCenter + 59 * Math.cos(i * 2 * Math.PI / 6)),
-                    (int) (yCenter + 58 * Math.sin(i * 2 * Math.PI / 6)));
+                    (int) (yCenter + 59 * Math.sin(i * 2 * Math.PI / 6)));
         }
         return hexagon;
     }
