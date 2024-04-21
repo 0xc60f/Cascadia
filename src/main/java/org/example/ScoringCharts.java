@@ -313,10 +313,10 @@ public class ScoringCharts {
             int p3Score = 0;
             int p4Score = 0;
 
-            p1Score += p1.getwildlifeTokenScore();
-            p2Score += p2.getwildlifeTokenScore();
-            p3Score += p3.getwildlifeTokenScore();
-            p4Score += p4.getwildlifeTokenScore();
+            p1Score += p1.getWildlifeTokenScore();
+            p2Score += p2.getWildlifeTokenScore();
+            p3Score += p3.getWildlifeTokenScore();
+            p4Score += p4.getWildlifeTokenScore();
 
 
             return 0;

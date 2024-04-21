@@ -20,7 +20,7 @@ public class Player implements Comparable<Player>{
         pNum = p;
         numBiomes = new HashMap<String, Integer>();
         numNatureTokens = 0; // Initialize to zero, assuming start of game, nature tokens need to be added.
-        natureTokenUsed = false ;
+        natureTokenUsed = (Boolean) false;
         playerTiles = new HashMap<>();
         for(int i = 0; i < 3; i++){
             playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken());
@@ -42,7 +42,7 @@ public class Player implements Comparable<Player>{
         return;
     }
     public boolean natureTokenUsed(){
-        natureTokenUsed = !natureTokenUsed;
+        natureTokenUsed = (Boolean) !natureTokenUsed;
         return natureTokenUsed;
     }
     public int numNatureTokens() {
@@ -73,43 +73,85 @@ public class Player implements Comparable<Player>{
 
         int t = this.getBiomeScore();
         int o = otherPlayer.getBiomeScore();
-        //int p = player2.getBiomeScore();
+        int p = player2.getBiomeScore();
 
-        int addpt =0;
-        int result = Integer.compare(0,1);//p.calcNumBiomes(), otherPlayer.calcNumBiomes(), player.calcNumBiome()); check through each biome
+        int addpt = 0;
 
-        if (result == 0) {
+        if (p == o && o == t) {
+            // All players have the same biome score, each gets 1 point
+            addpt = 1;
+            t += addpt;
+            o += addpt;
+            p += addpt;
+        } else if (t > o && o > p) { // Player 1 has the highest biome score
+            addpt = 3;
+            t += addpt;
+            addpt = 1;
+            o += addpt;
+        } else if (o > t && t > p) { // Other player has the highest biome score
+            addpt = 3;
+            o += addpt;
+            addpt = 1;
+            t += addpt;
+        } else if (p > t && t > o) { // Player 2 has the highest biome score
+            addpt = 3;
+            p += addpt;
+            addpt = 1;
+            t += addpt;
+            // No points for otherPlayer (o)
+        } else if (t == o && t > p) { // Player 1 and otherPlayer tie for highest biome score
             addpt = 2;
             t += addpt;
             o += addpt;
-        }else if(result > 0){ //check which one will get 3 points
-            addpt = 3;
+            // No points for player2 (p)
+        } else if (t == p && t > o) { // Player 1 and player2 tie for highest biome score
+            addpt = 2;
             t += addpt;
-            addpt = 1;
+            p += addpt;
+            // No points for otherPlayer (o)
+        } else if (o == p && o > t) { // Other player and player2 tie for highest biome score
+            addpt = 2;
             o += addpt;
-        }else if(result < 0){
-            addpt = 3;
-            o += addpt;
-            addpt = 1;
-            t += addpt;
+            p += addpt;
+            // No points for player 1 (t)
         }
-
         total+= t;
 
         return total;
     }
 
-   public int getBiomeScore() {
+    /*public int getBiomeScore() {
         int BS =0;
         return BS;
+    }*/
+    // Method to calculate the biome score using the stored ScoringCharts instance
+    public int getBiomeScore() {
+        int biomeScore = 0;
+
+
+        return biomeScore;
     }
-    public int getwildlifeTokenScore() {
-        //calculateBearTokenScoring(p) + calculateFoxTokenScoring(p) + calculateHawkTokenScoring(p);
-        int WLTS = 0;
-        return WLTS;
+    public int getWildlifeTokenScore() {
+        ScoringCharts scoringCharts = new ScoringCharts();
+
+        int wildlifeTokenScore = 0;
+
+        // Calculate scores for each wildlife token type
+        scoringCharts.calculateBearTokenScoring(pNum);
+        scoringCharts.calculateFoxTokenScoring(this);
+        scoringCharts.calculateHawkTokenScoring(this);
+        scoringCharts.calculateSalmonTokenScoring(this);
+
+        // Retrieve scores from ScoringCharts and sum them up
+        for (Integer score : scoringCharts.scoringVals) {
+            wildlifeTokenScore += score;
+        }
+
+        return wildlifeTokenScore;
     }
+
    public int totalScore(Player p){
-        total += numNatureTokens;
+        total += numNatureTokens + p.getWildlifeTokenScore();
         return total;
     }
 /*
