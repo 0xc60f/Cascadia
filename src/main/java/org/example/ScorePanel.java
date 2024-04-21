@@ -5,19 +5,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Objects;
-public class WinnerPanel extends JPanel implements MouseListener  {
+
+public class ScorePanel extends JPanel implements MouseListener  {
 
 
     private Polygon viewWinner;
     private BufferedImage backgroundImage;
     private boolean isVisible = true;
     private String winnerText = "Player X Wins!";
-    public WinnerPanel() {
+    public ScorePanel() {
         addMouseListener(this);
     }
 

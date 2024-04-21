@@ -21,11 +21,13 @@ public class CascadiaPanel extends JPanel implements MouseListener {
     private final StartPanel Menu;
     private final MainBoardPanel MainBoard;
     private final WinnerPanel WinnerScreen;
+    private final ScorePanel ScoreScreen;
     public CascadiaPanel() {
         addMouseListener(this);
         Menu = new StartPanel();
         MainBoard = new MainBoardPanel();
         WinnerScreen = new WinnerPanel();
+        ScoreScreen = new ScorePanel();
     }
 
     public void paint(Graphics g) {
@@ -50,7 +52,10 @@ public class CascadiaPanel extends JPanel implements MouseListener {
             MainBoard.mouseClicked(e);
         } else if (WinnerScreen.getVisible()) {
             WinnerScreen.mouseClicked(e);
+        } else if (ScoreScreen.getVisible()){
+            ScoreScreen.mouseClicked(e);
         }
+
         repaint();
     }
 
