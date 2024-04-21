@@ -127,7 +127,6 @@ public class Player implements Comparable<Player>{
     // Method to calculate the biome score using the stored ScoringCharts instance
     public int getBiomeScore() {
         int biomeScore = 0;
-
         return biomeScore;
     }
     public int getWildlifeTokenScore() {
