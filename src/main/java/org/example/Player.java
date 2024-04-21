@@ -128,7 +128,6 @@ public class Player implements Comparable<Player>{
     public int getBiomeScore() {
         int biomeScore = 0;
 
-
         return biomeScore;
     }
     public int getWildlifeTokenScore() {
