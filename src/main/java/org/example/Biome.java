@@ -6,5 +6,5 @@ package org.example;
  @author Archi
  */
 public enum Biome {
-        LAKE, MOUNTAIN, DESERT, SWAMP, FOREST
+    LAKE, MOUNTAIN, DESERT, SWAMP, FOREST
 }

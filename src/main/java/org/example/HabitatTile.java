@@ -37,7 +37,7 @@ public class HabitatTile {
         this.y = y;
     }
 
-    public HabitatTile(String h1, String h2, int animal1, int animal2, int animal3){
+    public HabitatTile(String h1, String h2, int animal1, int animal2, int animal3) {
         switch (h1) {
             case "d" -> habitat1 = Biome.DESERT;
             case "l" -> habitat1 = Biome.LAKE;
@@ -53,21 +53,21 @@ public class HabitatTile {
             case "m" -> habitat2 = Biome.MOUNTAIN;
         }
 
-        switch(animal1){
+        switch (animal1) {
             case 1 -> possibleAnimals.add(WildlifeToken.ELK);
             case 2 -> possibleAnimals.add(WildlifeToken.HAWK);
             case 3 -> possibleAnimals.add(WildlifeToken.BEAR);
             case 4 -> possibleAnimals.add(WildlifeToken.SALMON);
             case 5 -> possibleAnimals.add(WildlifeToken.FOX);
         }
-        switch(animal2){
+        switch (animal2) {
             case 1 -> possibleAnimals.add(WildlifeToken.ELK);
             case 2 -> possibleAnimals.add(WildlifeToken.HAWK);
             case 3 -> possibleAnimals.add(WildlifeToken.BEAR);
             case 4 -> possibleAnimals.add(WildlifeToken.SALMON);
             case 5 -> possibleAnimals.add(WildlifeToken.FOX);
         }
-        switch(animal3){
+        switch (animal3) {
             case 1 -> possibleAnimals.add(WildlifeToken.ELK);
             case 2 -> possibleAnimals.add(WildlifeToken.HAWK);
             case 3 -> possibleAnimals.add(WildlifeToken.BEAR);
@@ -79,22 +79,24 @@ public class HabitatTile {
     //Instantiates the HabitatTile as the Node class of the Cascadia Graph
     // BufferedReader
 
-    public void setWildlifeToken(WildlifeToken w){
+    public void setWildlifeToken(WildlifeToken w) {
         this.w = w;
     }
+
     //Connects a HabitatTile to another
-    public void addEdge(HabitatTile h){
+    public void addEdge(HabitatTile h) {
         neighbors.add(h);
     }
 
-    public ArrayList<HabitatTile> getNeighbors(){
+    public ArrayList<HabitatTile> getNeighbors() {
         return neighbors;
     }
-    public boolean canPlace(WildlifeToken w){
+
+    public boolean canPlace(WildlifeToken w) {
         return possibleAnimals.contains(w);
     }
 
-    public WildlifeToken getWildlifeToken(){
+    public WildlifeToken getWildlifeToken() {
         return w;
     }
 

@@ -10,13 +10,15 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Objects;
-public class WinnerPanel extends JPanel implements MouseListener  {
+
+public class WinnerPanel extends JPanel implements MouseListener {
 
 
     private Polygon viewWinner;
     private BufferedImage backgroundImage;
     private boolean isVisible = true;
     private String winnerText = "Player X Wins!";
+
     public WinnerPanel() {
         addMouseListener(this);
     }
@@ -29,18 +31,18 @@ public class WinnerPanel extends JPanel implements MouseListener  {
             throw new RuntimeException(e);
         }
 
-        Font defFont = new Font("Arial", Font.BOLD, width/90);
+        Font defFont = new Font("Arial", Font.BOLD, width / 90);
 
         g.drawImage(backgroundImage, 0, 0, null);
         g.setFont(defFont);
-        int debugRectWidth = width/4;
-        int debugRectHeight = height/7;
-        int debugXPos = width/2 - debugRectWidth/2;
-        int debugYPos = height - (debugRectHeight/2) * 5;
+        int debugRectWidth = width / 4;
+        int debugRectHeight = height / 7;
+        int debugXPos = width / 2 - debugRectWidth / 2;
+        int debugYPos = height - (debugRectHeight / 2) * 5;
         Color beigeColor = new Color(255, 221, 122);
 
-        int[] xPoints = {debugXPos, debugXPos, debugXPos+debugRectWidth, debugXPos+debugRectWidth};
-        int[] yPoints = {debugYPos+debugRectHeight, debugYPos, debugYPos, debugYPos+debugRectHeight};
+        int[] xPoints = {debugXPos, debugXPos, debugXPos + debugRectWidth, debugXPos + debugRectWidth};
+        int[] yPoints = {debugYPos + debugRectHeight, debugYPos, debugYPos, debugYPos + debugRectHeight};
 
         viewWinner = new Polygon(xPoints, yPoints, 4);
         g.setColor(Color.black);
@@ -48,15 +50,15 @@ public class WinnerPanel extends JPanel implements MouseListener  {
         g.setColor(beigeColor);
         g.fillRoundRect(debugXPos, debugYPos, debugRectWidth, debugRectHeight, 30, 30);
 
-        int widthmult  = 2;
+        int widthmult = 2;
         int heightmult = 2;
 
-        g.fillRoundRect(debugXPos - (debugRectWidth * widthmult)/(2*widthmult), debugYPos - debugRectHeight * heightmult - height/8, debugRectWidth * widthmult, debugRectHeight * heightmult, 30, 30);
+        g.fillRoundRect(debugXPos - (debugRectWidth * widthmult) / (2 * widthmult), debugYPos - debugRectHeight * heightmult - height / 8, debugRectWidth * widthmult, debugRectHeight * heightmult, 30, 30);
 
-        int textx = debugXPos - (debugRectWidth * widthmult)/(2*widthmult);
-        int texty = debugYPos - debugRectHeight * heightmult - height/8;
+        int textx = debugXPos - (debugRectWidth * widthmult) / (2 * widthmult);
+        int texty = debugYPos - debugRectHeight * heightmult - height / 8;
 
-        Rectangle textAlign = new Rectangle(debugXPos - (debugRectWidth * widthmult)/(2*widthmult), debugYPos - debugRectHeight * heightmult - height/8, debugRectWidth * widthmult, debugRectHeight * heightmult);
+        Rectangle textAlign = new Rectangle(debugXPos - (debugRectWidth * widthmult) / (2 * widthmult), debugYPos - debugRectHeight * heightmult - height / 8, debugRectWidth * widthmult, debugRectHeight * heightmult);
 
         g.setColor(Color.black);
 
@@ -83,13 +85,14 @@ public class WinnerPanel extends JPanel implements MouseListener  {
     }
 
 
-    public void setWinnerText( String wt) {
+    public void setWinnerText(String wt) {
         winnerText = wt;
     }
 
     public void setVisible(boolean val) {
         isVisible = val;
     }
+
     public boolean getVisible() {
         return isVisible;
     }

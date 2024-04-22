@@ -9,10 +9,12 @@ public abstract class Graph {
     private LinkedList<HabitatTile> hTiles;
     private LinkedList<Edge> edges;
     private ArrayList<HabitatTile> searchNeighbourTilesForWildlife, neighbourTiles, forwardsAndBackwardsSalmonRun, salmonTokensInRun;
+
     public Graph() {
         hTiles = new LinkedList<>();
         edges = new LinkedList<>();
     }
+
     public static List<HabitatTile> getNeighbors(HabitatTile tile) {
         return tile.getNeighbors();
     }

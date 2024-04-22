@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.*;
 
-public class Player implements Comparable<Player>{
+public class Player implements Comparable<Player> {
     private int pNum;
     private ArrayList<HabitatTile> initialThree;
     private int numNatureTokens;
@@ -15,39 +15,43 @@ public class Player implements Comparable<Player>{
     private ArrayList<Integer> playerHabitatScores;
 
 
-
-    public Player(int p){
+    public Player(int p) {
         pNum = p;
         numBiomes = new HashMap<String, Integer>();
         numNatureTokens = 0; // Initialize to zero, assuming start of game, nature tokens need to be added.
         natureTokenUsed = (Boolean) false;
         playerTiles = new HashMap<>();
-        for(int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken());
         }
         totalScore = 0;
     }
 
-    public HashMap<HabitatTile, WildlifeToken> getPlayerTiles(){
+    public HashMap<HabitatTile, WildlifeToken> getPlayerTiles() {
         return playerTiles;
     }
-    //finish later
-    public void calcNumBiomes(){ return;}
 
-    public HashMap<String, Integer> getNumBiomes(){
+    //finish later
+    public void calcNumBiomes() {
+        return;
+    }
+
+    public HashMap<String, Integer> getNumBiomes() {
         return numBiomes;
     }
 
-    public void addTile(HabitatTile h){
+    public void addTile(HabitatTile h) {
         return;
     }
-    public boolean natureTokenUsed(){
+
+    public boolean natureTokenUsed() {
         natureTokenUsed = (Boolean) !natureTokenUsed;
         return natureTokenUsed;
     }
+
     public int numNatureTokens() {
         //if statement when a wildlife token is placed on a key stone (numNatureTokens ++;)
-        if(natureTokenUsed()){
+        if (natureTokenUsed()) {
             numNatureTokens--;
         }
         return numNatureTokens;
@@ -115,7 +119,7 @@ public class Player implements Comparable<Player>{
             p += addpt;
             // No points for player 1 (t)
         }
-        total+= t;
+        total += t;
 
         return total;
     }
@@ -129,6 +133,7 @@ public class Player implements Comparable<Player>{
         int biomeScore = 0;
         return biomeScore;
     }
+
     public int getWildlifeTokenScore() {
         ScoringCharts scoringCharts = new ScoringCharts();
 
@@ -148,7 +153,7 @@ public class Player implements Comparable<Player>{
         return wildlifeTokenScore;
     }
 
-   public int totalScore(Player p){
+    public int totalScore(Player p) {
         total += numNatureTokens + p.getWildlifeTokenScore();
         return total;
     }

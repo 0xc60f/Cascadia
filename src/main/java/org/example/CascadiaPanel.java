@@ -21,6 +21,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
     private final StartPanel Menu;
     private final MainBoardPanel MainBoard;
     private final WinnerPanel WinnerScreen;
+
     public CascadiaPanel() {
         addMouseListener(this);
         Menu = new StartPanel();
@@ -103,7 +104,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * The x and y coordinates should be used as the top-left corner of the image, where java draws images.
      * The x coordinate is the key, and the y coordinate is the value.
      */
-    public static Point getCoordsAdjacentHexagon(Polygon baseHexagon, int edge, BufferedImage newImage){
+    public static Point getCoordsAdjacentHexagon(Polygon baseHexagon, int edge, BufferedImage newImage) {
         int boundingBoxWidth = newImage.getWidth();
         int boundingBoxHeight = newImage.getHeight();
         int radius = boundingBoxHeight / 2;
@@ -126,7 +127,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
             }
             case 3 -> yCoord += height + 8; // Adjusted for better alignment
             case 4 -> {
-                xCoord -= horizontalDistance -1; // Adjusted for better alignment
+                xCoord -= horizontalDistance - 1; // Adjusted for better alignment
                 yCoord += (height / 2) + 2;
             }
             case 5 -> {
@@ -137,7 +138,6 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         }
         return new Point(xCoord - boundingBoxWidth / 2, yCoord - height / 2);
     }
-
 
 
     /**
@@ -155,10 +155,6 @@ public class CascadiaPanel extends JPanel implements MouseListener {
     }
 
 
-
-
-
-
     /**
      * Calls the appropriate drawTiles method based on the size of the list of buffered images.
      * @param bufferedList An array of <code>BufferedImage</code> objects that will be drawn on top of each other. The size of the array determines which drawTiles method is called.
@@ -170,7 +166,8 @@ public class CascadiaPanel extends JPanel implements MouseListener {
             case 2 -> drawTiles(bufferedList[0], bufferedList[1]);
             case 3 -> drawTiles(bufferedList[0], bufferedList[1], bufferedList[2]);
             case 4 -> drawTiles(bufferedList[0], bufferedList[1], bufferedList[2], bufferedList[3]);
-            default -> throw new IllegalStateException("Unexpected value: " + bufferedList.length + " tiles\n Must be 2, 3, or 4 tiles");
+            default ->
+                    throw new IllegalStateException("Unexpected value: " + bufferedList.length + " tiles\n Must be 2, 3, or 4 tiles");
         };
     }
 

@@ -1,12 +1,15 @@
 package org.example;
+
 import java.util.*;
 import java.util.stream.*;
 
 public class ScoringCharts {
     private int totalScore;
-    public int calcWildlifeScore(Player p){
+
+    public int calcWildlifeScore(Player p) {
         return 0;
     }
+
     public int calcTotalScore(Player p) {
         //return totalScore;
         return 0;
@@ -43,6 +46,7 @@ public class ScoringCharts {
         hawkscoringVals = new ArrayList<Integer>();
         salmonscoringVals = new ArrayList<Integer>();
     }
+
     public void BearScoring() {
         bearScoringValues = new HashMap<>();
         bearScoringValues.put(1, 4);
@@ -71,7 +75,7 @@ public class ScoringCharts {
                 List<HabitatTile> neighboringTiles = Graph.getNeighbors(tokenID);
 
                 for (HabitatTile neighborTile : neighboringTiles) {
-                    if(neighborTile != null) {
+                    if (neighborTile != null) {
                         if (allPlacedTokens.containsKey(neighborTile.getWildlifeToken())) {
                             // The neighboring tile exists and has a placed token on it
                             // Continue with the specified scoring process for this wildlife'
@@ -113,6 +117,7 @@ public class ScoringCharts {
             //gotta make the token scoring method that will hold all scoring values
         }
     }
+
     public void CalculateFoxScoring() {
         foxScoringValues = new HashMap<>();
         foxScoringValues.put(1, 1);
@@ -156,179 +161,176 @@ public class ScoringCharts {
         }
     }
 
-        private Map<Integer, Integer> hawkScoringValues;
+    private Map<Integer, Integer> hawkScoringValues;
 
-        public void HawkScoring() {
-            hawkScoringValues = new HashMap<>();
-            hawkScoringValues.put(0, 0);
-            hawkScoringValues.put(1, 2);
-            hawkScoringValues.put(2, 5);
-            hawkScoringValues.put(3, 8);
-            hawkScoringValues.put(4, 11);
-            hawkScoringValues.put(5, 14);
-            hawkScoringValues.put(6, 18);
-            hawkScoringValues.put(7, 22);
-            hawkScoringValues.put(8, 26);
-        }
+    public void HawkScoring() {
+        hawkScoringValues = new HashMap<>();
+        hawkScoringValues.put(0, 0);
+        hawkScoringValues.put(1, 2);
+        hawkScoringValues.put(2, 5);
+        hawkScoringValues.put(3, 8);
+        hawkScoringValues.put(4, 11);
+        hawkScoringValues.put(5, 14);
+        hawkScoringValues.put(6, 18);
+        hawkScoringValues.put(7, 22);
+        hawkScoringValues.put(8, 26);
+    }
 
-        public void calculateHawkTokenScoring(Player p) {
-            allPlacedTokens = p.getPlayerTiles();
-            ArrayList<HabitatTile> tokenIDs = new ArrayList<>(allPlacedTokens.keySet());
+    public void calculateHawkTokenScoring(Player p) {
+        allPlacedTokens = p.getPlayerTiles();
+        ArrayList<HabitatTile> tokenIDs = new ArrayList<>(allPlacedTokens.keySet());
 
-            int numIsolatedHawks = 0;
+        int numIsolatedHawks = 0;
 
-            for (HabitatTile tokenID : tokenIDs) {
-                WildlifeToken token = allPlacedTokens.get(tokenID);
-                if (token == WildlifeToken.HAWK) {
+        for (HabitatTile tokenID : tokenIDs) {
+            WildlifeToken token = allPlacedTokens.get(tokenID);
+            if (token == WildlifeToken.HAWK) {
 
-                    List<HabitatTile> neighbourTiles = Graph.getNeighbors(tokenID);
+                List<HabitatTile> neighbourTiles = Graph.getNeighbors(tokenID);
 
-                    boolean neighbouringHawks = false;
+                boolean neighbouringHawks = false;
 
-                    for (HabitatTile neighbourTile : neighbourTiles) {
-                        WildlifeToken neighbourToken = allPlacedTokens.get(neighbourTile);
-                        if (neighbourToken != null && neighbourToken == WildlifeToken.HAWK) {
-                            neighbouringHawks = true;
-                        }
-                    }
-                    if (!neighbouringHawks) {
-                        numIsolatedHawks++;
+                for (HabitatTile neighbourTile : neighbourTiles) {
+                    WildlifeToken neighbourToken = allPlacedTokens.get(neighbourTile);
+                    if (neighbourToken != null && neighbourToken == WildlifeToken.HAWK) {
+                        neighbouringHawks = true;
                     }
                 }
-            }
-
-            if (numIsolatedHawks > 8) {
-                numIsolatedHawks = 8;
-            }
-
-            scoringVals.add(hawkScoringValues.get(numIsolatedHawks));
-            hawkscoringVals.add(hawkScoringValues.get(numIsolatedHawks));
-            //token scoring method needs to be created
-        }
-
-        private Map<Integer, Integer> salmonScoringValues;
-
-        public void SalmonScoring() {
-            salmonScoringValues = new HashMap<>();
-            salmonScoringValues.put(1, 2);
-            salmonScoringValues.put(2, 4);
-            salmonScoringValues.put(3, 7);
-            salmonScoringValues.put(4, 11);
-            salmonScoringValues.put(5, 15);
-            salmonScoringValues.put(6, 20);
-            salmonScoringValues.put(7, 26);
-        }
-
-        public void calculateSalmonTokenScoring(Player p) {
-            allPlacedTokens = p.getPlayerTiles();
-            HashSet<HabitatTile> possibleSalmons = (HashSet<HabitatTile>) allPlacedTokens.keySet();
-
-            ArrayList<HabitatTile> allSalmonTiles = new ArrayList<>();
-
-            for (HabitatTile hToken : possibleSalmons) {
-                WildlifeToken token = allPlacedTokens.get(hToken);
-                if (token == WildlifeToken.SALMON) {
-                    allSalmonTiles.add(hToken);
+                if (!neighbouringHawks) {
+                    numIsolatedHawks++;
                 }
             }
+        }
 
-            List<HabitatTile> validSalmonTiles = new ArrayList<>();
+        if (numIsolatedHawks > 8) {
+            numIsolatedHawks = 8;
+        }
 
-            for (HabitatTile salmonTile : allSalmonTiles) {
-                ArrayList<HabitatTile> neighbouringSalmon = Graph.searchNeighbourTilesForWildlife(allPlacedTokens, salmonTile, WildlifeToken.SALMON);
-                if (neighbouringSalmon.size() <= 2) {
-                    validSalmonTiles.add(salmonTile);
-                }
+        scoringVals.add(hawkScoringValues.get(numIsolatedHawks));
+        hawkscoringVals.add(hawkScoringValues.get(numIsolatedHawks));
+        //token scoring method needs to be created
+    }
+
+    private Map<Integer, Integer> salmonScoringValues;
+
+    public void SalmonScoring() {
+        salmonScoringValues = new HashMap<>();
+        salmonScoringValues.put(1, 2);
+        salmonScoringValues.put(2, 4);
+        salmonScoringValues.put(3, 7);
+        salmonScoringValues.put(4, 11);
+        salmonScoringValues.put(5, 15);
+        salmonScoringValues.put(6, 20);
+        salmonScoringValues.put(7, 26);
+    }
+
+    public void calculateSalmonTokenScoring(Player p) {
+        allPlacedTokens = p.getPlayerTiles();
+        HashSet<HabitatTile> possibleSalmons = (HashSet<HabitatTile>) allPlacedTokens.keySet();
+
+        ArrayList<HabitatTile> allSalmonTiles = new ArrayList<>();
+
+        for (HabitatTile hToken : possibleSalmons) {
+            WildlifeToken token = allPlacedTokens.get(hToken);
+            if (token == WildlifeToken.SALMON) {
+                allSalmonTiles.add(hToken);
             }
+        }
 
-            List<List<HabitatTile>> confirmedSalmonRuns = new ArrayList<>();
-            List<HabitatTile> usedSalmonTokenIDs = new ArrayList<>();
-            for (HabitatTile validSalmonTile : validSalmonTiles) {
+        List<HabitatTile> validSalmonTiles = new ArrayList<>();
 
-                ArrayList<HabitatTile> potentialSalmonTokenIDs = new ArrayList<>();
+        for (HabitatTile salmonTile : allSalmonTiles) {
+            ArrayList<HabitatTile> neighbouringSalmon = Graph.searchNeighbourTilesForWildlife(allPlacedTokens, salmonTile, WildlifeToken.SALMON);
+            if (neighbouringSalmon.size() <= 2) {
+                validSalmonTiles.add(salmonTile);
+            }
+        }
 
-                if (!usedSalmonTokenIDs.contains(validSalmonTile)) {
+        List<List<HabitatTile>> confirmedSalmonRuns = new ArrayList<>();
+        List<HabitatTile> usedSalmonTokenIDs = new ArrayList<>();
+        for (HabitatTile validSalmonTile : validSalmonTiles) {
 
-                    List<HabitatTile> potentialNeighbourSalmon = Graph.searchNeighbourTilesForWildlife(allPlacedTokens, validSalmonTile, WildlifeToken.SALMON);
-                    List<HabitatTile> confirmedNeighbourSalmon = new ArrayList<>();
+            ArrayList<HabitatTile> potentialSalmonTokenIDs = new ArrayList<>();
 
-                    for (HabitatTile potentialSalmon : potentialNeighbourSalmon) {
-                        if (!usedSalmonTokenIDs.contains(potentialSalmon)) {
-                            confirmedNeighbourSalmon.add(potentialSalmon);
-                            usedSalmonTokenIDs.add(potentialSalmon);
-                        }
+            if (!usedSalmonTokenIDs.contains(validSalmonTile)) {
+
+                List<HabitatTile> potentialNeighbourSalmon = Graph.searchNeighbourTilesForWildlife(allPlacedTokens, validSalmonTile, WildlifeToken.SALMON);
+                List<HabitatTile> confirmedNeighbourSalmon = new ArrayList<>();
+
+                for (HabitatTile potentialSalmon : potentialNeighbourSalmon) {
+                    if (!usedSalmonTokenIDs.contains(potentialSalmon)) {
+                        confirmedNeighbourSalmon.add(potentialSalmon);
+                        usedSalmonTokenIDs.add(potentialSalmon);
                     }
+                }
 
-                    if (confirmedNeighbourSalmon.size() == 2) {
-                        List<HabitatTile> tilesToCheck = new ArrayList<HabitatTile>();
-                        tilesToCheck.add(validSalmonTile);
-                        tilesToCheck.addAll(confirmedNeighbourSalmon);
+                if (confirmedNeighbourSalmon.size() == 2) {
+                    List<HabitatTile> tilesToCheck = new ArrayList<HabitatTile>();
+                    tilesToCheck.add(validSalmonTile);
+                    tilesToCheck.addAll(confirmedNeighbourSalmon);
 
-                        ArrayList<HabitatTile> firstNeighbourTiles = Graph.neighbourTiles(allPlacedTokens, confirmedNeighbourSalmon.get(0));
-                        ArrayList<HabitatTile> secondNeighbourTiles = Graph.neighbourTiles(allPlacedTokens, confirmedNeighbourSalmon.get(1));
+                    ArrayList<HabitatTile> firstNeighbourTiles = Graph.neighbourTiles(allPlacedTokens, confirmedNeighbourSalmon.get(0));
+                    ArrayList<HabitatTile> secondNeighbourTiles = Graph.neighbourTiles(allPlacedTokens, confirmedNeighbourSalmon.get(1));
 
-                        if (!firstNeighbourTiles.contains(confirmedNeighbourSalmon.get(1)) && !secondNeighbourTiles.contains(confirmedNeighbourSalmon.get(0))) {
-                            ArrayList<HabitatTile> forwardsAndBackwardsSalmonRunIDs = Graph.forwardsAndBackwardsSalmonRun(allPlacedTokens, validSalmonTile, confirmedNeighbourSalmon);
-                            potentialSalmonTokenIDs.addAll(forwardsAndBackwardsSalmonRunIDs);
-                        } else {
-                            potentialSalmonTokenIDs.addAll(tilesToCheck);
-                            usedSalmonTokenIDs.addAll(tilesToCheck);
-                        }
-                    } else if (confirmedNeighbourSalmon.size() < 2) {
-                        potentialSalmonTokenIDs.add(validSalmonTile);
-                        ArrayList<HabitatTile> salmonRunIDs = Graph.salmonTokensInRun(allPlacedTokens, validSalmonTile, WildlifeToken.SALMON);
-                        potentialSalmonTokenIDs.addAll(salmonRunIDs);
+                    if (!firstNeighbourTiles.contains(confirmedNeighbourSalmon.get(1)) && !secondNeighbourTiles.contains(confirmedNeighbourSalmon.get(0))) {
+                        ArrayList<HabitatTile> forwardsAndBackwardsSalmonRunIDs = Graph.forwardsAndBackwardsSalmonRun(allPlacedTokens, validSalmonTile, confirmedNeighbourSalmon);
+                        potentialSalmonTokenIDs.addAll(forwardsAndBackwardsSalmonRunIDs);
+                    } else {
+                        potentialSalmonTokenIDs.addAll(tilesToCheck);
+                        usedSalmonTokenIDs.addAll(tilesToCheck);
                     }
-                    confirmedSalmonRuns.add(potentialSalmonTokenIDs);
+                } else if (confirmedNeighbourSalmon.size() < 2) {
+                    potentialSalmonTokenIDs.add(validSalmonTile);
+                    ArrayList<HabitatTile> salmonRunIDs = Graph.salmonTokensInRun(allPlacedTokens, validSalmonTile, WildlifeToken.SALMON);
+                    potentialSalmonTokenIDs.addAll(salmonRunIDs);
                 }
-            }
-
-            confirmedSalmonRuns.sort((a, b) -> b.size() - a.size());
-
-            for (List<HabitatTile> confirmedSalmonRun : confirmedSalmonRuns) {
-                List<HabitatTile> uniqueSalmonIDs = confirmedSalmonRun.stream().distinct().collect(Collectors.toList());
-                int salmonInRunNum = uniqueSalmonIDs.size();
-                if (salmonInRunNum > 7) {
-                    salmonInRunNum = 7;
-                }
-                scoringVals.add(salmonScoringValues.get(salmonInRunNum));
-                salmonscoringVals.add(salmonScoringValues.get(salmonInRunNum));
-
-                //gotta fix
+                confirmedSalmonRuns.add(potentialSalmonTokenIDs);
             }
         }
 
+        confirmedSalmonRuns.sort((a, b) -> b.size() - a.size());
 
-        public void calculateHabitatScoring(Player p) {
-            for (Biome currentHabitat : habitatMatches.keySet()) {
-                int largestGroupNum = habitatMatches.get(currentHabitat);
-                System.out.println("Habitat " + currentHabitat + " has a largest group size of " + largestGroupNum);
-
+        for (List<HabitatTile> confirmedSalmonRun : confirmedSalmonRuns) {
+            List<HabitatTile> uniqueSalmonIDs = confirmedSalmonRun.stream().distinct().collect(Collectors.toList());
+            int salmonInRunNum = uniqueSalmonIDs.size();
+            if (salmonInRunNum > 7) {
+                salmonInRunNum = 7;
             }
+            scoringVals.add(salmonScoringValues.get(salmonInRunNum));
+            salmonscoringVals.add(salmonScoringValues.get(salmonInRunNum));
+
+            //gotta fix
         }
-
-        public int finalScoring(){
-            int p1Score = 0;
-            int p2Score = 0;
-            int p3Score = 0;
-            int p4Score = 0;
-
-            p1Score += p1.getWildlifeTokenScore();
-            p2Score += p2.getWildlifeTokenScore();
-            p3Score += p3.getWildlifeTokenScore();
-            p4Score += p4.getWildlifeTokenScore();
+    }
 
 
-            return 0;
-        }
-
-
-        public void processAllHabitats(){
+    public void calculateHabitatScoring(Player p) {
+        for (Biome currentHabitat : habitatMatches.keySet()) {
+            int largestGroupNum = habitatMatches.get(currentHabitat);
+            System.out.println("Habitat " + currentHabitat + " has a largest group size of " + largestGroupNum);
 
         }
+    }
+
+    public int finalScoring() {
+        int p1Score = 0;
+        int p2Score = 0;
+        int p3Score = 0;
+        int p4Score = 0;
+
+        p1Score += p1.getWildlifeTokenScore();
+        p2Score += p2.getWildlifeTokenScore();
+        p3Score += p3.getWildlifeTokenScore();
+        p4Score += p4.getWildlifeTokenScore();
 
 
+        return 0;
+    }
 
+
+    public void processAllHabitats() {
+
+    }
 
 
     // Assuming neighbourTileIDs is a method that returns a list of neighbouring tile IDs
@@ -337,7 +339,7 @@ public class ScoringCharts {
         return new ArrayList<>();
     }
 
-    public int getTotalScore(){
+    public int getTotalScore() {
         return totalScore;
     }
     /*function setupFinalScoring() {
