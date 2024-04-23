@@ -75,5 +75,40 @@ public abstract class Graph {
         return new ArrayList<>();
     }
 
+    public static int getLargestConnectedComponentSize(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile startTile, Biome targetBiome) {
+        int size = 0;
+        Set<HabitatTile> visited = new HashSet<>();
+
+        Deque<HabitatTile> stack = new ArrayDeque<>();
+        stack.push(startTile);
+
+        while (!stack.isEmpty()) {
+            HabitatTile currentTile = stack.pop();
+            if (!visited.contains(currentTile)) {
+                visited.add(currentTile);
+                if (allPlacedTokens.get(currentTile).equals(targetBiome)) {
+                    size++;
+                }
+                for (HabitatTile neighbor : Graph.getNeighbors(currentTile)) {
+                    if (allPlacedTokens.containsKey(neighbor)) {
+                        stack.push(neighbor);
+                    }
+                }
+            }
+        }
+        return size;
+    }
+    public static HabitatTile getNeighborWithSideBiome(HabitatTile tile, int side, Biome biome) {
+        for (HabitatTile neighbor : tile.getNeighbors()) {
+            if (neighbor.getBiome(side) == biome) {
+                return neighbor;
+            }
+        }
+        return null;
+    }
+
+    public static int getOppositeSide(int side) {
+        return (side + 3) % 6;
+    }
 
 }
