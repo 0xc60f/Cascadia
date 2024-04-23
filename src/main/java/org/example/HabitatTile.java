@@ -14,8 +14,8 @@ public class HabitatTile {
     private Polygon polygon;
     private int x;
     private int y;
-    private Biome habitat1;
-    private Biome habitat2;
+    public Biome habitat1;
+    public Biome habitat2;
     private TreeMap<Integer, Biome> biomes;
     //Constructor for the Biomes of the HabitatTile
     private ArrayList<HabitatTile> neighbors;
@@ -189,6 +189,14 @@ public class HabitatTile {
 
     public WildlifeToken getWildlifeToken() {
         return w;
+    }
+
+    public Biome getBiome(int side) {
+        return biomes.get(side);
+    }
+
+    public TreeMap<Integer, Biome> getBiomes(){
+        return biomes;
     }
 
     /*function rotateTileClockwiseFunction() {
