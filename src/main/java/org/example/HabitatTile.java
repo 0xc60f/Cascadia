@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class HabitatTile {
     public WildlifeToken w = null;
@@ -38,6 +39,97 @@ public class HabitatTile {
     }
 
     public HabitatTile(String h1, String h2, int animal1, int animal2, int animal3) {
+        possibleAnimals = new ArrayList<>();
+        biomes = new TreeMap<>();
+        edges = new LinkedList<>();
+        neighbors = new ArrayList<>();
+        switch (h1 + h2){
+            case "dd" -> IntStream.range(0, 6).forEach(i -> biomes.put(i, Biome.DESERT));
+            case "dl" -> {
+                biomes.put(0, Biome.DESERT);
+                biomes.put(1, Biome.DESERT);
+                biomes.put(2, Biome.LAKE);
+                biomes.put(3, Biome.LAKE);
+                biomes.put(4, Biome.LAKE);
+                biomes.put(5, Biome.DESERT);
+            }
+            case "ds" -> {
+                biomes.put(0, Biome.DESERT);
+                biomes.put(1, Biome.DESERT);
+                biomes.put(2, Biome.SWAMP);
+                biomes.put(3, Biome.SWAMP);
+                biomes.put(4, Biome.SWAMP);
+                biomes.put(5, Biome.DESERT);
+            }
+            case "fd" -> {
+                biomes.put(0, Biome.FOREST);
+                biomes.put(1, Biome.FOREST);
+                biomes.put(2, Biome.DESERT);
+                biomes.put(3, Biome.DESERT);
+                biomes.put(4, Biome.DESERT);
+                biomes.put(5, Biome.FOREST);
+            }
+            case "ff" -> IntStream.range(0, 6).forEach(i -> biomes.put(i, Biome.FOREST));
+            case "fl" -> {
+                biomes.put(0, Biome.FOREST);
+                biomes.put(1, Biome.FOREST);
+                biomes.put(2, Biome.LAKE);
+                biomes.put(3, Biome.LAKE);
+                biomes.put(4, Biome.LAKE);
+                biomes.put(5, Biome.FOREST);
+            }
+            case "fs" -> {
+                biomes.put(0, Biome.FOREST);
+                biomes.put(1, Biome.FOREST);
+                biomes.put(2, Biome.SWAMP);
+                biomes.put(3, Biome.SWAMP);
+                biomes.put(4, Biome.SWAMP);
+                biomes.put(5, Biome.FOREST);
+            }
+            case "ll" -> IntStream.range(0, 6).forEach(i -> biomes.put(i, Biome.LAKE));
+            case "lm" -> {
+                biomes.put(0, Biome.LAKE);
+                biomes.put(1, Biome.LAKE);
+                biomes.put(2, Biome.MOUNTAIN);
+                biomes.put(3, Biome.MOUNTAIN);
+                biomes.put(4, Biome.MOUNTAIN);
+                biomes.put(5, Biome.LAKE);
+            }
+            case "md" -> {
+                biomes.put(0, Biome.MOUNTAIN);
+                biomes.put(1, Biome.MOUNTAIN);
+                biomes.put(2, Biome.DESERT);
+                biomes.put(3, Biome.DESERT);
+                biomes.put(4, Biome.DESERT);
+                biomes.put(5, Biome.MOUNTAIN);
+            }
+            case "mf" -> {
+                biomes.put(0, Biome.MOUNTAIN);
+                biomes.put(1, Biome.MOUNTAIN);
+                biomes.put(2, Biome.FOREST);
+                biomes.put(3, Biome.FOREST);
+                biomes.put(4, Biome.FOREST);
+                biomes.put(5, Biome.MOUNTAIN);
+            }
+            case "mm" -> IntStream.range(0, 6).forEach(i -> biomes.put(i, Biome.MOUNTAIN));
+            case "ms" -> {
+                biomes.put(0, Biome.MOUNTAIN);
+                biomes.put(1, Biome.MOUNTAIN);
+                biomes.put(2, Biome.SWAMP);
+                biomes.put(3, Biome.SWAMP);
+                biomes.put(4, Biome.SWAMP);
+                biomes.put(5, Biome.MOUNTAIN);
+            }
+            case "sl" -> {
+                biomes.put(0, Biome.SWAMP);
+                biomes.put(1, Biome.SWAMP);
+                biomes.put(2, Biome.LAKE);
+                biomes.put(3, Biome.LAKE);
+                biomes.put(4, Biome.LAKE);
+                biomes.put(5, Biome.SWAMP);
+            }
+            case "ss" -> IntStream.range(0, 6).forEach(i -> biomes.put(i, Biome.SWAMP));
+        }
         switch (h1) {
             case "d" -> habitat1 = Biome.DESERT;
             case "l" -> habitat1 = Biome.LAKE;
@@ -74,7 +166,6 @@ public class HabitatTile {
             case 4 -> possibleAnimals.add(WildlifeToken.SALMON);
             case 5 -> possibleAnimals.add(WildlifeToken.FOX);
         }
-        neighbors = new ArrayList<HabitatTile>();
     }
     //Instantiates the HabitatTile as the Node class of the Cascadia Graph
     // BufferedReader

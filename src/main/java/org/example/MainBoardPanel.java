@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
@@ -22,16 +23,16 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     private BufferedImage arrowRight, arrowLeft;
     private boolean isVisible = true;
     private int offsetx, offsety = 0;
+    private Game game;
     private String turn = "Turn: 1", action = "Action Prompt";
 
     public MainBoardPanel() {
-
+        game = new Game();
         addMouseListener(this);
         importImages();
     }
 
     public void paint(Graphics g, int width, int height) {
-
 
         int div = 5;
 
@@ -232,17 +233,20 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
 
         ///// Move Tiles polygons end
-        IntStream.range(0, 4).forEach(i -> drawAnimalTiles(g, width, height, div, i, bear));
+        ArrayList<WildlifeToken> displayedWildlife = game.getDisplayedWildlife();
+        for (int i = 0; i < 4; i++){
+            switch (displayedWildlife.get(i)){
+                case BEAR -> drawAnimalTiles(g, width, height, div, i, bear);
+                case ELK -> drawAnimalTiles(g, width, height, div, i, elk);
+                case FOX -> drawAnimalTiles(g, width, height, div, i, fox);
+                case HAWK -> drawAnimalTiles(g, width, height, div, i, hawk);
+                case SALMON -> drawAnimalTiles(g, width, height, div, i, salmon);
+            }
+        }
         //clearAnimalTiles(g, width, height, div, 2);
         //clearArrows(g, width, height, div, 3);
 
         IntStream.range(0, 4).forEach(i -> drawTilesDownbar(g, width, height, div, i, testBaseTile));
-        clearTilesDownbar(g, width, height, div, 2);
-        clearNatureTokenCount(g, width, height, div);
-        clearTurnCounter(g, width, height, div);
-        clearActionPrompt(g, width, height, div);
-        clearBoardViewButton(g, width, height, div, 0);
-        clearBoardViewButton(g, width, height, div, 1);
 
 
     }
