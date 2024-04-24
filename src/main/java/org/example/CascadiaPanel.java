@@ -1,11 +1,13 @@
 package org.example;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 
 /**
  * The main panel for the Cascadia game. This manages all the interactions with mouse clicks and interactions with the game. However, it delegates the actual drawing of the game to the other panels.
@@ -21,12 +23,26 @@ public class CascadiaPanel extends JPanel implements MouseListener {
     private final StartPanel Menu;
     private final MainBoardPanel MainBoard;
     private final WinnerPanel WinnerScreen;
+    public BufferedImage hawk, bear, elk, fox, salmon;
 
     public CascadiaPanel() {
         addMouseListener(this);
         Menu = new StartPanel();
         MainBoard = new MainBoardPanel();
         WinnerScreen = new WinnerPanel();
+        try {
+            hawk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/HAWK.png")));
+            bear = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource
+                    ("/Images/WildlifeTokens/BEAR.png")));
+            elk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource
+                    ("/Images/WildlifeTokens/ELK.png")));
+            fox = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource
+                    ("/Images/WildlifeTokens/FOX.png")));
+            salmon = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource
+                    ("/Images/WildlifeTokens/SALMON.png")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void paint(Graphics g) {
@@ -276,14 +292,20 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @return A <code>Polygon</code> that is the result of creating a hexagon with the specified x and y coordinates.
      */
     public static Polygon createHexagon(int x, int y, BufferedImage imageUsed) {
-        //Get the center of the image based on the size of the image and the x and y coords
+        // Calculate the center of the image
         int xCenter = x + imageUsed.getWidth() / 2;
         int yCenter = y + imageUsed.getHeight() / 2;
+
+        // Calculate the radius of the hexagon based on the smaller dimension of the image
+        int radius = Math.min(imageUsed.getWidth(), imageUsed.getHeight()) / 2;
+
+        // Create the hexagon
         Polygon hexagon = new Polygon();
         for (int i = 0; i < 6; i++) {
             hexagon.addPoint((int) (xCenter + 59 * Math.cos(i * 2 * Math.PI / 6)),
                     (int) (yCenter + 59 * Math.sin(i * 2 * Math.PI / 6)));
         }
+
         return hexagon;
     }
 

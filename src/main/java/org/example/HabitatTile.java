@@ -1,7 +1,9 @@
 package org.example;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -43,93 +45,6 @@ public class HabitatTile {
         biomes = new TreeMap<>();
         edges = new LinkedList<>();
         neighbors = new ArrayList<>();
-        switch (h1 + h2){
-            case "dd" -> IntStream.range(0, 6).forEach(i -> biomes.put(i, Biome.DESERT));
-            case "dl" -> {
-                biomes.put(0, Biome.DESERT);
-                biomes.put(1, Biome.DESERT);
-                biomes.put(2, Biome.LAKE);
-                biomes.put(3, Biome.LAKE);
-                biomes.put(4, Biome.LAKE);
-                biomes.put(5, Biome.DESERT);
-            }
-            case "ds" -> {
-                biomes.put(0, Biome.DESERT);
-                biomes.put(1, Biome.DESERT);
-                biomes.put(2, Biome.SWAMP);
-                biomes.put(3, Biome.SWAMP);
-                biomes.put(4, Biome.SWAMP);
-                biomes.put(5, Biome.DESERT);
-            }
-            case "fd" -> {
-                biomes.put(0, Biome.FOREST);
-                biomes.put(1, Biome.FOREST);
-                biomes.put(2, Biome.DESERT);
-                biomes.put(3, Biome.DESERT);
-                biomes.put(4, Biome.DESERT);
-                biomes.put(5, Biome.FOREST);
-            }
-            case "ff" -> IntStream.range(0, 6).forEach(i -> biomes.put(i, Biome.FOREST));
-            case "fl" -> {
-                biomes.put(0, Biome.FOREST);
-                biomes.put(1, Biome.FOREST);
-                biomes.put(2, Biome.LAKE);
-                biomes.put(3, Biome.LAKE);
-                biomes.put(4, Biome.LAKE);
-                biomes.put(5, Biome.FOREST);
-            }
-            case "fs" -> {
-                biomes.put(0, Biome.FOREST);
-                biomes.put(1, Biome.FOREST);
-                biomes.put(2, Biome.SWAMP);
-                biomes.put(3, Biome.SWAMP);
-                biomes.put(4, Biome.SWAMP);
-                biomes.put(5, Biome.FOREST);
-            }
-            case "ll" -> IntStream.range(0, 6).forEach(i -> biomes.put(i, Biome.LAKE));
-            case "lm" -> {
-                biomes.put(0, Biome.LAKE);
-                biomes.put(1, Biome.LAKE);
-                biomes.put(2, Biome.MOUNTAIN);
-                biomes.put(3, Biome.MOUNTAIN);
-                biomes.put(4, Biome.MOUNTAIN);
-                biomes.put(5, Biome.LAKE);
-            }
-            case "md" -> {
-                biomes.put(0, Biome.MOUNTAIN);
-                biomes.put(1, Biome.MOUNTAIN);
-                biomes.put(2, Biome.DESERT);
-                biomes.put(3, Biome.DESERT);
-                biomes.put(4, Biome.DESERT);
-                biomes.put(5, Biome.MOUNTAIN);
-            }
-            case "mf" -> {
-                biomes.put(0, Biome.MOUNTAIN);
-                biomes.put(1, Biome.MOUNTAIN);
-                biomes.put(2, Biome.FOREST);
-                biomes.put(3, Biome.FOREST);
-                biomes.put(4, Biome.FOREST);
-                biomes.put(5, Biome.MOUNTAIN);
-            }
-            case "mm" -> IntStream.range(0, 6).forEach(i -> biomes.put(i, Biome.MOUNTAIN));
-            case "ms" -> {
-                biomes.put(0, Biome.MOUNTAIN);
-                biomes.put(1, Biome.MOUNTAIN);
-                biomes.put(2, Biome.SWAMP);
-                biomes.put(3, Biome.SWAMP);
-                biomes.put(4, Biome.SWAMP);
-                biomes.put(5, Biome.MOUNTAIN);
-            }
-            case "sl" -> {
-                biomes.put(0, Biome.SWAMP);
-                biomes.put(1, Biome.SWAMP);
-                biomes.put(2, Biome.LAKE);
-                biomes.put(3, Biome.LAKE);
-                biomes.put(4, Biome.LAKE);
-                biomes.put(5, Biome.SWAMP);
-            }
-            case "ss" -> IntStream.range(0, 6).forEach(i -> biomes.put(i, Biome.SWAMP));
-        }
         switch (h1) {
             case "d" -> habitat1 = Biome.DESERT;
             case "l" -> habitat1 = Biome.LAKE;
@@ -166,9 +81,125 @@ public class HabitatTile {
             case 4 -> possibleAnimals.add(WildlifeToken.SALMON);
             case 5 -> possibleAnimals.add(WildlifeToken.FOX);
         }
+        try {
+            image = initializeImage();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     //Instantiates the HabitatTile as the Node class of the Cascadia Graph
     // BufferedReader
+
+    /**
+     * Initializes the image of the habitat tile. Uses helper methods in the CascadiaPanel class to draw the image.
+     * @return A {@code BufferedImage} object that represents the image of the habitat tile
+     */
+    private BufferedImage initializeImage() {
+        try {
+            String h1, h2;
+            switch (this.habitat1) {
+                case DESERT -> h1 = "d";
+                case LAKE -> h1 = "l";
+                case SWAMP -> h1 = "s";
+                case FOREST -> h1 = "f";
+                case MOUNTAIN -> h1 = "m";
+                default -> throw new IllegalStateException("Unexpected value: " + this.habitat1);
+            }
+            switch (this.habitat2) {
+                case DESERT -> h2 = "d";
+                case LAKE -> h2 = "l";
+                case SWAMP -> h2 = "s";
+                case FOREST -> h2 = "f";
+                case MOUNTAIN -> h2 = "m";
+                default -> throw new IllegalStateException("Unexpected value: " + this.habitat2);
+            }
+            BufferedImage baseImage = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Images/Tiles/" + h1 + h2 + ".png")));
+            BufferedImage[] animals = new BufferedImage[possibleAnimals.size() + 1];
+            for (int i = 0; i < possibleAnimals.size(); i++) {
+                animals[i + 1] = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Images/WildLifeTokens/" + possibleAnimals.get(i) + ".png")));
+            }
+            animals[0] = baseImage;
+            return CascadiaPanel.drawTiles(animals);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public WildlifeToken getW() {
+        return w;
+    }
+
+    public void setW(WildlifeToken w) {
+        this.w = w;
+    }
+
+    public ArrayList<WildlifeToken> getPossibleAnimals() {
+        return possibleAnimals;
+    }
+
+    public void setPossibleAnimals(ArrayList<WildlifeToken> possibleAnimals) {
+        this.possibleAnimals = possibleAnimals;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
+
+    public Polygon getPolygon() {
+        return polygon;
+    }
+
+    public void setPolygon(Polygon polygon) {
+        this.polygon = polygon;
+    }
+
+    public Biome getHabitat1() {
+        return habitat1;
+    }
+
+    public void setHabitat1(Biome habitat1) {
+        this.habitat1 = habitat1;
+    }
+
+    public Biome getHabitat2() {
+        return habitat2;
+    }
+
+    public void setHabitat2(Biome habitat2) {
+        this.habitat2 = habitat2;
+    }
+
+    public TreeMap<Integer, Biome> getBiomes() {
+        return biomes;
+    }
+
+    public void setBiomes(TreeMap<Integer, Biome> biomes) {
+        this.biomes = biomes;
+    }
+
+    public void setNeighbors(ArrayList<HabitatTile> neighbors) {
+        this.neighbors = neighbors;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public List<Edge> getEdges() {
+        return edges;
+    }
+
+    public void setEdges(List<Edge> edges) {
+        this.edges = edges;
+    }
 
     public void setWildlifeToken(WildlifeToken w) {
         this.w = w;
@@ -193,10 +224,6 @@ public class HabitatTile {
 
     public Biome getBiome(int side) {
         return biomes.get(side);
-    }
-
-    public TreeMap<Integer, Biome> getBiomes(){
-        return biomes;
     }
 
     /*function rotateTileClockwiseFunction() {
