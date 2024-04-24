@@ -116,7 +116,7 @@ public class HabitatTile {
             BufferedImage baseImage = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Images/Tiles/" + h1 + h2 + ".png")));
             BufferedImage[] animals = new BufferedImage[possibleAnimals.size() + 1];
             for (int i = 0; i < possibleAnimals.size(); i++) {
-                animals[i + 1] = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Images/WildLifeTokens/" + possibleAnimals.get(i) + ".png")));
+                animals[i + 1] = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Images/WildlifeTokens/" + possibleAnimals.get(i) + ".png")));
             }
             animals[0] = baseImage;
             return CascadiaPanel.drawTiles(animals);
