@@ -10,6 +10,9 @@ public class Game {
     private ArrayList<WildlifeToken> displayedWildlife;
     private ArrayList<WildlifeToken> possibleWildlife;
     private ArrayList<HabitatTile> possibleHabitatTiles;
+    private Boolean shuffleTokens = false;
+
+    private TreeSet<WildlifeToken> check;
 
     private int numTurns;
 
@@ -18,6 +21,7 @@ public class Game {
 
     //make this the construcotr for the actual game so the 4 displayed and make another one for the player class. Add to graph as well
     public Game() {
+        check = new TreeSet<>();
         numTurns = 1;
         displayedTiles = new ArrayList<>();
         possibleWildlife = new ArrayList<>();
@@ -87,6 +91,18 @@ public class Game {
             h.w = wild;
             return true;
         }
+        return false;
+    }
+    //true means there are at least 3
+    public boolean checkTokens(){
+
+        for(int i = 0; i < 4; i++){
+            check.add(displayedTiles.get(i).getWildlifeToken());
+        }
+        if(check.size() <=2){
+            return true;
+        }
+        check.clear();
         return false;
     }
 
