@@ -246,7 +246,13 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         //clearAnimalTiles(g, width, height, div, 2);
         //clearArrows(g, width, height, div, 3);
 
-        IntStream.range(0, 4).forEach(i -> drawTilesDownbar(g, width, height, div, i, testBaseTile));
+        ArrayList<HabitatTile> displayedTiles = game.getDisplayedTiles();
+        for (int i = 0; i < 4; i++){
+            Point tempPoint = drawTilesDownbar(g, width, height, div, i, displayedTiles.get(i).getImage());
+            //Associate a polygon with each tile
+            Polygon tempPoly = CascadiaPanel.createHexagon(tempPoint.x, tempPoint.y, displayedTiles.get(i).getImage());
+            displayedTiles.get(i).setPolygon(tempPoly);
+        }
 
 
     }
@@ -467,9 +473,10 @@ public class MainBoardPanel extends JPanel implements MouseListener {
      * @param div The number of divisions that the screen is divided into.
      * @param pos The position of the animal tile. 0 is the first animal tile, 1 is the second animal tile, 2 is the third animal tile, and 3 is the fourth animal tile.
      * @param tile The {@code BufferedImage} object that is used to draw the animal tile.
+     * @return A {@code Point} object that represents the x and y coordinates of the animal tile.
      * @throws IllegalArgumentException If pos is not between 0 and 3.
      */
-    private void drawAnimalTiles(Graphics g, int width, int height, int div, int pos, BufferedImage tile) {
+    private Point drawAnimalTiles(Graphics g, int width, int height, int div, int pos, BufferedImage tile) {
         int x = 0;
         switch (pos) {
             case 0 -> x = width / div - 75 + 5;
@@ -480,6 +487,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         }
         int y = height - height / div + height / div / 2 - 25 - 50;
         g.drawImage(CascadiaPanel.resizeImage(tile, 40, 40), x, y, null);
+        return new Point(x, y);
     }
 
     /**
@@ -553,19 +561,22 @@ public class MainBoardPanel extends JPanel implements MouseListener {
      * @param div The number of divisions that the screen is divided into.
      * @param numPos The position of the tile. 0 is the first tile, 1 is the second tile, 2 is the third tile, and 3 is the fourth tile.
      * @param tile The {@code BufferedImage} object that is used to draw the tile.
+     * @return A {@code Point} object that contains the x and y coordinates of where the tile was drawn.
      * @throws IllegalArgumentException If numPos is not between 0 and 3.
      */
-    private void drawTilesDownbar(Graphics g, int width, int height, int div, int numPos, BufferedImage tile) {
+    private Point drawTilesDownbar(Graphics g, int width, int height, int div, int numPos, BufferedImage tile) {
         int x = 0;
         switch (numPos) {
-            case 0 -> x = width / div + 15;
-            case 1 -> x = width / div + 325;
-            case 2 -> x = width / div + 635;
-            case 3 -> x = width / div + 928;
+            case 0 -> x = width / div + 20;
+            case 1 -> x = width / div + 338;
+            case 2 -> x = width / div + 642;
+            case 3 -> x = width / div + 937;
             default -> throw new IllegalArgumentException("pos must be between 0 and 3.");
         }
-        int y = height - height / div + height / div / 2 - 60;
-        g.drawImage(CascadiaPanel.resizeImage(tile, (tile.getWidth() * 7) / 6, (tile.getHeight() * 7) / 6), x, y, null);
+        int y = height - height / div + height / div / 2 - 55;
+        g.drawImage(tile, x, y, null);
+        //Return the coordinates of where the tile was drawn
+        return new Point(x, y);
     }
 
     /**
