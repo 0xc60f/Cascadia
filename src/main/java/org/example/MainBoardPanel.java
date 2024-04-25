@@ -22,11 +22,19 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     private BufferedImage potentialPlacement;
     private BufferedImage arrowRight, arrowLeft;
     private boolean isVisible = true;
+    private final Polygon[] displayedTilesPolygons;
+    private final Polygon[] displayedAnimalPolygons;
+    private final Polygon[] leftArrowPolygons;
+    private final Polygon[] rightArrowPolygons;
     private int offsetx, offsety = 0;
     private Game game;
     private String turn = "Turn: 1", action = "Action Prompt";
 
     public MainBoardPanel() {
+        displayedTilesPolygons = new Polygon[4];
+        displayedAnimalPolygons = new Polygon[4];
+        leftArrowPolygons = new Polygon[4];
+        rightArrowPolygons = new Polygon[4];
         game = new Game();
         addMouseListener(this);
         importImages();
@@ -138,14 +146,14 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.drawLine(width / div + 555, height - height / div, width / div + 555, height);
         g.drawLine(width / div + 845, height - height / div, width / div + 845, height);
         drawScoring(g, width, height, div);
-        g.drawImage(testBaseTile, width / 2, height / 2, null);
-        Polygon polygon1 = CascadiaPanel.createHexagon(width / 2, height / 2, testBaseTile);
-        BufferedImage[] buffList2 = {dd, dl, ds, fd, ff, fl, potentialPlacement, ll, lm, md, mf, mm, ms, sl, ss};
-        //g.drawPolygon(polygon1);
-        for (int i = 0; i < 6; i++) {
-            Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(polygon1, i, dd);
-            CascadiaPanel.createAndDrawHexagon(drawPoint.x, drawPoint.y, buffList2[i + 2], g);
-        }
+//        g.drawImage(testBaseTile, width / 2, height / 2, null);
+//        Polygon polygon1 = CascadiaPanel.createHexagon(width / 2, height / 2, testBaseTile);
+//        BufferedImage[] buffList2 = {dd, dl, ds, fd, ff, fl, potentialPlacement, ll, lm, md, mf, mm, ms, sl, ss};
+//        //g.drawPolygon(polygon1);
+//        for (int i = 0; i < 6; i++) {
+//            Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(polygon1, i, dd);
+//            CascadiaPanel.createAndDrawHexagon(drawPoint.x, drawPoint.y, buffList2[i + 2], g);
+//        }
 
 
         ///// Move Tiles polygons start
@@ -204,19 +212,16 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         g.setColor(darkBeigeColor);
 
-        /*
-        g.drawPolygon(rightMove);
-        g.drawPolygon(leftMove);
-        g.drawPolygon(upMove);
-        g.drawPolygon(downMove);
-        */
+        for (int i = 0; i < 4; i++) {
+            Point[] arrows = drawArrows(width, height, div, i, g);
+            rightArrowPolygons[i] = new Polygon(new int[]{arrows[0].x, arrows[0].x, arrows[0].x + 50, arrows[0].x + 50}, new int[]{arrows[0].y + 50, arrows[0].y, arrows[0].y, arrows[0].y + 50}, 4);
+            leftArrowPolygons[i] = new Polygon(new int[]{arrows[1].x, arrows[1].x, arrows[1].x + 50, arrows[1].x + 50}, new int[]{arrows[1].y + 50, arrows[1].y, arrows[1].y, arrows[1].y + 50}, 4);
+            g.drawPolygon(leftArrowPolygons[i]);
+            g.drawPolygon(rightArrowPolygons[i]);
+        }
 
-        IntStream.range(0, 4).forEach(i -> drawArrows(width, height, div, i, g));
 
-        /**
-         * Following Polygon is for debugging - clicking it ends the game automatically
-         */
-
+        // Following Polygon is for debugging - clicking it ends the game automatically
 
         g.setColor(Color.red);
         int debugRectWidth5 = 100;
@@ -232,27 +237,30 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.drawPolygon(endGame);
 
 
-        ///// Move Tiles polygons end
         ArrayList<WildlifeToken> displayedWildlife = game.getDisplayedWildlife();
-        for (int i = 0; i < 4; i++){
-            switch (displayedWildlife.get(i)){
+        for (int i = 0; i < 4; i++) {
+            Point drawPoint = switch (displayedWildlife.get(i)) {
                 case BEAR -> drawAnimalTiles(g, width, height, div, i, bear);
                 case ELK -> drawAnimalTiles(g, width, height, div, i, elk);
                 case FOX -> drawAnimalTiles(g, width, height, div, i, fox);
                 case HAWK -> drawAnimalTiles(g, width, height, div, i, hawk);
                 case SALMON -> drawAnimalTiles(g, width, height, div, i, salmon);
-            }
+            };
+            //Create a square polygon that starts at drawPoint and is 60 pixels
+            Polygon tempPoly = new Polygon(new int[]{drawPoint.x, drawPoint.x, drawPoint.x + 40, drawPoint.x + 40}, new int[]{drawPoint.y + 40, drawPoint.y, drawPoint.y, drawPoint.y + 40}, 4);
+            displayedAnimalPolygons[i] = tempPoly;
+            g.drawPolygon(tempPoly);
         }
-        //clearAnimalTiles(g, width, height, div, 2);
-        //clearArrows(g, width, height, div, 3);
 
         ArrayList<HabitatTile> displayedTiles = game.getDisplayedTiles();
-        for (int i = 0; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             Point tempPoint = drawTilesDownbar(g, width, height, div, i, displayedTiles.get(i).getImage());
             //Associate a polygon with each tile
             Polygon tempPoly = CascadiaPanel.createHexagon(tempPoint.x, tempPoint.y, displayedTiles.get(i).getImage());
-            displayedTiles.get(i).setPolygon(tempPoly);
+            displayedTilesPolygons[i] = tempPoly;
         }
+
+
 
 
     }
@@ -386,7 +394,24 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
-        System.out.println("X: " + x + " Y: " + y);
+        for (int i = 0; i < 4; i++) {
+            if (displayedTilesPolygons[i].contains(e.getPoint())) {
+                System.out.println("Tile " + i + " clicked");
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            if (displayedAnimalPolygons[i].contains(e.getPoint())) {
+                System.out.println("Animal " + i + " clicked");
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            if (leftArrowPolygons[i].contains(e.getPoint())) {
+                System.out.println("Left arrow " + i + " clicked");
+            }
+            if (rightArrowPolygons[i].contains(e.getPoint())) {
+                System.out.println("Right arrow " + i + " clicked");
+            }
+        }
         if (viewB1.contains(x, y)) {
             viewVis = true;
         } else if (viewB2.contains(x, y)) {
@@ -440,29 +465,40 @@ public class MainBoardPanel extends JPanel implements MouseListener {
      * @param height The height of the screen.
      * @param div The number of divisions that the screen is divided into.
      * @param numBox Which box the arrows are being drawn in. 0 is the first box, 1 is the second box, 2 is the third box, and 3 is the fourth box.
+     * @return A {@code Point} array that contains the x and y coordinates of the arrows. The first element is the right arrow, and the second element is the left arrow.
      * @throws IllegalArgumentException If numBox is not between 0 and 3.
      */
-    private void drawArrows(int width, int height, int div, int numBox, Graphics g) {
+    private Point[] drawArrows(int width, int height, int div, int numBox, Graphics g) {
+        Point[] arrowPoints = new Point[2];
         switch (numBox) {
             case 0:
                 g.drawImage(arrowRight, width / div + 190, height - height / div + height / div / 2 - 25, null);
                 g.drawImage(arrowLeft, width / div - 75, height - height / div + height / div / 2 - 25, null);
+                arrowPoints[0] = new Point(width / div + 190, height - height / div + height / div / 2 - 25);
+                arrowPoints[1] = new Point(width / div - 75, height - height / div + height / div / 2 - 25);
                 break;
             case 1:
                 g.drawImage(arrowRight, width / div + 505, height - height / div + height / div / 2 - 25, null);
                 g.drawImage(arrowLeft, width / div + 240, height - height / div + height / div / 2 - 25, null);
+                arrowPoints[0] = new Point(width / div + 505, height - height / div + height / div / 2 - 25);
+                arrowPoints[1] = new Point(width / div + 240, height - height / div + height / div / 2 - 25);
                 break;
             case 2:
                 g.drawImage(arrowRight, width / div + 795, height - height / div + height / div / 2 - 25, null);
                 g.drawImage(arrowLeft, width / div + 555, height - height / div + height / div / 2 - 25, null);
+                arrowPoints[0] = new Point(width / div + 795, height - height / div + height / div / 2 - 25);
+                arrowPoints[1] = new Point(width / div + 555, height - height / div + height / div / 2 - 25);
                 break;
             case 3:
                 g.drawImage(arrowRight, width / div + 1100, height - height / div + height / div / 2 - 25, null);
                 g.drawImage(arrowLeft, width / div + 845, height - height / div + height / div / 2 - 25, null);
+                arrowPoints[0] = new Point(width / div + 1100, height - height / div + height / div / 2 - 25);
+                arrowPoints[1] = new Point(width / div + 845, height - height / div + height / div / 2 - 25);
                 break;
             default:
                 throw new IllegalArgumentException("numBox must be between 0 and 3.");
         }
+        return arrowPoints;
     }
 
     /**
