@@ -85,6 +85,9 @@ public class Game {
     public void addTile() {
         displayedTiles.add(possibleHabitatTiles.remove((int) (Math.random() * possibleHabitatTiles.size())));
     }
+    public void addTilePlayer(){
+
+    }
 
     public boolean addWildlife(HabitatTile h, WildlifeToken wild) {
         if (h.canPlace(wild)) {
@@ -118,6 +121,12 @@ public class Game {
     public void endGame() {
         ScoringCharts sc = new ScoringCharts();
 
+    }
+    //need to add more to this
+
+
+    public void updateTurn(Player p){
+        cntTurns();
     }
 
 
