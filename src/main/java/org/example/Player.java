@@ -29,6 +29,7 @@ public class Player implements Comparable<Player>{
             playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken());
         }
         totalScore = 0;
+        //bimes
     }
 
     public HashMap<HabitatTile, WildlifeToken> getPlayerTiles(){
