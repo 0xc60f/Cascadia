@@ -7,8 +7,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.RecursiveAction;
 import java.util.stream.IntStream;
 
 
@@ -16,23 +16,31 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     private Polygon viewB1, viewB2, viewPage, downMove, upMove, leftMove, rightMove, endGame;
     private boolean viewVis = false;
     private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring, natureToken, testingTile1, testingTile2, testBaseTile, testingTile3;
-    private BufferedImage dpad;
+    private BufferedImage arrUp, arrDown, arrLeft, arrRight;
     private BufferedImage dd, dl, ds, fd, ff, fl, fs, ll, lm, md, mf, mm, ms, sl, ss;
     private BufferedImage bear, elk, fox, hawk, salmon;
     private BufferedImage potentialPlacement;
     private BufferedImage arrowRight, arrowLeft;
     private boolean isVisible = true;
+    private final Polygon[] displayedTilesPolygons;
+    private final Polygon[] displayedAnimalPolygons;
+    private final Polygon[] leftArrowPolygons;
+    private final Polygon[] rightArrowPolygons;
     private int offsetx, offsety = 0;
+    private Game game;
     private String turn = "Turn: 1", action = "Action Prompt";
 
     public MainBoardPanel() {
-
+        displayedTilesPolygons = new Polygon[4];
+        displayedAnimalPolygons = new Polygon[4];
+        leftArrowPolygons = new Polygon[4];
+        rightArrowPolygons = new Polygon[4];
+        game = new Game();
         addMouseListener(this);
         importImages();
     }
 
     public void paint(Graphics g, int width, int height) {
-
 
         int div = 5;
 
@@ -78,6 +86,8 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         g.setColor(beigeColor);
         g.fillRect(width - width / div, 0, width / div, height);
+        //Draw a large rectangle covering the bottom of the screen
+        g.fillRect(0, height - height / div, width, height / div);
         g.fillRoundRect(width / 2 + width / 6, height / 100, width / 8, height / 14, 30, 30);
 
         g.fillRoundRect(width / 2 + width / 6, height / 100 + height / 14 + height / 100, width / 8, height / 14, 30, 30);
@@ -121,116 +131,97 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         viewPage = new Polygon(xPoints3, yPoints3, 4);
 
-        //Draw a large rectangle covering the bottom of the screen
-        g.setColor(beigeColor);
-        g.fillRect(0, height - (height / div), width, height / div);
-        int bottomwidth = playAreaWidth/5;
-        int bottomheight = height/div;
-        int bottomy = height - height / div;
-        int bottomx = 0;
-        g.setColor(Color.black);
-        Rectangle bottomLeft = new Rectangle(bottomx, bottomy, bottomwidth, bottomheight);
-        g.drawRect(bottomx, bottomy, bottomwidth, bottomheight);
-        bottomx += bottomwidth;
-        g.drawRect(bottomx, bottomy, bottomwidth, bottomheight);
-        bottomx += bottomwidth;
-        g.drawRect(bottomx, bottomy, bottomwidth, bottomheight);
-        bottomx += bottomwidth;
-        g.drawRect(bottomx, bottomy, bottomwidth, bottomheight);
-        bottomx += bottomwidth;
-        g.drawRect(bottomx, bottomy, bottomwidth, bottomheight);
-
-        int arrWidth = bottomwidth/6;
-        int arrHeight = bottomheight/4;
-
-        int arrY = bottomy + bottomheight/2 - arrHeight/2;
-
-        IntStream.range(0, 4).forEach(i -> drawArrows(width, height, div, i, g, arrWidth, arrHeight, arrY, bottomwidth));
-
-
+        if (viewVis) {
+            g.setColor(beigeColor);
+            g.fillPolygon(viewPage);
+        }
         //Draw a vertical line 150 pixels dividing the bottom rectangle into a square and long rectangle
+        g.drawLine(width - width / div, 0, width - width / div, height);
+        g.drawLine(width / div - 75, height - height / div, width / div - 75, height);
 
-        drawNatureTokenCount(g, 0, width, height, div, bottomLeft, bottomwidth, bottomheight);
+        drawNatureTokenCount(g, 0, width, height, div);
 
         //Draw 4 lines that evenly divide the rest of the bottom rectangle
+        g.drawLine(width / div + 240, height - height / div, width / div + 240, height);
+        g.drawLine(width / div + 555, height - height / div, width / div + 555, height);
+        g.drawLine(width / div + 845, height - height / div, width / div + 845, height);
         drawScoring(g, width, height, div);
-        g.drawImage(testBaseTile, width / 2, height / 2, null);
-        Polygon polygon1 = CascadiaPanel.createHexagon(width / 2, height / 2, testBaseTile);
-        BufferedImage[] buffList2 = {dd, dl, ds, fd, ff, fl, potentialPlacement, ll, lm, md, mf, mm, ms, sl, ss};
-        //g.drawPolygon(polygon1);
-        for (int i = 0; i < 6; i++) {
-            Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(polygon1, i, dd);
-            CascadiaPanel.createAndDrawHexagon(drawPoint.x, drawPoint.y, buffList2[i + 2], g);
-        }
+//        g.drawImage(testBaseTile, width / 2, height / 2, null);
+//        Polygon polygon1 = CascadiaPanel.createHexagon(width / 2, height / 2, testBaseTile);
+//        BufferedImage[] buffList2 = {dd, dl, ds, fd, ff, fl, potentialPlacement, ll, lm, md, mf, mm, ms, sl, ss};
+//        //g.drawPolygon(polygon1);
+//        for (int i = 0; i < 6; i++) {
+//            Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(polygon1, i, dd);
+//            CascadiaPanel.createAndDrawHexagon(drawPoint.x, drawPoint.y, buffList2[i + 2], g);
+//        }
 
 
         ///// Move Tiles polygons start
 
+        int regSize = 3;
 
-        int dpadCenterx = playAreaWidth - playAreaWidth / 12;
-        int dpadCentery = playAreaHeight - playAreaHeight / 6;
-        int dpadwidth = width/16;
-        int dpadheight = height/8;
+        int dpadCenterx = playAreaWidth - playAreaWidth / 16;
+        int dpadCentery = playAreaHeight - playAreaHeight / 7;
+        int xsync = -172;
+        int ysync = 200;
+        int ydis = 20;
+        int xdis = 20;
+        g.drawImage(arrUp, dpadCenterx, (dpadCentery - height / ydis), null);
+        g.drawImage(arrDown, dpadCenterx, (dpadCentery + height / ydis), null);
+        g.drawImage(arrLeft, (dpadCenterx - height / xdis) + height / xsync, dpadCentery + height / ysync, null);
+        g.drawImage(arrRight, (dpadCenterx + height / xdis) + height / xsync, dpadCentery + height / ysync, null);
 
-        int dpadxadjust = dpadwidth/4;
-        int dpadyadjust = dpadheight/6;
-
-        g.drawImage(dpad, dpadCenterx - dpadxadjust/2, dpadCentery - dpadyadjust/2, dpadwidth + dpadxadjust, dpadheight + dpadyadjust, null);
-
-        int debugRectWidth4 = dpadwidth;
-        int debugRectHeight4 = dpadheight/4;
-        int debugXPos4 = dpadCenterx;
-        int debugYPos4 = dpadCentery;
+        int debugRectWidth4 = xdis * 2;
+        int debugRectHeight4 = xdis * 4 + ydis * 3;
+        int debugXPos4 = (dpadCenterx + height / xdis) + height / xsync;
+        int debugYPos4 = (dpadCentery - height / ydis);
 
         int[] xPoints4 = {debugXPos4, debugXPos4, debugXPos4 + debugRectWidth4, debugXPos4 + debugRectWidth4};
         int[] yPoints4 = {debugYPos4 + debugRectHeight4, debugYPos4, debugYPos4, debugYPos4 + debugRectHeight4};
 
-        debugRectWidth4 = dpadwidth/4;
-        debugRectHeight4 = dpadheight;
-        debugXPos4 = dpadCenterx;
-        debugYPos4 = dpadCentery;
+        debugRectWidth4 = xdis * 2;
+        debugRectHeight4 = xdis * 4 + ydis * 3;
+        debugXPos4 = (dpadCenterx - height / xdis) + height / xsync;
+        debugYPos4 = (dpadCentery - height / ydis);
 
         int[] xPoints5 = {debugXPos4, debugXPos4, debugXPos4 + debugRectWidth4, debugXPos4 + debugRectWidth4};
         int[] yPoints5 = {debugYPos4 + debugRectHeight4, debugYPos4, debugYPos4, debugYPos4 + debugRectHeight4};
 
-        debugRectWidth4 = dpadwidth;
-        debugRectHeight4 = dpadheight/4;
-        debugXPos4 = dpadCenterx;
-        debugYPos4 = dpadCentery + dpadheight - dpadheight/4;
+        debugRectWidth4 = xdis * 4 + ydis * 3;
+        debugRectHeight4 = xdis * 2;
+        debugXPos4 = (dpadCenterx - height / xdis) + height / xsync;
+        debugYPos4 = (dpadCentery - height / ydis);
 
         int[] xPoints6 = {debugXPos4, debugXPos4, debugXPos4 + debugRectWidth4, debugXPos4 + debugRectWidth4};
         int[] yPoints6 = {debugYPos4 + debugRectHeight4, debugYPos4, debugYPos4, debugYPos4 + debugRectHeight4};
 
-        debugRectWidth4 = dpadwidth/4;
-        debugRectHeight4 = dpadheight;
-        debugXPos4 = dpadCenterx+dpadwidth-dpadwidth/4;
-        debugYPos4 = dpadCentery;
+        debugRectWidth4 = xdis * 4 + ydis * 3;
+        debugRectHeight4 = xdis * 2;
+        debugXPos4 = (dpadCenterx - height / xdis) + height / xsync;
+        debugYPos4 = (dpadCentery + height / ydis);
 
         int[] xPoints7 = {debugXPos4, debugXPos4, debugXPos4 + debugRectWidth4, debugXPos4 + debugRectWidth4};
         int[] yPoints7 = {debugYPos4 + debugRectHeight4, debugYPos4, debugYPos4, debugYPos4 + debugRectHeight4};
 
-        upMove = new Polygon(xPoints4, yPoints4, 4);
+        rightMove = new Polygon(xPoints4, yPoints4, 4);
         leftMove = new Polygon(xPoints5, yPoints5, 4);
-        downMove = new Polygon(xPoints6, yPoints6, 4);
-        rightMove = new Polygon(xPoints7, yPoints7, 4);
+        upMove = new Polygon(xPoints6, yPoints6, 4);
+        downMove = new Polygon(xPoints7, yPoints7, 4);
 
         Color darkBeigeColor = new Color(0, 0, 0, 129);
 
         g.setColor(darkBeigeColor);
 
-        /*
-        g.drawPolygon(rightMove);
-        g.drawPolygon(leftMove);
-        g.drawPolygon(upMove);
-        g.drawPolygon(downMove);
-         */
+        for (int i = 0; i < 4; i++) {
+            Point[] arrows = drawArrows(width, height, div, i, g);
+            rightArrowPolygons[i] = new Polygon(new int[]{arrows[0].x, arrows[0].x, arrows[0].x + 50, arrows[0].x + 50}, new int[]{arrows[0].y + 50, arrows[0].y, arrows[0].y, arrows[0].y + 50}, 4);
+            leftArrowPolygons[i] = new Polygon(new int[]{arrows[1].x, arrows[1].x, arrows[1].x + 50, arrows[1].x + 50}, new int[]{arrows[1].y + 50, arrows[1].y, arrows[1].y, arrows[1].y + 50}, 4);
+            g.drawPolygon(leftArrowPolygons[i]);
+            g.drawPolygon(rightArrowPolygons[i]);
+        }
 
 
-        /**
-         * Following Polygon is for debugging - clicking it ends the game automatically
-         */
-
-
+        // Following Polygon is for debugging - clicking it ends the game automatically
 
         g.setColor(Color.red);
         int debugRectWidth5 = 100;
@@ -245,12 +236,32 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         g.drawPolygon(endGame);
 
-        if (viewVis) {
-            g.setColor(beigeColor);
-            g.fillPolygon(viewPage);
+
+        ArrayList<WildlifeToken> displayedWildlife = game.getDisplayedWildlife();
+        for (int i = 0; i < 4; i++) {
+            Point drawPoint = switch (displayedWildlife.get(i)) {
+                case BEAR -> drawAnimalTiles(g, width, height, div, i, bear);
+                case ELK -> drawAnimalTiles(g, width, height, div, i, elk);
+                case FOX -> drawAnimalTiles(g, width, height, div, i, fox);
+                case HAWK -> drawAnimalTiles(g, width, height, div, i, hawk);
+                case SALMON -> drawAnimalTiles(g, width, height, div, i, salmon);
+            };
+            //Create a square polygon that starts at drawPoint and is 60 pixels
+            Polygon tempPoly = new Polygon(new int[]{drawPoint.x, drawPoint.x, drawPoint.x + 40, drawPoint.x + 40}, new int[]{drawPoint.y + 40, drawPoint.y, drawPoint.y, drawPoint.y + 40}, 4);
+            displayedAnimalPolygons[i] = tempPoly;
+            g.drawPolygon(tempPoly);
         }
 
-        //clearBoard(g, width, height, div);
+        ArrayList<HabitatTile> displayedTiles = game.getDisplayedTiles();
+        for (int i = 0; i < 4; i++) {
+            Point tempPoint = drawTilesDownbar(g, width, height, div, i, displayedTiles.get(i).getImage());
+            //Associate a polygon with each tile
+            Polygon tempPoly = CascadiaPanel.createHexagon(tempPoint.x, tempPoint.y, displayedTiles.get(i).getImage());
+            displayedTilesPolygons[i] = tempPoly;
+        }
+
+
+
 
     }
 
@@ -287,7 +298,10 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             hawk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/HAWK.png")));
             salmon = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/SALMON.png")));
 
-            dpad = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/dpad.png")));
+            arrUp = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrowup.png")));
+            arrDown = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrowdown.png")));
+            arrLeft = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrowleft.png")));
+            arrRight = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrowright.png")));
 
             testBaseTile = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/dd.png")));
             testingTile1 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/fd.png")));
@@ -295,6 +309,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             testingTile3 = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/Tiles/ss.png")));
 
             arrowRight = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/arrow.png")));
+            arrowRight = CascadiaPanel.resizeImage(arrowRight, 50, 50);
             arrowRight = CascadiaPanel.rotateImage(arrowRight, 90);
             arrowLeft = CascadiaPanel.rotateImage(arrowRight, 180);
 
@@ -302,7 +317,11 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        bearScoring = CascadiaPanel.resizeImage(bearScoring, 190, 190);
+        hawkScoring = CascadiaPanel.resizeImage(hawkScoring, 190, 190);
+        salmonScoring = CascadiaPanel.resizeImage(salmonScoring, 190, 190);
+        elkScoring = CascadiaPanel.resizeImage(elkScoring, 190, 190);
+        foxScoring = CascadiaPanel.resizeImage(foxScoring, 190, 190);
     }
 
     /**
@@ -314,22 +333,17 @@ public class MainBoardPanel extends JPanel implements MouseListener {
      */
     private void drawScoring(Graphics g, int width, int height, int div) {
         g.drawRect(width - width / div, 0, width / div, height);
-
-        int imgwidth = width/10;
-        int imgheight = height/5;
-
-        int x = width - width / div + width / div / 2 - imgwidth / 2;
-        int y = height / div / 2 - imgheight / 3 - height/30;
-
-        g.drawImage(bearScoring, x, y, imgwidth, imgheight, null);
-        y += imgheight;
-        g.drawImage(hawkScoring, x, y, imgwidth, imgheight, null);
-        y += imgheight;
-        g.drawImage(salmonScoring, x, y, imgwidth, imgheight, null);
-        y += imgheight;
-        g.drawImage(elkScoring, x, y, imgwidth, imgheight, null);
-        y += imgheight;
-        g.drawImage(foxScoring, x, y, imgwidth, imgheight, null);
+        int x = width - width / div + width / div / 2 - bearScoring.getWidth() / 2;
+        int y = height / div / 2 - bearScoring.getHeight() / 2;
+        g.drawImage(bearScoring, x, y, null);
+        y += height / div;
+        g.drawImage(hawkScoring, x, y, null);
+        y += height / div;
+        g.drawImage(salmonScoring, x, y, null);
+        y += height / div;
+        g.drawImage(elkScoring, x, y, null);
+        y += height / div;
+        g.drawImage(foxScoring, x, y, null);
     }
 
     /**
@@ -341,23 +355,17 @@ public class MainBoardPanel extends JPanel implements MouseListener {
      * @param height The height of the screen.
      * @param div The number of divisions that the screen is divided into.
      */
-    private void drawNatureTokenCount(Graphics g, int numTokens, int width, int height, int div, Rectangle bottomleft, int bottomwidth, int bottomheight) {
+    private void drawNatureTokenCount(Graphics g, int numTokens, int width, int height, int div) {
         //Draw 4 nature tokens in each corner of the square in the bottom left corner
-
-        int conewidth = width/40;
-        int coneheight = height/20;
-
-        g.drawImage(natureToken, 0, height - bottomheight, conewidth, coneheight, null);
-        g.drawImage(natureToken, 0, height - coneheight, conewidth, coneheight, null);
-        g.drawImage(natureToken, bottomwidth-conewidth, height - bottomheight, conewidth, coneheight, null);
-        g.drawImage(natureToken, bottomwidth-conewidth, height - coneheight, conewidth, coneheight, null);
-        Font defFont = new Font("Arial", Font.BOLD, width / 90);
+        g.drawImage(natureToken, 0, height - height / div, null);
+        g.drawImage(natureToken, 0, height - 50, null);
+        g.drawImage(natureToken, width / div - 140, height - 50, null);
+        g.drawImage(natureToken, width / div - 140, height - height / div, null);
 
         //Draw the player's nature tokens in the bottom right corner in the center
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 25));
-
-        drawCenteredString(g, String.valueOf(numTokens), bottomleft, defFont);
+        g.drawString(String.valueOf(numTokens), width / div - 230, height - height / div + height / div / 2 + 5);
     }
 
     public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
@@ -373,21 +381,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.drawString(text, x, y);
     }
 
-    public void clearBoard(Graphics g, int width, int height, int div) {
-        ///// Move Tiles polygons end
-        IntStream.range(0, 4).forEach(i -> drawAnimalTiles(g, width, height, div, i, bear));
-        //clearAnimalTiles(g, width, height, div, 2);
-        //clearArrows(g, width, height, div, 3);
-
-        IntStream.range(0, 4).forEach(i -> drawTilesDownbar(g, width, height, div, i, testBaseTile));
-        clearTilesDownbar(g, width, height, div, 2);
-        clearNatureTokenCount(g, width, height, div);
-        clearTurnCounter(g, width, height, div);
-        clearActionPrompt(g, width, height, div);
-        clearBoardViewButton(g, width, height, div, 0);
-        clearBoardViewButton(g, width, height, div, 1);
-    }
-
 
     public void setVisible(boolean val) {
         isVisible = val;
@@ -401,7 +394,24 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
-        System.out.println("X: " + x + " Y: " + y);
+        for (int i = 0; i < 4; i++) {
+            if (displayedTilesPolygons[i].contains(e.getPoint())) {
+                System.out.println("Tile " + i + " clicked");
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            if (displayedAnimalPolygons[i].contains(e.getPoint())) {
+                System.out.println("Animal " + i + " clicked");
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            if (leftArrowPolygons[i].contains(e.getPoint())) {
+                System.out.println("Left arrow " + i + " clicked");
+            }
+            if (rightArrowPolygons[i].contains(e.getPoint())) {
+                System.out.println("Right arrow " + i + " clicked");
+            }
+        }
         if (viewB1.contains(x, y)) {
             viewVis = true;
         } else if (viewB2.contains(x, y)) {
@@ -455,30 +465,40 @@ public class MainBoardPanel extends JPanel implements MouseListener {
      * @param height The height of the screen.
      * @param div The number of divisions that the screen is divided into.
      * @param numBox Which box the arrows are being drawn in. 0 is the first box, 1 is the second box, 2 is the third box, and 3 is the fourth box.
+     * @return A {@code Point} array that contains the x and y coordinates of the arrows. The first element is the right arrow, and the second element is the left arrow.
      * @throws IllegalArgumentException If numBox is not between 0 and 3.
      */
-    private void drawArrows(int width, int height, int div, int numBox, Graphics g, int arrWidth, int arrHeight, int arrY, int bottomwidth) {
-
+    private Point[] drawArrows(int width, int height, int div, int numBox, Graphics g) {
+        Point[] arrowPoints = new Point[2];
         switch (numBox) {
             case 0:
-                g.drawImage(arrowRight, bottomwidth*(numBox+2) - arrWidth, arrY, arrWidth, arrHeight, null);
-                g.drawImage(arrowLeft, bottomwidth*(numBox+1), arrY, arrWidth, arrHeight,  null);
+                g.drawImage(arrowRight, width / div + 190, height - height / div + height / div / 2 - 25, null);
+                g.drawImage(arrowLeft, width / div - 75, height - height / div + height / div / 2 - 25, null);
+                arrowPoints[0] = new Point(width / div + 190, height - height / div + height / div / 2 - 25);
+                arrowPoints[1] = new Point(width / div - 75, height - height / div + height / div / 2 - 25);
                 break;
             case 1:
-                g.drawImage(arrowRight, bottomwidth*(numBox+2) - arrWidth, arrY, arrWidth, arrHeight, null);
-                g.drawImage(arrowLeft, bottomwidth*(numBox+1), arrY, arrWidth, arrHeight,  null);
+                g.drawImage(arrowRight, width / div + 505, height - height / div + height / div / 2 - 25, null);
+                g.drawImage(arrowLeft, width / div + 240, height - height / div + height / div / 2 - 25, null);
+                arrowPoints[0] = new Point(width / div + 505, height - height / div + height / div / 2 - 25);
+                arrowPoints[1] = new Point(width / div + 240, height - height / div + height / div / 2 - 25);
                 break;
             case 2:
-                g.drawImage(arrowRight, bottomwidth*(numBox+2) - arrWidth, arrY, arrWidth, arrHeight, null);
-                g.drawImage(arrowLeft, bottomwidth*(numBox+1), arrY, arrWidth, arrHeight,  null);
+                g.drawImage(arrowRight, width / div + 795, height - height / div + height / div / 2 - 25, null);
+                g.drawImage(arrowLeft, width / div + 555, height - height / div + height / div / 2 - 25, null);
+                arrowPoints[0] = new Point(width / div + 795, height - height / div + height / div / 2 - 25);
+                arrowPoints[1] = new Point(width / div + 555, height - height / div + height / div / 2 - 25);
                 break;
             case 3:
-                g.drawImage(arrowRight, bottomwidth*(numBox+2) - arrWidth, arrY, arrWidth, arrHeight, null);
-                g.drawImage(arrowLeft, bottomwidth*(numBox+1), arrY, arrWidth, arrHeight,  null);
+                g.drawImage(arrowRight, width / div + 1100, height - height / div + height / div / 2 - 25, null);
+                g.drawImage(arrowLeft, width / div + 845, height - height / div + height / div / 2 - 25, null);
+                arrowPoints[0] = new Point(width / div + 1100, height - height / div + height / div / 2 - 25);
+                arrowPoints[1] = new Point(width / div + 845, height - height / div + height / div / 2 - 25);
                 break;
             default:
                 throw new IllegalArgumentException("numBox must be between 0 and 3.");
         }
+        return arrowPoints;
     }
 
     /**
@@ -489,9 +509,10 @@ public class MainBoardPanel extends JPanel implements MouseListener {
      * @param div The number of divisions that the screen is divided into.
      * @param pos The position of the animal tile. 0 is the first animal tile, 1 is the second animal tile, 2 is the third animal tile, and 3 is the fourth animal tile.
      * @param tile The {@code BufferedImage} object that is used to draw the animal tile.
+     * @return A {@code Point} object that represents the x and y coordinates of the animal tile.
      * @throws IllegalArgumentException If pos is not between 0 and 3.
      */
-    private void drawAnimalTiles(Graphics g, int width, int height, int div, int pos, BufferedImage tile) {
+    private Point drawAnimalTiles(Graphics g, int width, int height, int div, int pos, BufferedImage tile) {
         int x = 0;
         switch (pos) {
             case 0 -> x = width / div - 75 + 5;
@@ -502,6 +523,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         }
         int y = height - height / div + height / div / 2 - 25 - 50;
         g.drawImage(CascadiaPanel.resizeImage(tile, 40, 40), x, y, null);
+        return new Point(x, y);
     }
 
     /**
@@ -575,19 +597,22 @@ public class MainBoardPanel extends JPanel implements MouseListener {
      * @param div The number of divisions that the screen is divided into.
      * @param numPos The position of the tile. 0 is the first tile, 1 is the second tile, 2 is the third tile, and 3 is the fourth tile.
      * @param tile The {@code BufferedImage} object that is used to draw the tile.
+     * @return A {@code Point} object that contains the x and y coordinates of where the tile was drawn.
      * @throws IllegalArgumentException If numPos is not between 0 and 3.
      */
-    private void drawTilesDownbar(Graphics g, int width, int height, int div, int numPos, BufferedImage tile) {
+    private Point drawTilesDownbar(Graphics g, int width, int height, int div, int numPos, BufferedImage tile) {
         int x = 0;
         switch (numPos) {
-            case 0 -> x = width / div + 15;
-            case 1 -> x = width / div + 325;
-            case 2 -> x = width / div + 635;
-            case 3 -> x = width / div + 928;
+            case 0 -> x = width / div + 20;
+            case 1 -> x = width / div + 338;
+            case 2 -> x = width / div + 642;
+            case 3 -> x = width / div + 937;
             default -> throw new IllegalArgumentException("pos must be between 0 and 3.");
         }
-        int y = height - height / div + height / div / 2 - 60;
-        g.drawImage(CascadiaPanel.resizeImage(tile, (tile.getWidth() * 7) / 6, (tile.getHeight() * 7) / 6), x, y, null);
+        int y = height - height / div + height / div / 2 - 55;
+        g.drawImage(tile, x, y, null);
+        //Return the coordinates of where the tile was drawn
+        return new Point(x, y);
     }
 
     /**

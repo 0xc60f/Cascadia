@@ -7,6 +7,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 public class ScorePanel extends JPanel implements MouseListener  {
@@ -64,6 +66,7 @@ public class ScorePanel extends JPanel implements MouseListener  {
         g.setColor(beigeColor);
         g.fillRoundRect(width/3 - xdis, height/20, labelWidth, height/15, 30, 30);
         g.drawImage(scoringTable, width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
+        drawScores(g,width/3 - scorexdis,height/40 + height/20 + height/8, scoreWidth, height/2 );
         g.fillRoundRect(2 * width/3 - xdis, height/20, labelWidth, height/15, 30, 30);
         g.drawImage(scoringTable, 2 * width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
         g.fillRoundRect(width - xdis, height/20, labelWidth, height/15, 30, 30);
@@ -120,6 +123,27 @@ public class ScorePanel extends JPanel implements MouseListener  {
     }
     public boolean getVisible() {
         return isVisible;
+    }
+
+    public void drawScores(Graphics g, int x, int y, int w, int h) {
+
+        int boxWidth = w/5;
+        int boxHeight = h/8;
+        int i = 0;
+        g.drawRect(x+boxWidth, y + boxHeight*i, boxWidth, h/8);
+        i++;
+        g.drawRect(x+boxWidth, y + boxHeight*i, boxWidth, h/8);
+        i++;
+        g.drawRect(x+boxWidth, y + boxHeight*i, boxWidth, h/8);
+        i++;
+        g.drawRect(x+boxWidth, y + boxHeight*i, boxWidth, h/8);
+        i++;
+        g.drawRect(x+boxWidth, y + boxHeight*i, boxWidth, h/8);
+        i++;
+        g.drawRect(x+boxWidth, y + boxHeight*i, boxWidth, h/8);
+        i++;
+        g.drawRect(x+boxWidth, y + boxHeight*i, boxWidth, h/8);
+        i++;
     }
 
     @Override
