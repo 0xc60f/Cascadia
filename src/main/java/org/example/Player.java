@@ -29,7 +29,6 @@ public class Player implements Comparable<Player>{
             playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken());
         }
         totalScore = 0;
-        //Biomes.add("LAKE", "MOUNTAIN", "DESERT", "SWAMP", "FOREST");
     }
 
     public HashMap<HabitatTile, WildlifeToken> getPlayerTiles(){
