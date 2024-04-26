@@ -14,6 +14,9 @@ public class Player implements Comparable<Player> {
     private int totalScore;
     private ArrayList<Integer> playerHabitatScores;
 
+    private ScoringCharts scoringCharts = new ScoringCharts();
+
+
 
     public Player(int p) {
         pNum = p;
@@ -43,17 +46,16 @@ public class Player implements Comparable<Player> {
     public void addTile(HabitatTile h) {
         return;
     }
+    //0 is any token with any habitatTile, 1 is wiping
+    public void natureTokenUsed(int action) {
+        if(numNatureTokens >= 1){
+            if (action == 0) {
 
-    public boolean natureTokenUsed() {
-        natureTokenUsed = (Boolean) !natureTokenUsed;
-        return natureTokenUsed;
+            }
+        }
     }
 
     public int numNatureTokens() {
-        //if statement when a wildlife token is placed on a key stone (numNatureTokens ++;)
-        if (natureTokenUsed()) {
-            numNatureTokens--;
-        }
         return numNatureTokens;
     }
 
@@ -135,8 +137,6 @@ public class Player implements Comparable<Player> {
     }
 
     public int getWildlifeTokenScore() {
-        ScoringCharts scoringCharts = new ScoringCharts();
-
         int wildlifeTokenScore = 0;
 
         // Calculate scores for each wildlife token type
@@ -156,6 +156,10 @@ public class Player implements Comparable<Player> {
     public int totalScore(Player p) {
         total += numNatureTokens + p.getWildlifeTokenScore();
         return total;
+    }
+
+    public int habitatScoring(){
+        return scoringCharts.scoreHabitats(playerTiles);
     }
 /*
    //public int getnatureTokenAmt() {return natureTokenAmt;}
