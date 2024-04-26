@@ -13,6 +13,7 @@ public class HabitatTile {
     //Sides in relation to Biomes
     private ArrayList<WildlifeToken> possibleAnimals;
     private BufferedImage image;
+    private boolean isKeystone;
     private Polygon polygon;
     private int x;
     private int y;
@@ -59,7 +60,7 @@ public class HabitatTile {
             case "f" -> habitat2 = Biome.FOREST;
             case "m" -> habitat2 = Biome.MOUNTAIN;
         }
-
+        isKeystone = h1.equals(h2);
         switch (animal1) {
             case 1 -> possibleAnimals.add(WildlifeToken.ELK);
             case 2 -> possibleAnimals.add(WildlifeToken.HAWK);
@@ -143,6 +144,14 @@ public class HabitatTile {
 
     public BufferedImage getImage() {
         return image;
+    }
+
+    public boolean isKeystone() {
+        return isKeystone;
+    }
+
+    public void setKeystone(boolean keystone) {
+        isKeystone = keystone;
     }
 
     public void setImage(BufferedImage image) {
