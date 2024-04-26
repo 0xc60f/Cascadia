@@ -1,8 +1,10 @@
 package org.example;
 
+
 import java.util.*;
 
-public class Player implements Comparable<Player> {
+
+public class Player implements Comparable<Player>{
     private int pNum;
     private ArrayList<HabitatTile> initialThree;
     private int numNatureTokens;
@@ -13,49 +15,50 @@ public class Player implements Comparable<Player> {
     private int total;
     private int totalScore;
     private ArrayList<Integer> playerHabitatScores;
+    public ArrayList<String> Biomes;
 
 
-    public Player(int p) {
+
+    public Player(int p){
         pNum = p;
         numBiomes = new HashMap<String, Integer>();
         numNatureTokens = 0; // Initialize to zero, assuming start of game, nature tokens need to be added.
         natureTokenUsed = (Boolean) false;
         playerTiles = new HashMap<>();
-        for (int i = 0; i < 3; i++) {
+        for(int i = 0; i < 3; i++){
             playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken());
         }
         totalScore = 0;
+        //Biomes.add("LAKE", "MOUNTAIN", "DESERT", "SWAMP", "FOREST");
     }
 
-    public HashMap<HabitatTile, WildlifeToken> getPlayerTiles() {
+    public HashMap<HabitatTile, WildlifeToken> getPlayerTiles(){
         return playerTiles;
     }
-
     //finish later
-    public void calcNumBiomes() {
-        return;
-    }
+    public void calcNumBiomes(){ return;}
 
-    public HashMap<String, Integer> getNumBiomes() {
+    public HashMap<String, Integer> getNumBiomes(){
         return numBiomes;
     }
 
-    public void addTile(HabitatTile h) {
+    public void addTile(HabitatTile h){
         return;
     }
-
-    public boolean natureTokenUsed() {
+    public boolean natureTokenUsed(){
         natureTokenUsed = (Boolean) !natureTokenUsed;
+        if(natureTokenUsed){
+            numNatureTokens--;
+        }
         return natureTokenUsed;
     }
-
-    public int numNatureTokens() {
+    /*public int numNatureTokens() {
         //if statement when a wildlife token is placed on a key stone (numNatureTokens ++;)
-        if (natureTokenUsed()) {
+        if(natureTokenUsed()){
             numNatureTokens--;
         }
         return numNatureTokens;
-    }
+    }*/
 
     @Override
     public int compareTo(Player otherPlayer) {
@@ -71,13 +74,20 @@ public class Player implements Comparable<Player> {
         return result;
     }
 
-    public int compareTiebreakers(Player otherPlayer, Player player2) { //check for all three player
+    public int compareScores(Player otherPlayer, Player player2) { //check for all three player
         // Implement additional tiebreakers as needed
-        // Example: Compare based on biome score, wildlifeToken score, and natureToken amount
+        // Example: Compare based on each of the biome scores
 
-        int t = this.getBiomeScore();
-        int o = otherPlayer.getBiomeScore();
-        int p = player2.getBiomeScore();
+        int t = 0;
+        int o = 0;
+        int p = 0;
+
+        for(int i = 0; i<5; i++ ){
+
+        }
+         t += this.getBiomeScore();
+         o += otherPlayer.getBiomeScore();
+         p += player2.getBiomeScore();
 
         int addpt = 0;
 
@@ -119,21 +129,23 @@ public class Player implements Comparable<Player> {
             p += addpt;
             // No points for player 1 (t)
         }
-        total += t;
+        total+= t;
+
 
         return total;
     }
 
-    /*public int getBiomeScore() {
-        int BS =0;
-        return BS;
-    }*/
     // Method to calculate the biome score using the stored ScoringCharts instance
     public int getBiomeScore() {
-        int biomeScore = 0;
-        return biomeScore;
-    }
+        ScoringCharts scoringCharts = new ScoringCharts();
+        //Map<Biome, Integer> biome = scoringCharts.scoreHabitats(playerTiles);
 
+        int i = 0;
+        int biomeScore = 0;//Map.get(biome.get(i));
+        return biomeScore;
+        // fix for each biome
+
+    }
     public int getWildlifeTokenScore() {
         ScoringCharts scoringCharts = new ScoringCharts();
 
@@ -145,6 +157,7 @@ public class Player implements Comparable<Player> {
         scoringCharts.calculateHawkTokenScoring(this);
         scoringCharts.calculateSalmonTokenScoring(this);
 
+
         // Retrieve scores from ScoringCharts and sum them up
         for (Integer score : scoringCharts.scoringVals) {
             wildlifeTokenScore += score;
@@ -153,19 +166,28 @@ public class Player implements Comparable<Player> {
         return wildlifeTokenScore;
     }
 
-    public int totalScore(Player p) {
+    public int totalScore(Player p){
         total += numNatureTokens + p.getWildlifeTokenScore();
         return total;
     }
-/*
-   //public int getnatureTokenAmt() {return natureTokenAmt;}
-    public void clearEffects(){
-        effects.clear();
+    public String calcWinner (Player p1, Player p2, Player p3) {
+        compareScores(p2, p3);
+        int t1 = totalScore(p1);
+        int t2 = totalScore(p2);
+        int t3 = totalScore(p3);
+
+        if (compareTo(p2) == -1) {
+            return "Player 1";
+        }else if (compareTo(p2) == 1){
+            return "Player 2";
+        }else if (compareTo(p3) == -1) {
+            return "Player 1";
+        } else if (compareTo(p3) == 1) {
+            return "Player 3";
+        }
+        return null;
+        ///fux
     }
 
-    public int totalScore(){
-        return getTotalScore();
-    }
 
-    */
 }
