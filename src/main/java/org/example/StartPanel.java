@@ -10,12 +10,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class StartPanel extends JPanel implements MouseListener  {
+public class StartPanel extends JPanel implements MouseListener {
 
 
-    private Polygon start,rules;
+    private Polygon start, rules;
 
     private boolean isVisible = true;
+
     public StartPanel() {
         addMouseListener(this);
     }
@@ -32,24 +33,24 @@ public class StartPanel extends JPanel implements MouseListener  {
         int yCenter = img.getHeight() / 2;
         g.drawImage(img, xCenter - img.getWidth() / 2, yCenter - img.getHeight() / 2, width, height, null);
 
-        int debugRectWidth = width/4;
-        int debugRectHeight = height/7;
-        int debugXPos = width/2 - debugRectWidth/2;
-        int debugYPos = height/2 - (debugRectHeight / 7) * 5;
+        int debugRectWidth = width / 4;
+        int debugRectHeight = height / 7;
+        int debugXPos = width / 2 - debugRectWidth / 2;
+        int debugYPos = height / 2 - (debugRectHeight / 7) * 5;
 
-        int debugRectWidth2 = width/4;
-        int debugRectHeight2 = height/7;
-        int debugXPos2 = width/2 - debugRectWidth/2;
-        int debugYPos2 = height/2 + debugRectHeight/3 + debugRectHeight/5;
+        int debugRectWidth2 = width / 4;
+        int debugRectHeight2 = height / 7;
+        int debugXPos2 = width / 2 - debugRectWidth / 2;
+        int debugYPos2 = height / 2 + debugRectHeight / 3 + debugRectHeight / 5;
 
-        int[] xPoints = {debugXPos, debugXPos, debugXPos+debugRectWidth, debugXPos+debugRectWidth};
-        int[] yPoints = {debugYPos+debugRectHeight, debugYPos, debugYPos, debugYPos+debugRectHeight};
+        int[] xPoints = {debugXPos, debugXPos, debugXPos + debugRectWidth, debugXPos + debugRectWidth};
+        int[] yPoints = {debugYPos + debugRectHeight, debugYPos, debugYPos, debugYPos + debugRectHeight};
 
         start = new Polygon(xPoints, yPoints, 4);
         //g.drawPolygon(start);
 
-        int[] xPoints2 = {debugXPos2, debugXPos2, debugXPos2+debugRectWidth2, debugXPos2+debugRectWidth2};
-        int[] yPoints2 = {debugYPos2+debugRectHeight2, debugYPos2, debugYPos2, debugYPos2+debugRectHeight2};
+        int[] xPoints2 = {debugXPos2, debugXPos2, debugXPos2 + debugRectWidth2, debugXPos2 + debugRectWidth2};
+        int[] yPoints2 = {debugYPos2 + debugRectHeight2, debugYPos2, debugYPos2, debugYPos2 + debugRectHeight2};
 
         rules = new Polygon(xPoints2, yPoints2, 4);
         //g.drawPolygon(rules);
@@ -60,6 +61,7 @@ public class StartPanel extends JPanel implements MouseListener  {
     public void setVisible(boolean val) {
         isVisible = val;
     }
+
     public boolean getVisible() {
         return isVisible;
     }

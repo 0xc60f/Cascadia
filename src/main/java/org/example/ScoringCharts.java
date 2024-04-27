@@ -106,10 +106,12 @@ public class ScoringCharts {
                 usedTokenIDs.addAll(potentialBears);
             }
         }
+        usedTokenIDs.clear();
 
         if (confirmedBearPairs != 0) {
             scoringVals.add(bearScoringValues.get(confirmedBearPairs));
             bearscoringVals.add(bearScoringValues.get(confirmedBearPairs));
+
             //gotta make the token scoring method that will hold all scoring values
         }
     }
@@ -299,28 +301,31 @@ public class ScoringCharts {
         }
 
 
-        public void calculateHabitatScoring(Player p) {
-            for (Biome currentHabitat : habitatMatches.keySet()) {
-                int largestGroupNum = habitatMatches.get(currentHabitat);
-                System.out.println("Habitat " + currentHabitat + " has a largest group size of " + largestGroupNum);
+    public int scoreHabitats(HashMap<HabitatTile, WildlifeToken> allPlacedTokens) {
+        int score = 0;
 
+        for (HabitatTile tile : allPlacedTokens.keySet()) {
+            TreeMap<Integer, Biome> biomes = tile.getBiomes();
+            for (Map.Entry<Integer, Biome> entry : biomes.entrySet()) {
+                Biome biome = entry.getValue();
+                int side = entry.getKey();
+                HabitatTile neighbor = Graph.getNeighborWithSideBiome(tile, side, biome);
+                if (neighbor != null) {
+                    int neighborSide = Graph.getOppositeSide(side);
+                    Biome neighborBiome = neighbor.getBiome(neighborSide);
+                    if (biome == neighborBiome) {
+                        score++;
+                    }
+                }
             }
         }
 
-        public int finalScoring(){
-            int p1Score = 0;
-            int p2Score = 0;
-            int p3Score = 0;
-            int p4Score = 0;
-
-            p1Score += p1.getwildlifeTokenScore();
-            p2Score += p2.getwildlifeTokenScore();
-            p3Score += p3.getwildlifeTokenScore();
-            p4Score += p4.getwildlifeTokenScore();
+        return score;
+    }
 
 
-            return 0;
-        }
+    // Helper method to find the largest connected component size of a specific biome
+
 
 
         public void processAllHabitats(){
