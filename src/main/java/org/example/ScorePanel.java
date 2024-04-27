@@ -7,15 +7,16 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 public class ScorePanel extends JPanel implements MouseListener  {
 
 
     private Polygon viewWinner;
-    private BufferedImage backgroundImage;
+    private BufferedImage backgroundImage, scoringTable, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
     private boolean isVisible = true;
-    private String winnerText = "Player X Wins!";
     public ScorePanel() {
         addMouseListener(this);
     }
@@ -24,50 +25,89 @@ public class ScorePanel extends JPanel implements MouseListener  {
         super.paint(g);
         try {
             backgroundImage = ImageIO.read(Objects.requireNonNull(StartPanel.class.getResource("/Menu/Background.jpg")));
+            scoringTable = ImageIO.read(Objects.requireNonNull(StartPanel.class.getResource("/Images/full-scoring-table.jpg")));
+            bearScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/bear-small.jpg")));
+            hawkScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/hawk-small.jpg")));
+            salmonScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/salmon-small.jpg")));
+            elkScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/elk-small.jpg")));
+            foxScoring = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/fox-small.jpg")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        Font defFont = new Font("Arial", Font.BOLD, width/70);
-
-        g.drawImage(backgroundImage, 0, 0, null);
-        g.setFont(defFont);
-        int debugRectWidth = width/4;
-        int debugRectHeight = height/7;
-        int debugXPos = width/2 - debugRectWidth/2;
-        int debugYPos = height - (debugRectHeight/2) * 5;
         Color beigeColor = new Color(255, 221, 122);
 
-        int[] xPoints = {debugXPos, debugXPos, debugXPos+debugRectWidth, debugXPos+debugRectWidth};
-        int[] yPoints = {debugYPos+debugRectHeight, debugYPos, debugYPos, debugYPos+debugRectHeight};
+        Font defFont = new Font("Arial", Font.BOLD, width/90);
+        Font smallFont = new Font("Arial", Font.BOLD, width/120);
 
-        viewWinner = new Polygon(xPoints, yPoints, 4);
-        g.setColor(Color.black);
-        g.fillRoundRect(debugXPos, debugYPos, debugRectWidth, debugRectHeight, 10, 10);
+        g.drawImage(backgroundImage, 0, 0, null);
+
+        int scorepatH = height/4;
+
+        int scorepatW = width/7;
+
+        int scorepatY = height-height/80 - scorepatH;
+
+        int scorepatX = scorepatW;
+
+        g.drawImage(bearScoring, scorepatX, scorepatY, scorepatW, scorepatH, null);
+        g.drawImage(hawkScoring, 2*scorepatX, scorepatY, scorepatW, scorepatH, null);
+        g.drawImage(salmonScoring, 3*scorepatX, scorepatY, scorepatW, scorepatH, null);
+        g.drawImage(elkScoring, 4*scorepatX, scorepatY, scorepatW, scorepatH, null);
+        g.drawImage(foxScoring, 5*scorepatX, scorepatY, scorepatW, scorepatH, null);
+
+
+        int labelWidth = width/4;
+        int xdis = width/6 + labelWidth/2;
+
+        int scoreWidth = width/5;
+        int scorexdis = width/6 + scoreWidth/2;
+
+
         g.setColor(beigeColor);
-        g.fillRoundRect(debugXPos, debugYPos, debugRectWidth, debugRectHeight, 30, 30);
+        g.fillRoundRect(width/3 - xdis, height/20, labelWidth, height/15, 30, 30);
+        g.drawImage(scoringTable, width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
 
-        int widthmult  = 2;
-        int heightmult = 2;
+        ArrayList<Integer> test = new ArrayList<Integer>();
+        test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1);
+        test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1);
 
-        g.fillRoundRect(debugXPos - (debugRectWidth * widthmult)/(2*widthmult), debugYPos - debugRectHeight * heightmult - height/8, debugRectWidth * widthmult, debugRectHeight * heightmult, 30, 30);
+        drawScores(g,width/3 - scorexdis,height/40 + height/20 + height/8, scoreWidth, height/2, test);
+        g.fillRoundRect(2 * width/3 - xdis, height/20, labelWidth, height/15, 30, 30);
+        g.drawImage(scoringTable, 2 * width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
+        g.fillRoundRect(width - xdis, height/20, labelWidth, height/15, 30, 30);
+        g.drawImage(scoringTable, width - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
 
-        int textx = debugXPos - (debugRectWidth * widthmult)/(2*widthmult);
-        int texty = debugYPos - debugRectHeight * heightmult - height/8;
-
-        Rectangle textAlign = new Rectangle(debugXPos - (debugRectWidth * widthmult)/(2*widthmult), debugYPos - debugRectHeight * heightmult - height/8, debugRectWidth * widthmult, debugRectHeight * heightmult);
+        int labelWidth2 = width/9;
+        int xdis2 = width/6 + labelWidth2/2;
 
         g.setColor(Color.black);
+        g.fillRoundRect(width/3 - xdis2, height/8, labelWidth2, height/20, 10, 10);
+        g.fillRoundRect(2 * width/3 - xdis2, height/8, labelWidth2, height/20, 10, 10);
+        g.fillRoundRect(width - xdis2, height/8, labelWidth2, height/20, 10, 10);
 
-        drawCenteredString(g, winnerText, textAlign, defFont);
+        g.setColor(beigeColor);
+        g.fillRoundRect(width/3 - xdis2, height/8, labelWidth2, height/20, 30, 30);
+        g.fillRoundRect(2 * width/3 - xdis2, height/8, labelWidth2, height/20, 30, 30);
+        g.fillRoundRect(width - xdis2, height/8, labelWidth2, height/20, 30, 30);
 
-        Rectangle viewAlign = new Rectangle(debugXPos, debugYPos, debugRectWidth, debugRectHeight);
-        drawCenteredString(g, "View Scores", viewAlign, defFont);
-        /*
-        g.setColor(Color.red);
-        g.drawPolygon(viewWinner);
-         */
 
+        Rectangle p1label, p2label, p3label, p1button, p2button, p3button;
+
+        p1label = new Rectangle(width/3 - xdis, height/20, labelWidth, height/15);
+        p1button = new Rectangle(width/3 - xdis2, height/8, labelWidth2, height/20);
+        p2label = new Rectangle(2 * width/3 - xdis, height/20, labelWidth, height/15);
+        p2button = new Rectangle(2 * width/3 - xdis2, height/8, labelWidth2, height/20);
+        p3label = new Rectangle(width - xdis, height/20, labelWidth, height/15);
+        p3button = new Rectangle(width - xdis2, height/8, labelWidth2, height/20);
+
+
+        g.setColor(Color.black);
+        drawCenteredString(g, "Player 1", p1label, defFont);
+        drawCenteredString(g, "Player 2", p2label, defFont);
+        drawCenteredString(g, "Player 3", p3label, defFont);
+        drawCenteredString(g, "View Board", p1button, smallFont);
+        drawCenteredString(g, "View Board", p2button, smallFont);
+        drawCenteredString(g, "View Board", p3button, smallFont);
     }
 
     public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
@@ -83,11 +123,6 @@ public class ScorePanel extends JPanel implements MouseListener  {
         g.drawString(text, x, y);
     }
 
-
-    public void setWinnerText( String wt) {
-        winnerText = wt;
-    }
-
     public void setVisible(boolean val) {
         isVisible = val;
     }
@@ -95,13 +130,48 @@ public class ScorePanel extends JPanel implements MouseListener  {
         return isVisible;
     }
 
+    public void drawScores(Graphics g, int x, int y, int w, int h, ArrayList<Integer> score) {
+
+        g.setColor(Color.black);
+        int boxWidth = w/5;
+        int boxHeight = h/8;
+        Font smallFont = new Font("Arial", Font.BOLD, w/15);
+        Color beigeColor = new Color(255, 221, 122);
+        int xmult = 1;
+        int ymult = 0;
+        for (int i = 0; i < score.size(); i++){
+            System.out.println(i);
+            if (i == 7) {
+                xmult = 2;
+            }
+            if (i == 8) {
+                xmult = 3;
+                ymult = 1;
+            } else if (i == 14) {
+                xmult = 4;
+                ymult = 1;
+            } else if (i == 20) {
+                xmult = 5;
+                ymult = 1;
+            }
+            /*
+            g.setColor(beigeColor);
+            g.drawRect(x+boxWidth*xmult, y + boxHeight*ymult, boxWidth, h/8);
+            */
+            Rectangle r = new Rectangle(x+boxWidth*xmult, y + boxHeight*ymult, boxWidth, h/8);
+            drawCenteredString(g, score.get(i).toString(), r, smallFont);
+            ymult++;
+        }
+        g.setColor(beigeColor);
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
-        if (viewWinner.contains(x, y)) {
+        /*if (viewWinner.contains(x, y)) {
             isVisible = false;
-        }
+        }*/
     }
 
     @Override

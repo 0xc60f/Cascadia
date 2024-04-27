@@ -68,6 +68,9 @@ public class WinnerPanel extends JPanel implements MouseListener {
         g.setColor(Color.red);
         g.drawPolygon(viewWinner);
          */
+        Rectangle scoreAlign = new Rectangle(width/2 - debugRectWidth/2, height - (debugRectHeight/2) * 5, width/4, height/7);
+
+        drawCenteredString(g, "View Scores", scoreAlign, defFont);
 
     }
 
