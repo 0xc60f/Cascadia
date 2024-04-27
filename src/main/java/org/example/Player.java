@@ -3,7 +3,6 @@ package org.example;
 
 import java.util.*;
 
-
 public class Player implements Comparable<Player>{
     private int pNum;
     private ArrayList<HabitatTile> initialThree;
