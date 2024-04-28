@@ -14,8 +14,9 @@ import java.util.Objects;
 public class ScorePanel extends JPanel implements MouseListener  {
 
 
-    private Polygon viewWinner;
+    private Polygon vb1, vb2, vb3, viewPage;
     private BufferedImage backgroundImage, scoringTable, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
+    private boolean boardVisible = false;
     private boolean isVisible = true;
     public ScorePanel() {
         addMouseListener(this);
@@ -63,6 +64,7 @@ public class ScorePanel extends JPanel implements MouseListener  {
         int scorexdis = width/6 + scoreWidth/2;
 
 
+
         g.setColor(beigeColor);
         g.fillRoundRect(width/3 - xdis, height/20, labelWidth, height/15, 30, 30);
         g.drawImage(scoringTable, width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
@@ -72,10 +74,13 @@ public class ScorePanel extends JPanel implements MouseListener  {
         test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1);
 
         drawScores(g,width/3 - scorexdis,height/40 + height/20 + height/8, scoreWidth, height/2, test);
+
         g.fillRoundRect(2 * width/3 - xdis, height/20, labelWidth, height/15, 30, 30);
         g.drawImage(scoringTable, 2 * width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
+        drawScores(g,2 * width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, test);
         g.fillRoundRect(width - xdis, height/20, labelWidth, height/15, 30, 30);
         g.drawImage(scoringTable, width - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
+        drawScores(g,width - scorexdis,height/40 + height/20 + height/8, scoreWidth, height/2, test);
 
         int labelWidth2 = width/9;
         int xdis2 = width/6 + labelWidth2/2;
@@ -90,6 +95,49 @@ public class ScorePanel extends JPanel implements MouseListener  {
         g.fillRoundRect(2 * width/3 - xdis2, height/8, labelWidth2, height/20, 30, 30);
         g.fillRoundRect(width - xdis2, height/8, labelWidth2, height/20, 30, 30);
 
+        int debugRectWidth = labelWidth2;
+        int debugRectHeight = height/20;
+        int debugXPos = width/3 - xdis2;
+        int debugYPos = height/8;
+
+        int[] xPoints = {debugXPos, debugXPos, debugXPos + debugRectWidth, debugXPos + debugRectWidth};
+        int[] yPoints = {debugYPos + debugRectHeight, debugYPos, debugYPos, debugYPos + debugRectHeight};
+
+        debugXPos = 2*width/3 - xdis2;
+
+        int[] xPoints2 = {debugXPos, debugXPos, debugXPos + debugRectWidth, debugXPos + debugRectWidth};
+        int[] yPoints2 = {debugYPos + debugRectHeight, debugYPos, debugYPos, debugYPos + debugRectHeight};
+
+        debugXPos = width - xdis2;
+
+        int[] xPoints3 = {debugXPos, debugXPos, debugXPos + debugRectWidth, debugXPos + debugRectWidth};
+        int[] yPoints3 = {debugYPos + debugRectHeight, debugYPos, debugYPos, debugYPos + debugRectHeight};
+
+
+        int debugRectWidth3 = width/2;
+        int debugRectHeight3 = 2 * height/3;
+        int debugXPos3 = width/2 - debugRectWidth3/2;
+        int debugYPos3 = height/2 - debugRectHeight3/2;
+
+        int[] xPoints4 = {debugXPos3, debugXPos3, debugXPos3 + debugRectWidth3, debugXPos3 + debugRectWidth3};
+        int[] yPoints4 = {debugYPos3 + debugRectHeight3, debugYPos3, debugYPos3, debugYPos3 + debugRectHeight3};
+
+        viewPage = new Polygon(xPoints4, yPoints4, 4);
+
+        if (boardVisible) {
+            g.setColor(beigeColor);
+            g.fillPolygon(viewPage);
+        }
+
+        vb1 = new Polygon(xPoints, yPoints, 4);
+        vb2 = new Polygon(xPoints2, yPoints2, 4);
+        vb3 = new Polygon(xPoints3, yPoints3, 4);
+
+        /*
+        g.drawPolygon(vb1);
+        g.drawPolygon(vb2);
+        g.drawPolygon(vb3);
+        */
 
         Rectangle p1label, p2label, p3label, p1button, p2button, p3button;
 
@@ -132,6 +180,7 @@ public class ScorePanel extends JPanel implements MouseListener  {
 
     public void drawScores(Graphics g, int x, int y, int w, int h, ArrayList<Integer> score) {
 
+        System.out.println(x);
         g.setColor(Color.black);
         int boxWidth = w/5;
         int boxHeight = h/8;
@@ -140,7 +189,6 @@ public class ScorePanel extends JPanel implements MouseListener  {
         int xmult = 1;
         int ymult = 0;
         for (int i = 0; i < score.size(); i++){
-            System.out.println(i);
             if (i == 7) {
                 xmult = 2;
             }
@@ -169,9 +217,15 @@ public class ScorePanel extends JPanel implements MouseListener  {
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
-        /*if (viewWinner.contains(x, y)) {
-            isVisible = false;
-        }*/
+        if (vb1.contains(x, y)) {
+            boardVisible = true;
+        } else if (vb2.contains(x, y)) {
+            boardVisible = true;
+        } else if(vb3.contains(x, y)) {
+            boardVisible = true;
+        } else if (viewPage.contains(x, y)) {
+            boardVisible = false;
+        }
     }
 
     @Override
