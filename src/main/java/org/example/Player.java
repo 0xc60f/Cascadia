@@ -15,13 +15,11 @@ public class Player implements Comparable<Player>{
     private int totalScore;
     private ArrayList<Integer> playerHabitatScores;
     public ArrayList<String> Biomes;
-    public int lakeScore = 0;
-    public int mountainScore = 0;
-    public int desertScore = 0;
-    public int swampScore = 0;
-    public int forestScore = 0;
-
-
+    public int lakeBonusScore = 0;
+    public int mountainBonusScore = 0;
+    public int desertBonusScore = 0;
+    public int swampBonusScore = 0;
+    public int forestBonusScore = 0;
 
 
     public Player(int p){
@@ -51,6 +49,7 @@ public class Player implements Comparable<Player>{
     public void addTile(HabitatTile h){
         return;
     }
+
     public boolean natureTokenUsed(){
         natureTokenUsed = (Boolean) !natureTokenUsed;
         if(natureTokenUsed){
@@ -80,7 +79,7 @@ public class Player implements Comparable<Player>{
         return result;
     }
 
-    public int getBiomeScore(Player player, Biome specificBiome) {
+    private int getBScore(Player player, Biome specificBiome) {
         int biomeScore = 0;
 
         for (HabitatTile tile : playerTiles.keySet()) {
@@ -105,6 +104,32 @@ public class Player implements Comparable<Player>{
         return biomeScore;
     }
 
+    public int getScoreForBiome(Player p, Biome biome){
+        int score = getBScore(p, biome);
+        return score;
+    }
+
+    public int getLakeScore(Player p){
+        int ls = getBScore(p,Biome.LAKE);
+        return ls;
+    }
+    public int getMountainScore(Player p){
+        int ms = getBScore(p,Biome.MOUNTAIN);
+        return ms;
+    }
+    public int getDesertScore(Player p){
+        int ds = getBScore(p,Biome.DESERT);
+        return ds;
+    }
+    public int getSwampScore(Player p){
+        int ss = getBScore(p,Biome.SWAMP);
+        return ss;
+    }
+    public int getForestScore(Player p){
+        int fs = getBScore(p,Biome.FOREST);
+        return fs;
+    }
+
     public int compareBiomeScores(Player p1, Player p2, Player p3) { //check for all three player
 
         int t = 0;
@@ -113,9 +138,9 @@ public class Player implements Comparable<Player>{
 
         for(int i = 0; i<5; i++ ){
             Biome biome = Biome.valueOf(Biomes.get(i));
-            t += getBiomeScore(p1, biome);
-            o += getBiomeScore(p2, biome);
-            p += getBiomeScore(p3, biome);
+            t += getBScore(p1, biome);
+            o += getBScore(p2, biome);
+            p += getBScore(p3, biome);
 
             int addpt = 0;
 
@@ -159,16 +184,12 @@ public class Player implements Comparable<Player>{
             }
             total+= t;
 
-            if (i == 0){
-                lakeScore += t;
-            } else if(i == 1){
-                mountainScore += t;
-            } else if (i == 2){
-                desertScore += t;
-            }else if (i == 3){
-                swampScore += t;
-            }else if (i == 4){
-                forestScore += t;
+            switch (i) {
+                case 0 -> lakeBonusScore += t;
+                case 1 -> mountainBonusScore += t;
+                case 2 -> desertBonusScore += t;
+                case 3 -> swampBonusScore += t;
+                case 4 -> forestBonusScore += t;
             }
 
         }
@@ -193,7 +214,7 @@ public class Player implements Comparable<Player>{
         int wildlifeTokenScore = 0;
 
         // Calculate scores for each wildlife token type
-        scoringCharts.calculateBearTokenScoring(pNum);
+        scoringCharts.calculateBearTokenScoring(this.pNum);
         scoringCharts.calculateFoxTokenScoring(this);
         scoringCharts.calculateHawkTokenScoring(this);
         scoringCharts.calculateSalmonTokenScoring(this);
@@ -206,6 +227,47 @@ public class Player implements Comparable<Player>{
 
         return wildlifeTokenScore;
     }
+    public int getBearTokenScore() {
+        ScoringCharts scoringCharts = new ScoringCharts();
+        scoringCharts.calculateBearTokenScoring(this.pNum); // Calculate bear token scoring for the player
+        // Sum up the scores
+        int bScore = 0;
+        for (Integer bearscoring : scoringCharts.bearscoringVals) {
+            bScore += bearscoring;
+        }
+        return bScore;
+    }
+
+    public int getFoxTokenScore() {
+        ScoringCharts scoringCharts = new ScoringCharts();
+        scoringCharts.calculateFoxTokenScoring(this); // Calculate fox token scoring for the player
+        int fScore = 0;
+        for (Integer foxscoring : scoringCharts.foxscoringVals) {
+            fScore += foxscoring;
+        }
+        return fScore;
+    }
+
+    public int getHawkTokenScore() {
+        ScoringCharts scoringCharts = new ScoringCharts();
+        scoringCharts.calculateHawkTokenScoring(this); // Calculate hawk token scoring for the player
+        int hScore = 0;
+        for (Integer hawkscoring : scoringCharts.hawkscoringVals) {
+            hScore += hawkscoring;
+        }
+        return hScore;
+    }
+
+    public int getSalmonTokenScore() {
+        ScoringCharts scoringCharts = new ScoringCharts();
+        scoringCharts.calculateSalmonTokenScoring(this); // Calculate salmon token scoring for the player
+        int sScore = 0;
+        for (Integer salmonscoring : scoringCharts.salmonscoringVals) {
+            sScore += salmonscoring;
+        }
+        return sScore;
+    }
+
 
     public int totalScore(Player p){
         total += numNatureTokens + p.getWildlifeTokenScore() + p.getBiomeScore();
@@ -228,9 +290,8 @@ public class Player implements Comparable<Player>{
         return "It's a tie!";
     }
 
-    public int getBonusPoints(Player p){
-
-        int tb = lakeScore + mountainScore + desertScore + swampScore + forestScore;
+    public int getTotalBonusPoints(Player p){
+        int tb = lakeBonusScore + mountainBonusScore + desertBonusScore + swampBonusScore + forestBonusScore;
         return tb;
     }
 
