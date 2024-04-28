@@ -237,30 +237,3 @@ public class Player implements Comparable<Player>{
 
 
 }
-/*public int scoreSpecificBiome(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, Biome specificBiome) {
-        int score = 0;
-
-        for (HabitatTile tile : allPlacedTokens.keySet()) {
-            // Check if the tile belongs to the specific biome
-            TreeMap<Integer, Biome> biomes = tile.getBiomes();
-            if (biomes.containsValue(specificBiome)) {
-                for (Map.Entry<Integer, Biome> entry : biomes.entrySet()) {
-                    Biome biome = entry.getValue();
-                    int side = entry.getKey();
-                    HabitatTile neighbor = Graph.getNeighborWithSideBiome(tile, side, biome);
-                    if (neighbor != null) {
-                        int neighborSide = Graph.getOppositeSide(side);
-                        Biome neighborBiome = neighbor.getBiome(neighborSide);
-                        // Check if the neighbor tile also belongs to the same specific biome
-                        if (biome == neighborBiome && biome == specificBiome) {
-                            score++;
-                        }
-                    }
-                }
-            }
-        }
-
-        return score;
-    }
-
- */
