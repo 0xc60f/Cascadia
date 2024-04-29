@@ -234,6 +234,28 @@ public class HabitatTile {
     public Biome getBiome(int side) {
         return biomes.get(side);
     }
+    public void rotateClockwise(){
+        //Shifts the Biomes of the HabitatTile to the right by one
+        Biome temp = biomes.get(5);
+        biomes.put(5, biomes.get(4));
+        biomes.put(4, biomes.get(3));
+        biomes.put(3, biomes.get(2));
+        biomes.put(2, biomes.get(1));
+        biomes.put(1, biomes.get(0));
+        biomes.put(0, temp);
+        image = CascadiaPanel.rotateImage(image, 60);
+    }
+    public void rotateCounterClockwise(){
+        //Shifts the Biomes of the HabitatTile to the left by one
+        Biome temp = biomes.get(0);
+        biomes.put(0, biomes.get(1));
+        biomes.put(1, biomes.get(2));
+        biomes.put(2, biomes.get(3));
+        biomes.put(3, biomes.get(4));
+        biomes.put(4, biomes.get(5));
+        biomes.put(5, temp);
+        image = CascadiaPanel.rotateImage(image, -60);
+    }
 
     /*function rotateTileClockwiseFunction() {
 	// find the currently chosen tile that is currently being placed, and store it's current rotation value into a variable
