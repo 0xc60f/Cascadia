@@ -1,13 +1,11 @@
 package org.example;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 /**
  * The main panel for the Cascadia game. This manages all the interactions with mouse clicks and interactions with the game. However, it delegates the actual drawing of the game to the other panels.
@@ -23,26 +21,13 @@ public class CascadiaPanel extends JPanel implements MouseListener {
     private final StartPanel Menu;
     private final MainBoardPanel MainBoard;
     private final WinnerPanel WinnerScreen;
-    public BufferedImage hawk, bear, elk, fox, salmon;
-
+    private final ScorePanel ScoreScreen;
     public CascadiaPanel() {
         addMouseListener(this);
         Menu = new StartPanel();
         MainBoard = new MainBoardPanel();
         WinnerScreen = new WinnerPanel();
-        try {
-            hawk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource("/Images/WildlifeTokens/HAWK.png")));
-            bear = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource
-                    ("/Images/WildlifeTokens/BEAR.png")));
-            elk = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource
-                    ("/Images/WildlifeTokens/ELK.png")));
-            fox = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource
-                    ("/Images/WildlifeTokens/FOX.png")));
-            salmon = ImageIO.read(Objects.requireNonNull(CascadiaPanel.class.getResource
-                    ("/Images/WildlifeTokens/SALMON.png")));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ScoreScreen = new ScorePanel();
     }
 
     public void paint(Graphics g) {
@@ -54,6 +39,8 @@ public class CascadiaPanel extends JPanel implements MouseListener {
             MainBoard.paint(g, getWidth(), getHeight());
         } else if (WinnerScreen.getVisible()) {
             WinnerScreen.paint(g, getWidth(), getHeight());
+        } else if (ScoreScreen.getVisible()) {
+            ScoreScreen.paint(g, getWidth(), getHeight());
         }
     }
 
@@ -67,6 +54,8 @@ public class CascadiaPanel extends JPanel implements MouseListener {
             MainBoard.mouseClicked(e);
         } else if (WinnerScreen.getVisible()) {
             WinnerScreen.mouseClicked(e);
+        } else if (ScoreScreen.getVisible()) {
+            ScoreScreen.mouseClicked(e);
         }
         repaint();
     }
@@ -120,7 +109,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * The x and y coordinates should be used as the top-left corner of the image, where java draws images.
      * The x coordinate is the key, and the y coordinate is the value.
      */
-    public static Point getCoordsAdjacentHexagon(Polygon baseHexagon, int edge, BufferedImage newImage) {
+    public static Point getCoordsAdjacentHexagon(Polygon baseHexagon, int edge, BufferedImage newImage){
         int boundingBoxWidth = newImage.getWidth();
         int boundingBoxHeight = newImage.getHeight();
         int radius = boundingBoxHeight / 2;
@@ -143,7 +132,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
             }
             case 3 -> yCoord += height + 8; // Adjusted for better alignment
             case 4 -> {
-                xCoord -= horizontalDistance - 1; // Adjusted for better alignment
+                xCoord -= horizontalDistance -1; // Adjusted for better alignment
                 yCoord += (height / 2) + 2;
             }
             case 5 -> {
@@ -156,6 +145,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
     }
 
 
+
     /**
      * Creates a hexagon with the specified x and y coordinates, and then draws the image on top of the hexagon.
      * Also creates a silent hexagon that is used to determine where the adjacent hexagon should be drawn.
@@ -165,10 +155,15 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param g The <code>Graphics</code> object that is used to draw the hexagon. Should be called with <code>getGraphics()</code>
      *          from the panel class that is using it.
      */
-    public static void createAndDrawHexagon(int x, int y, BufferedImage imageUsed, Graphics g) {
+    public static Polygon createAndDrawHexagon(int x, int y, BufferedImage imageUsed, Graphics g) {
         Polygon hexagon = createHexagon(x, y, imageUsed);
         g.drawImage(imageUsed, x, y, null);
+        return hexagon;
     }
+
+
+
+
 
 
     /**
@@ -182,8 +177,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
             case 2 -> drawTiles(bufferedList[0], bufferedList[1]);
             case 3 -> drawTiles(bufferedList[0], bufferedList[1], bufferedList[2]);
             case 4 -> drawTiles(bufferedList[0], bufferedList[1], bufferedList[2], bufferedList[3]);
-            default ->
-                    throw new IllegalStateException("Unexpected value: " + bufferedList.length + " tiles\n Must be 2, 3, or 4 tiles");
+            default -> throw new IllegalStateException("Unexpected value: " + bufferedList.length + " tiles\n Must be 2, 3, or 4 tiles");
         };
     }
 
@@ -292,20 +286,14 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @return A <code>Polygon</code> that is the result of creating a hexagon with the specified x and y coordinates.
      */
     public static Polygon createHexagon(int x, int y, BufferedImage imageUsed) {
-        // Calculate the center of the image
+        //Get the center of the image based on the size of the image and the x and y coords
         int xCenter = x + imageUsed.getWidth() / 2;
         int yCenter = y + imageUsed.getHeight() / 2;
-
-        // Calculate the radius of the hexagon based on the smaller dimension of the image
-        int radius = Math.min(imageUsed.getWidth(), imageUsed.getHeight()) / 2;
-
-        // Create the hexagon
         Polygon hexagon = new Polygon();
         for (int i = 0; i < 6; i++) {
             hexagon.addPoint((int) (xCenter + 59 * Math.cos(i * 2 * Math.PI / 6)),
                     (int) (yCenter + 59 * Math.sin(i * 2 * Math.PI / 6)));
         }
-
         return hexagon;
     }
 

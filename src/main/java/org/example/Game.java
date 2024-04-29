@@ -10,6 +10,8 @@ public class Game {
     private ArrayList<WildlifeToken> displayedWildlife;
     private ArrayList<WildlifeToken> possibleWildlife;
     private ArrayList<HabitatTile> possibleHabitatTiles;
+    private ArrayList<Player> players;
+    private Player currentPlayer;
     private Boolean shuffleTokens = false;
 
     private TreeSet<WildlifeToken> check;
@@ -21,6 +23,7 @@ public class Game {
 
     //make this the construcotr for the actual game so the 4 displayed and make another one for the player class. Add to graph as well
     public Game() {
+        players = new ArrayList<>();
         check = new TreeSet<>();
         numTurns = 1;
         displayedTiles = new ArrayList<>();
@@ -44,8 +47,41 @@ public class Game {
 
         IntStream.range(0, 4).forEach(i -> displayedTiles.add(possibleHabitatTiles.remove((int) (Math.random() * possibleHabitatTiles.size()))));
         IntStream.range(0, 13).forEach(i -> Collections.addAll(possibleWildlife, WildlifeToken.values()));
+        Collections.shuffle(possibleWildlife);
         IntStream.range(0, 4).forEach(i -> displayedWildlife.add(possibleWildlife.remove((int) (Math.random() * possibleWildlife.size()))));
 
+        ArrayList<ArrayList<HabitatTile>> groupedTiles = new ArrayList<>();
+        try {
+            InputStream is = Game.class.getResourceAsStream("/StarterTiles.txt");
+            assert is != null;
+            Scanner reader = new Scanner(is);
+            ArrayList<HabitatTile> tilesGroup = new ArrayList<>();
+            while (reader.hasNextLine()) {
+                String data = reader.nextLine();
+                tilesGroup.add(new HabitatTile(data.substring(0, 1), data.substring(1, 2), Integer.parseInt(data.substring(2, 3)), Integer.parseInt(data.substring(3, 4)), Integer.parseInt(data.substring(4, 5))));
+                if (tilesGroup.size() == 3) {
+                    groupedTiles.add(tilesGroup);
+                    tilesGroup = new ArrayList<>();
+                }
+            }
+            reader.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        IntStream.range(0, 3).forEach(i -> players.add(new Player(i, groupedTiles.get((int) (Math.random() * groupedTiles.size())))));
+        currentPlayer = players.getFirst();
+
+    }
+
+    public void shuffleDisplayedWildLife() {
+        displayedWildlife = new ArrayList<WildlifeToken>();
+        IntStream.range(0, 4).forEach(i -> displayedWildlife.add(possibleWildlife.remove((int) (Math.random() * possibleWildlife.size()))));
+        IntStream.range(0, 4).forEach(i -> possibleWildlife.add(WildlifeToken.values()[(int) (Math.random() * WildlifeToken.values().length)]));
+    }
+
+    public void set3OfTheSame() {
+        displayedWildlife = new ArrayList<WildlifeToken>();
+        IntStream.range(0, 3).forEach(i -> displayedWildlife.add(WildlifeToken.SALMON));
 
     }
 
@@ -87,6 +123,22 @@ public class Game {
     }
     public void addTilePlayer(){
 
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
     }
 
     public boolean addWildlife(HabitatTile h, WildlifeToken wild) {
