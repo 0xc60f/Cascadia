@@ -121,7 +121,7 @@ public class HabitatTile {
             }
             animals[0] = baseImage;
             return CascadiaPanel.drawTiles(animals);
-        } catch (IOException e) {
+        } catch (IOException | IllegalStateException e) {
             throw new RuntimeException(e);
         }
     }

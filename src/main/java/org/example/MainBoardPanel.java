@@ -7,13 +7,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.stream.IntStream;
+import java.util.*;
 
 
 public class MainBoardPanel extends JPanel implements MouseListener {
-    private Polygon viewB1, viewB2, viewPage, downMove, upMove, leftMove, rightMove, endGame;
+    private Polygon viewB1, viewB2, viewPage, downMove, upMove, leftMove, rightMove, endGame, set3, specialButton;
     private boolean viewVis = false;
     private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring, natureToken, testingTile1, testingTile2, testBaseTile, testingTile3;
     private BufferedImage arrUp, arrDown, arrLeft, arrRight;
@@ -21,20 +19,34 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     private BufferedImage bear, elk, fox, hawk, salmon;
     private BufferedImage potentialPlacement;
     private BufferedImage arrowRight, arrowLeft;
+    private int boardCenterx, boardCentery, offsetX, offsetY;
     private boolean isVisible = true;
     private final Polygon[] displayedTilesPolygons;
+    private boolean displayedTilesClickable, displayedAnimalClickable;
+    private String specialButtonString = "";
+    private Boolean[] leftArrowClickable, rightArrowClickable;
     private final Polygon[] displayedAnimalPolygons;
     private final Polygon[] leftArrowPolygons;
     private final Polygon[] rightArrowPolygons;
+    private Graphics graphics;
+    private boolean shuffleUsed;
+    private ArrayList<Polygon> potentialPlacements;
+    private static ArrayList<Polygon> playerPlacedTiles;
     private int offsetx, offsety = 0;
     private Game game;
     private String turn = "Turn: 1", action = "Action Prompt";
 
     public MainBoardPanel() {
+        displayedTilesClickable = displayedAnimalClickable = false;
         displayedTilesPolygons = new Polygon[4];
         displayedAnimalPolygons = new Polygon[4];
         leftArrowPolygons = new Polygon[4];
+        leftArrowClickable = new Boolean[]{false, false, false, false};
+        rightArrowClickable = new Boolean[]{false, false, false, false};
         rightArrowPolygons = new Polygon[4];
+        potentialPlacements = new ArrayList<>();
+        playerPlacedTiles = new ArrayList<>();
+        shuffleUsed = false;
         game = new Game();
         addMouseListener(this);
         importImages();
@@ -51,13 +63,13 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         int boardCentery = ((div - 1) / 2) * (height / div);
 
         Font defFont = new Font("Arial", Font.BOLD, width / 90);
-
+        this.graphics = g;
         g.drawImage(backgroundImage, 0, 0, null);
         g.setFont(defFont);
 
         BufferedImage[] buffList = {ss, bear};
-        BufferedImage test = CascadiaPanel.drawTiles(buffList);
-        g.drawImage(test, boardCenterx + offsetx, boardCentery + offsety, null);
+//        BufferedImage test = CascadiaPanel.drawTiles(buffList);
+//        g.drawImage(test, boardCenterx + offsetx, boardCentery + offsety, null);
 
         Color beigeColor = new Color(255, 221, 122);
         g.setColor(beigeColor);
@@ -72,6 +84,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, width / 90));
 
+        action = "Pick a tile";
         drawCenteredString(g, turn, turnAlign, defFont);
         drawCenteredString(g, action, actionPromptAlign, defFont);
 
@@ -97,6 +110,14 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         drawCenteredString(g, "Player 2", p2Align, defFont);
         drawCenteredString(g, "Player 3", p3Align, defFont);
 
+        Rectangle specialButtonDef = new Rectangle(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10);
+        if (!specialButtonString.isEmpty()) {
+            g.drawRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10);
+        }
+        specialButton = new Polygon(new int[]{width / 100, width / 100, width / 100 + width / 8, width / 100 + width / 8}, new int[]{playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100 + height / 10, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100 + height / 10}, 4);
+        g.setColor(beigeColor);
+        g.fillRoundRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10, 30, 30);
+        g.setColor(Color.BLACK);
 
         int debugRectWidth = width / 8;
         int debugRectHeight = height / 14;
@@ -141,22 +162,10 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         drawNatureTokenCount(g, 0, width, height, div);
 
-        //Draw 4 lines that evenly divide the rest of the bottom rectangle
         g.drawLine(width / div + 240, height - height / div, width / div + 240, height);
         g.drawLine(width / div + 555, height - height / div, width / div + 555, height);
         g.drawLine(width / div + 845, height - height / div, width / div + 845, height);
         drawScoring(g, width, height, div);
-//        g.drawImage(testBaseTile, width / 2, height / 2, null);
-//        Polygon polygon1 = CascadiaPanel.createHexagon(width / 2, height / 2, testBaseTile);
-//        BufferedImage[] buffList2 = {dd, dl, ds, fd, ff, fl, potentialPlacement, ll, lm, md, mf, mm, ms, sl, ss};
-//        //g.drawPolygon(polygon1);
-//        for (int i = 0; i < 6; i++) {
-//            Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(polygon1, i, dd);
-//            CascadiaPanel.createAndDrawHexagon(drawPoint.x, drawPoint.y, buffList2[i + 2], g);
-//        }
-
-
-        ///// Move Tiles polygons start
 
         int regSize = 3;
 
@@ -214,14 +223,29 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         for (int i = 0; i < 4; i++) {
             Point[] arrows = drawArrows(width, height, div, i, g);
+            clearArrows(g, width, height, div, i);
             rightArrowPolygons[i] = new Polygon(new int[]{arrows[0].x, arrows[0].x, arrows[0].x + 50, arrows[0].x + 50}, new int[]{arrows[0].y + 50, arrows[0].y, arrows[0].y, arrows[0].y + 50}, 4);
             leftArrowPolygons[i] = new Polygon(new int[]{arrows[1].x, arrows[1].x, arrows[1].x + 50, arrows[1].x + 50}, new int[]{arrows[1].y + 50, arrows[1].y, arrows[1].y, arrows[1].y + 50}, 4);
-            g.drawPolygon(leftArrowPolygons[i]);
-            g.drawPolygon(rightArrowPolygons[i]);
         }
 
-
+        this.boardCenterx = boardCenterx;
+        this.boardCentery = boardCentery;
         // Following Polygon is for debugging - clicking it ends the game automatically
+
+        g.setColor(Color.green);
+        int debugRectWidth6 = 100;
+        int debugRectHeight6 = 100;
+        int debugXPos6 = 900;
+        int debugYPos6 = 200;
+
+        int[] xPoints9 = {debugXPos6, debugXPos6, debugXPos6 + debugRectWidth6, debugXPos6 + debugRectWidth6};
+        int[] yPoints9 = {debugYPos6 + debugRectHeight6, debugYPos6, debugYPos6, debugYPos6 + debugRectHeight6};
+
+        set3 = new Polygon(xPoints9, yPoints9, 4);
+
+        g.drawPolygon(set3);
+
+
 
         g.setColor(Color.red);
         int debugRectWidth5 = 100;
@@ -235,9 +259,37 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         endGame = new Polygon(xPoints8, yPoints8, 4);
 
         g.drawPolygon(endGame);
-
+        ArrayList<HabitatTile> displayedTiles = game.getDisplayedTiles();
+        for (int i = 0; i < 4; i++) {
+            Point tempPoint = drawTilesDownbar(g, width, height, div, i, displayedTiles.get(i).getImage());
+            //Associate a polygon with each tile
+            Polygon tempPoly = CascadiaPanel.createHexagon(tempPoint.x, tempPoint.y, displayedTiles.get(i).getImage());
+            displayedTilesPolygons[i] = tempPoly;
+        }
 
         ArrayList<WildlifeToken> displayedWildlife = game.getDisplayedWildlife();
+        int bcount = 0;
+        int ecount = 0;
+        int fcount = 0;
+        int hcount = 0;
+        int scount = 0;
+        for (int i = 0; i < 4; i++) {
+            switch (displayedWildlife.get(i)) {
+                case BEAR -> bcount++;
+                case ELK -> ecount++;
+                case FOX -> fcount++;
+                case HAWK -> hcount++;
+                case SALMON -> scount++;
+            }
+            ;
+        }
+        if (bcount == 4 || ecount == 4 || fcount == 4 || hcount == 4 || scount == 4) {
+            game.shuffleDisplayedWildLife();
+        }
+        if (bcount == 3 || ecount == 3 || fcount == 3 || hcount == 3 || scount == 3) {
+            specialButtonString = "Shuffle";
+        }
+        displayedWildlife = game.getDisplayedWildlife();
         for (int i = 0; i < 4; i++) {
             Point drawPoint = switch (displayedWildlife.get(i)) {
                 case BEAR -> drawAnimalTiles(g, width, height, div, i, bear);
@@ -249,18 +301,15 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             //Create a square polygon that starts at drawPoint and is 60 pixels
             Polygon tempPoly = new Polygon(new int[]{drawPoint.x, drawPoint.x, drawPoint.x + 40, drawPoint.x + 40}, new int[]{drawPoint.y + 40, drawPoint.y, drawPoint.y, drawPoint.y + 40}, 4);
             displayedAnimalPolygons[i] = tempPoly;
-            g.drawPolygon(tempPoly);
-        }
-
-        ArrayList<HabitatTile> displayedTiles = game.getDisplayedTiles();
-        for (int i = 0; i < 4; i++) {
-            Point tempPoint = drawTilesDownbar(g, width, height, div, i, displayedTiles.get(i).getImage());
-            //Associate a polygon with each tile
-            Polygon tempPoly = CascadiaPanel.createHexagon(tempPoint.x, tempPoint.y, displayedTiles.get(i).getImage());
-            displayedTilesPolygons[i] = tempPoly;
         }
 
 
+        g.setColor(Color.BLACK);
+        drawCenteredString(g, specialButtonString, specialButtonDef, defFont);
+
+        drawMainPlayerTiles(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
+        //drawPotentialPlacement(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
+        displayedTilesClickable = true;
 
 
     }
@@ -326,7 +375,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
     /**
      * Draws the scoring on the right side of the screen. The scoring is drawn in the order of bear, hawk, salmon, elk, and fox.
-     * @param g The <code>Graphics</code> object that is used to draw the scoring.
+     * @param g The {@link Graphics} object that is used to draw the scoring.
      * @param width The width of the screen.
      * @param height The height of the screen.
      * @param div The number of divisions that the screen is divided into.
@@ -344,6 +393,65 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.drawImage(elkScoring, x, y, null);
         y += height / div;
         g.drawImage(foxScoring, x, y, null);
+    }
+
+    public static void drawMainPlayerTiles(Graphics g, int boardCenterX, int boardCenterY, int offsetx, int offsety, Player p) {
+        playerPlacedTiles.clear();
+        HashMap<HabitatTile, WildlifeToken> playerDraw = p.getPlayerTiles();
+        // Get all the HabitatTiles in playerDraw
+        ArrayList<HabitatTile> playerTiles = new ArrayList<>(playerDraw.keySet());
+
+        // Create a set to store drawn tiles
+        Set<HabitatTile> drawnTiles = new HashSet<>();
+
+        for (HabitatTile ht : playerTiles) {
+            // Draw ht if it hasn't been drawn yet
+            Polygon base = null;
+            if (!drawnTiles.contains(ht)) {
+                base = CascadiaPanel.createAndDrawHexagon(boardCenterX + offsetx, boardCenterY + offsety, ht.getImage(), g);
+                drawnTiles.add(ht); // Add ht to the set of drawn tiles
+                ht.setPolygon(base);
+                playerPlacedTiles.add(base);
+
+            }
+            ArrayList<HabitatTile> adjTiles = ht.getNeighbors();
+            for (HabitatTile adjTile : adjTiles) {
+                if (adjTile != null && !drawnTiles.contains(adjTile) && base != null) {
+                    // Draw adjTile if it hasn't been drawn yet
+                    Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(base, adjTiles.indexOf(adjTile), adjTile.getImage());
+                    drawnTiles.add(adjTile); // Add adjTile to the set of drawn tiles
+                    Polygon tempPoly = CascadiaPanel.createAndDrawHexagon(drawPoint.x, drawPoint.y, adjTile.getImage(), g);
+                    playerPlacedTiles.add(tempPoly);
+                    adjTile.setPolygon(tempPoly);
+                }
+            }
+        }
+    }
+
+    private void drawPotentialPlacement(Graphics g, int boardCenterX, int boardCenterY, int offsetx, int offsety, Player p) {
+        potentialPlacements.clear();
+        HashMap<HabitatTile, WildlifeToken> playerDraw = p.getPlayerTiles();
+        ArrayList<HabitatTile> playerTiles = new ArrayList<>(playerDraw.keySet());
+        Set<HabitatTile> drawnTiles = new HashSet<>();
+        Set<Polygon> potentialPlacementSet = new HashSet<>();
+
+        for (HabitatTile ht : playerTiles) {
+            Polygon base = ht.getPolygon();
+            ArrayList<HabitatTile> adjTiles = ht.getNeighbors();
+            for (int i = 0; i < adjTiles.size(); i++) {
+                HabitatTile adjTile = adjTiles.get(i);
+                if (adjTile != null && !drawnTiles.contains(adjTile) && base != null) {
+                    Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(base, i, adjTile.getImage());
+                    drawnTiles.add(adjTile);
+                    playerPlacedTiles.add(CascadiaPanel.createAndDrawHexagon(drawPoint.x, drawPoint.y, adjTile.getImage(), g));
+                } else if (adjTile == null && base != null) {
+                    Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(base, i, potentialPlacement);
+                    Polygon potentialPlacementPolygon = CascadiaPanel.createAndDrawHexagon(drawPoint.x, drawPoint.y, potentialPlacement, g);
+                    potentialPlacementSet.add(potentialPlacementPolygon);
+                }
+            }
+        }
+        potentialPlacements.addAll(potentialPlacementSet);
     }
 
     /**
@@ -390,13 +498,26 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         return isVisible;
     }
 
+    public void waitForSeconds(double seconds) {
+        try {
+            Thread.sleep((int) (seconds * 1000));
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
         for (int i = 0; i < 4; i++) {
-            if (displayedTilesPolygons[i].contains(e.getPoint())) {
-                System.out.println("Tile " + i + " clicked");
+            if (displayedTilesPolygons[i].contains(e.getPoint()) && displayedTilesClickable) {
+                action = "Click where you want to place the tile.";
+                HabitatTile ht = game.getDisplayedTiles().get(i);
+                leftArrowClickable[i] = true;
+                rightArrowClickable[i] = true;
+                drawArrows(this.getWidth(), this.getHeight(), 4, i, graphics);
+                drawPotentialPlacement(graphics, boardCenterx, boardCentery, offsetX, offsetY, game.getCurrentPlayer());
             }
         }
         for (int i = 0; i < 4; i++) {
@@ -405,11 +526,27 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             }
         }
         for (int i = 0; i < 4; i++) {
-            if (leftArrowPolygons[i].contains(e.getPoint())) {
-                System.out.println("Left arrow " + i + " clicked");
+            if (leftArrowPolygons[i].contains(e.getPoint()) && leftArrowClickable[i]) {
+                HabitatTile ht = game.getDisplayedTiles().get(i);
+                //Rotate the tile 60 degrees counterclockwise
+                BufferedImage temp = ht.getImage();
+                ht.setImage(CascadiaPanel.rotateImage(temp, -60));
+                clearTilesDownbar(graphics, this.getWidth(), this.getHeight(), 4, i);
+                drawTilesDownbar(graphics, this.getWidth(), this.getHeight(), 4, i, ht.getImage());
             }
-            if (rightArrowPolygons[i].contains(e.getPoint())) {
-                System.out.println("Right arrow " + i + " clicked");
+            if (rightArrowPolygons[i].contains(e.getPoint()) && rightArrowClickable[i]) {
+                HabitatTile ht = game.getDisplayedTiles().get(i);
+                //Rotate the tile 60 degrees clockwise
+                BufferedImage temp = ht.getImage();
+                ht.setImage(CascadiaPanel.rotateImage(temp, 60));
+                clearTilesDownbar(graphics, this.getWidth(), this.getHeight(), 4, i);
+                drawTilesDownbar(graphics, this.getWidth(), this.getHeight(), 4, i, ht.getImage());
+            }
+        }
+        //Check which polygon in potentialPlacements contains e.getPoint()
+        for (Polygon p : potentialPlacements) {
+            if (p.contains(e.getPoint())) {
+                System.out.println("Potential placement clicked");
             }
         }
         if (viewB1.contains(x, y)) {
@@ -420,18 +557,27 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             viewVis = false;
         } else if (endGame.contains(x, y)) {
             setVisible(false);
+        } else if (specialButton.contains(x, y)) {
+            if (specialButtonString.equals("Shuffle") && !shuffleUsed) {
+                game.shuffleDisplayedWildLife();
+                shuffleUsed = true;
+            }
         } else {
             if (upMove.contains(x, y)) {
                 offsety = offsety + 10;
+                this.offsetY = offsety;
             }
             if (downMove.contains(x, y)) {
                 offsety = offsety - 10;
+                this.offsetY = offsety;
             }
             if (leftMove.contains(x, y)) {
                 offsetx = offsetx + 10;
+                this.offsetX = offsetx;
             }
             if (rightMove.contains(x, y)) {
                 offsetx = offsetx - 10;
+                this.offsetX = offsetx;
             }
         }
 
@@ -455,6 +601,14 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
+
+    }
+
+    private void writeActionPrompt(Graphics g, String text, Rectangle rect) {
+        Color tempColor = g.getColor();
+        g.setColor(Color.BLACK);
+        drawCenteredString(g, text, rect, new Font("Arial", Font.BOLD, this.getWidth() / 90));
+        g.setColor(tempColor);
 
     }
 
@@ -707,5 +861,20 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         g.setColor(tempColor);
     }
+
+    /**
+     * Clears the special button that is used for overpopulation.
+     * @param g The {@link Graphics} object that is used to draw the special button.
+     * @param width The width of the screen.
+     * @param height The height of the screen.
+     * @param div The number of divisions that the screen is divided into.
+     */
+    private void clearSpecialButton(Graphics g, int width, int height, int div) {
+        Color tempColor = g.getColor();
+        g.setColor(new Color(255, 221, 122));
+        g.fillRoundRect(width / 100, (height - height / div) - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10, 30, 30);
+        g.setColor(tempColor);
+    }
+
 
 }

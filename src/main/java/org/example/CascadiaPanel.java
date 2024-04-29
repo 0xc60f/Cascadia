@@ -155,9 +155,10 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param g The <code>Graphics</code> object that is used to draw the hexagon. Should be called with <code>getGraphics()</code>
      *          from the panel class that is using it.
      */
-    public static void createAndDrawHexagon(int x, int y, BufferedImage imageUsed, Graphics g) {
+    public static Polygon createAndDrawHexagon(int x, int y, BufferedImage imageUsed, Graphics g) {
         Polygon hexagon = createHexagon(x, y, imageUsed);
         g.drawImage(imageUsed, x, y, null);
+        return hexagon;
     }
 
 
