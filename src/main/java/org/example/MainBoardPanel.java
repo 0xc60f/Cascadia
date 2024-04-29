@@ -29,11 +29,16 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     private final Polygon[] leftArrowPolygons;
     private final Polygon[] rightArrowPolygons;
     private Graphics graphics;
+    private boolean uniqueToken;
+    private GameState gameState;
     private boolean shuffleUsed;
+    private int tileClicked, tokenClicked;
     private ArrayList<Polygon> potentialPlacements;
     private static ArrayList<Polygon> playerPlacedTiles;
     private int offsetx, offsety = 0;
     private Game game;
+
+
     private String turn = "Turn: 1", action = "Action Prompt";
 
     public MainBoardPanel() {
@@ -47,9 +52,11 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         potentialPlacements = new ArrayList<>();
         playerPlacedTiles = new ArrayList<>();
         shuffleUsed = false;
+        tileClicked = tokenClicked = 0;
         game = new Game();
         addMouseListener(this);
         importImages();
+        gameState = GameState.GAMESTART;
     }
 
     public void paint(Graphics g, int width, int height) {
@@ -84,9 +91,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, width / 90));
 
-        action = "Pick a tile";
         drawCenteredString(g, turn, turnAlign, defFont);
-        drawCenteredString(g, action, actionPromptAlign, defFont);
 
         drawScoring(g, width, height, div);
 
@@ -311,6 +316,20 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         //drawPotentialPlacement(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
         displayedTilesClickable = true;
 
+        if (gameState.equals(GameState.GAMESTART)) {
+            action = "Pick a tile";
+            drawCenteredString(g, action, actionPromptAlign, defFont);
+        }
+
+
+        if (gameState.equals(GameState.TILECLICKED)){
+            clearActionPrompt(g, width, height, div);
+            action = "Rotate your tile\n, then place it on the yellow tile.";
+            drawCenteredString(g, action, actionPromptAlign, defFont);
+            drawArrows(width, height, 4, tileClicked, g);
+            drawPotentialPlacement(g, boardCenterx, boardCentery, offsetX, offsetY, game.getCurrentPlayer());
+        }
+
 
     }
 
@@ -512,12 +531,12 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         int y = e.getY();
         for (int i = 0; i < 4; i++) {
             if (displayedTilesPolygons[i].contains(e.getPoint()) && displayedTilesClickable) {
-                action = "Click where you want to place the tile.";
-                HabitatTile ht = game.getDisplayedTiles().get(i);
+                action = "Rotate your tile, then click to place the tile.";
+                gameState = GameState.TILECLICKED;
                 leftArrowClickable[i] = true;
                 rightArrowClickable[i] = true;
-                drawArrows(this.getWidth(), this.getHeight(), 4, i, graphics);
-                drawPotentialPlacement(graphics, boardCenterx, boardCentery, offsetX, offsetY, game.getCurrentPlayer());
+                tileClicked = i;
+                repaint();
             }
         }
         for (int i = 0; i < 4; i++) {
