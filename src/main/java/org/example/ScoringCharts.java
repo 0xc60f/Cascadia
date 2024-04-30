@@ -19,6 +19,7 @@ public class ScoringCharts {
     private ArrayList<HabitatTile> potentialBears;
     private ArrayList<HabitatTile> usedTokenIDs;
     private HashMap<Integer, Integer> foxScoringValues;
+    private ArrayList<Integer> elkscoringvals;
     private Map<Biome, Integer> habitatMatches;
     public Player p1 = new Player(1);
     public Player p2 = new Player(2);
@@ -341,6 +342,7 @@ public class ScoringCharts {
         }
 
         scoringVals.add(totalElkScore);
+        elkscoringvals.add(hawkScoringValues.get(totalElkScore));
     }
 
     private int calculateElkScore(ArrayList<HabitatTile> elkGroup) {
