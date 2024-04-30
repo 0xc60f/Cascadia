@@ -71,19 +71,52 @@ public abstract class Graph {
     }
 
     public static ArrayList<HabitatTile> neighbourTiles(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile tileID) {
-        // Implement this method based on  reqs
-        return new ArrayList<>();
+        ArrayList<HabitatTile> neighbourTiles = new ArrayList<>();
+        for (HabitatTile tile : allPlacedTokens.keySet()) {
+            if (tile.isNeighbour(tileID)) {
+                neighbourTiles.add(tile);
+            }
+        }
+        return neighbourTiles;
     }
 
-    // Implement the forwardsAndBackwardsSalmonRun and salmonTokensInRun methods in the SalmonScoring class
     public static ArrayList<HabitatTile> forwardsAndBackwardsSalmonRun(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile firstTile, List<HabitatTile> startingTiles) {
-        return new ArrayList<>();
+        ArrayList<HabitatTile> run = new ArrayList<>();
+        run.add(firstTile);
+        List<HabitatTile> queue = new ArrayList<>(startingTiles);
+        while (!queue.isEmpty()) {
+            HabitatTile currentTile = queue.remove(0);
+            if (currentTile.equals(firstTile)) {
+                continue;
+            }
+            List<HabitatTile> neighbours = Graph.getNeighbors(currentTile);
+            for (HabitatTile neighbour : neighbours) {
+                if (allPlacedTokens.get(neighbour) == WildlifeToken.SALMON && !run.contains(neighbour)) {
+                    run.add(neighbour);
+                    queue.add(neighbour);
+                }
+            }
+        }
+        Collections.reverse(run);
+        return run;
     }
 
     public static ArrayList<HabitatTile> salmonTokensInRun(Map<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile startID, WildlifeToken thisWildlife) {
-        return new ArrayList<>();
-
-
+        ArrayList<HabitatTile> run = new ArrayList<>();
+        run.add(startID);
+        List<HabitatTile> queue = new ArrayList<>();
+        queue.add(startID);
+        while (!queue.isEmpty()) {
+            HabitatTile currentTile = queue.remove(0);
+            List<HabitatTile> neighbours = Graph.getNeighbors(currentTile);
+            for (HabitatTile neighbour : neighbours) {
+                if (allPlacedTokens.get(neighbour) == thisWildlife && !run.contains(neighbour)) {
+                    run.add(neighbour);
+                    queue.add(neighbour);
+                }
+            }
+        }
+        return run;
     }
 
     public static int getLargestConnectedComponentSize(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile startTile, Biome targetBiome) {
