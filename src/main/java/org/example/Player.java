@@ -72,13 +72,9 @@ public class Player implements Comparable<Player>{
         }
         return natureTokenUsed;
     }
-    /*public int numNatureTokens() {
-        //if statement when a wildlife token is placed on a key stone (numNatureTokens ++;)
-        if(natureTokenUsed()){
-            numNatureTokens--;
-        }
+    public int numNatureTokens() {
         return numNatureTokens;
-    }*/
+    }
 
     @Override
     public int compareTo(Player otherPlayer) {
