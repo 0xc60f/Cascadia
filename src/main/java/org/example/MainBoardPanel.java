@@ -117,11 +117,11 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         Rectangle specialButtonDef = new Rectangle(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10);
         if (!specialButtonString.isEmpty()) {
+            g.fillRoundRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10, 30, 30);
             g.drawRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10);
         }
         specialButton = new Polygon(new int[]{width / 100, width / 100, width / 100 + width / 8, width / 100 + width / 8}, new int[]{playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100 + height / 10, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100 + height / 10}, 4);
         g.setColor(beigeColor);
-        g.fillRoundRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10, 30, 30);
         g.setColor(Color.BLACK);
 
         int debugRectWidth = width / 8;
@@ -287,8 +287,16 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             }
             ;
         }
-        if (bcount == 4 || ecount == 4 || fcount == 4 || hcount == 4 || scount == 4) {
-            game.shuffleDisplayedWildLife();
+        if (bcount == 4) {
+            game.shuffleDisplayedWildLife(WildlifeToken.BEAR);
+        } else if (ecount == 4) {
+            game.shuffleDisplayedWildLife(WildlifeToken.ELK);
+        } else if (fcount == 4) {
+            game.shuffleDisplayedWildLife(WildlifeToken.FOX);
+        } else if (hcount == 4) {
+            game.shuffleDisplayedWildLife(WildlifeToken.HAWK);
+        } else if (scount == 4) {
+            game.shuffleDisplayedWildLife(WildlifeToken.SALMON);
         }
         if (bcount == 3 || ecount == 3 || fcount == 3 || hcount == 3 || scount == 3) {
             specialButtonString = "Shuffle";
@@ -338,18 +346,35 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             clearArrows(g, width, height, div, tileClicked);
 
             HabitatTile ht = game.getDisplayedTiles().remove(tileClicked);
-            ArrayList<HabitatTile> existingTiles = new ArrayList<>(game.getCurrentPlayer().getPlayerTiles().keySet());
-            for (HabitatTile h : existingTiles) {
-                //Check if h's polygon borders ht's polygon
-                if (h.getPolygon().intersects(ht.getPolygon().getBounds2D())) {
-                    game.getCurrentPlayer().addTile(ht);
-                    break;
-                }
-
-            }
-
-
+            ArrayList<HabitatTile> neighbors = findNeighborsFromPotentialPolygon(ht.getPolygon(), game.getCurrentPlayer());
+            ht.setNeighbors(neighbors);
+            System.out.println(neighbors);
+            //ArrayList<HabitatTile> existingTiles = new ArrayList<>(game.getCurrentPlayer().getPlayerTiles().keySet());
             game.getCurrentPlayer().addTile(ht);
+//            for (HabitatTile h : existingTiles) {
+//                //Check if h's polygon borders ht's polygon
+//                if (h.getPolygon().intersects(ht.getPolygon().getBounds2D())) {
+//                    //Find which edge of h borders ht based on geometry
+//                    if (h.getPolygon().getBounds2D().getMaxY() == ht.getPolygon().getBounds2D().getMinY()) {
+//                        htNeighbors[0] = h;
+//                    } else if (h.getPolygon().getBounds2D().getMinY() == ht.getPolygon().getBounds2D().getMaxY()) {
+//                        htNeighbors[1] = h;
+//                    } else if (h.getPolygon().getBounds2D().getMaxX() == ht.getPolygon().getBounds2D().getMinX()) {
+//                        htNeighbors[2] = h;
+//                    } else if (h.getPolygon().getBounds2D().getMinX() == ht.getPolygon().getBounds2D().getMaxX()) {
+//                        htNeighbors[3] = h;
+//                    } else if (h.getPolygon().getBounds2D().getMaxX() == ht.getPolygon().getBounds2D().getMaxX()) {
+//                        htNeighbors[4] = h;
+//                    } else if (h.getPolygon().getBounds2D().getMinX() == ht.getPolygon().getBounds2D().getMinX()) {
+//                        htNeighbors[5] = h;
+//                    }
+//                }
+//
+//            }
+//            ArrayList<HabitatTile> allNewTiles = new ArrayList<>(game.getCurrentPlayer().getPlayerTiles().keySet());
+//            allNewTiles.stream().map(HabitatTile::getNeighbors).forEach(System.out::println);
+//            System.out.println(game.getCurrentPlayer().getPlayerTiles().keySet());
+            drawMainPlayerTiles(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
 
         }
 
@@ -483,17 +508,31 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             for (int i = 0; i < adjTiles.size(); i++) {
                 HabitatTile adjTile = adjTiles.get(i);
                 if (adjTile != null && !drawnTiles.contains(adjTile) && base != null) {
-                    Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(base, i, adjTile.getImage());
-                    drawnTiles.add(adjTile);
-                    playerPlacedTiles.add(CascadiaPanel.createAndDrawHexagon(drawPoint.x, drawPoint.y, adjTile.getImage(), g));
+
                 } else if (adjTile == null && base != null) {
                     Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(base, i, potentialPlacement);
-                    Polygon potentialPlacementPolygon = CascadiaPanel.createAndDrawHexagon(drawPoint.x, drawPoint.y, potentialPlacement, g);
-                    potentialPlacementSet.add(potentialPlacementPolygon);
+                    Polygon potentialPlacementPolygon = CascadiaPanel.createHexagon(drawPoint.x, drawPoint.y, potentialPlacement);
+
+                    // Calculate the centers of the bounding boxes of the polygons
+                    double centerX1 = potentialPlacementPolygon.getBounds2D().getCenterX();
+                    double centerY1 = potentialPlacementPolygon.getBounds2D().getCenterY();
+                    double centerX2 = base.getBounds2D().getCenterX();
+                    double centerY2 = base.getBounds2D().getCenterY();
+
+
+                    // If the centers are at least 5 pixels away from each other
+                    if (Math.abs(centerX1 - centerX2) >= 5 && Math.abs(centerY1 - centerY2) >= 5) {
+                        g.drawImage(potentialPlacement, drawPoint.x, drawPoint.y, null);
+                        potentialPlacementSet.add(potentialPlacementPolygon);
+                    }
+                    else
+                        System.out.println((centerX1 - centerX2) + " " + (centerY1 - centerY2));
                 }
             }
         }
+        // Add the polygons to the potentialPlacements set
         potentialPlacements.addAll(potentialPlacementSet);
+        System.out.println(potentialPlacements.size());
     }
 
     /**
@@ -584,15 +623,19 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             }
         }
         //Check which polygon in potentialPlacements contains e.getPoint()
-        for (Polygon p : potentialPlacements) {
-            if (p.contains(e.getPoint())) {
-                gameState = GameState.TILEPLACE;
-                game.getDisplayedTiles().get(tileClicked).setPolygon(p);
-                System.out.println("AMong us");
+        if (gameState.equals(GameState.TILECLICKED)){
+            boolean found = false;
+            for (Polygon p : potentialPlacements) {
+                if (p.contains(e.getPoint())) {
+                    gameState = GameState.TILEPLACE;
+                    game.getDisplayedTiles().get(tileClicked).setPolygon(p);
+                    found = true;
+                    break;
+                }
+            }
+            if (found){
                 potentialPlacements.clear();
                 repaint();
-
-
             }
         }
         if (viewB1.contains(x, y)) {
@@ -605,7 +648,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             setVisible(false);
         } else if (specialButton.contains(x, y)) {
             if (specialButtonString.equals("Shuffle") && !shuffleUsed) {
-                game.shuffleDisplayedWildLife();
+                game.shuffleDisplayedWildLife(null);
                 shuffleUsed = true;
             }
         } else {
@@ -750,6 +793,55 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.setColor(new Color(255, 221, 122));
         g.fillRoundRect(x, y, 40, 40, 10, 10);
         g.setColor(tempColor);
+    }
+
+    private ArrayList<HabitatTile> findNeighborsFromPotentialPolygon(Polygon poly, Player p){
+        HabitatTile[] neighbors = new HabitatTile[6];
+        ArrayList<HabitatTile> existingTiles = new ArrayList<>(p.getPlayerTiles().keySet());
+
+        // Calculate the center of the bounding box of the original polygon
+        double polyCenterX = poly.getBounds2D().getCenterX();
+        double polyCenterY = poly.getBounds2D().getCenterY();
+
+        for (HabitatTile existingTile : existingTiles) {
+            Polygon existingPolygon = existingTile.getPolygon();
+
+            // Check if the bounding boxes intersect
+            if (poly.getBounds2D().intersects(existingPolygon.getBounds2D())) {
+                // Calculate the center of the bounding box of the existing tile
+                double existingCenterX = existingPolygon.getBounds2D().getCenterX();
+                double existingCenterY = existingPolygon.getBounds2D().getCenterY();
+
+                // Calculate the relative position
+                double relativeX = polyCenterX - existingCenterX;
+                double relativeY = polyCenterY - existingCenterY;
+
+                // Define the leeway
+                double leeway = 3.0;
+                System.out.println("Relative X: " + relativeX + " Relative Y: " + relativeY);
+                if (relativeX > leeway && relativeY > leeway) {
+                    // The potential tile is to the right and below the existing tile
+                    neighbors[1] = existingTile;
+                } else if (relativeX > leeway && relativeY < -leeway) {
+                    // The potential tile is to the right and above the existing tile
+                    neighbors[2] = existingTile;
+                } else if (relativeX < -leeway && relativeY > leeway) {
+                    // The potential tile is to the left and below the existing tile
+                    neighbors[5] = existingTile;
+                } else if (relativeX < -leeway && relativeY < -leeway) {
+                    // The potential tile is to the left and above the existing tile
+                    neighbors[4] = existingTile;
+                } else if (Math.abs(relativeX) <= leeway && relativeY > leeway) {
+                    // The potential tile is to the right of the existing tile
+                    neighbors[0] = existingTile;
+                } else if (Math.abs(relativeX) <= leeway && relativeY < -leeway) {
+                    // The potential tile is to the left of the existing tile
+                    neighbors[3] = existingTile;
+                }
+            }
+        }
+
+        return new ArrayList<>(Arrays.asList(neighbors));
     }
 
     /**
