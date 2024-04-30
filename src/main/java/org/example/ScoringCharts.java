@@ -305,14 +305,13 @@ public class ScoringCharts {
     public void calculateElkTokenScoring(Player p) {
         allPlacedTokens = p.getPlayerTiles();
         ArrayList<HabitatTile> tokenIDs = new ArrayList<>(allPlacedTokens.keySet());
-
+        int elkScore = 0;
         HashMap<HabitatTile, Integer> elkScoring = new HashMap<>();
         ArrayList<HabitatTile> usedElkTokenIDs = new ArrayList<>();
 
         for (HabitatTile tokenID : tokenIDs) {
             WildlifeToken token = allPlacedTokens.get(tokenID);
             if (token == WildlifeToken.ELK && !usedElkTokenIDs.contains(tokenID)) {
-                int elkScore = 0;
                 ArrayList<HabitatTile> elkGroup = new ArrayList<>();
                 elkGroup.add(tokenID);
                 usedElkTokenIDs.add(tokenID);
@@ -334,16 +333,14 @@ public class ScoringCharts {
                 }
 
                 elkScore = calculateElkScore(elkGroup);
-                elkScoring.put(tokenID, elkScore);
+
             }
         }
 
-        for (Map.Entry<HabitatTile, Integer> entry : elkScoring.entrySet()) {
-            totalElkScore += entry.getValue();
-        }
 
-        scoringVals.add(totalElkScore);
-        elkscoringvals.add(totalElkScore);
+
+        scoringVals.add(elkScore);
+        elkscoringvals.add(elkScore);
     }
 
     private int calculateElkScore(ArrayList<HabitatTile> elkGroup) {
