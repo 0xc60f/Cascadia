@@ -342,7 +342,7 @@ public class ScoringCharts {
         }
 
         scoringVals.add(totalElkScore);
-        elkscoringvals.add(hawkScoringValues.get(totalElkScore));
+        elkscoringvals.add(totalElkScore);
     }
 
     private int calculateElkScore(ArrayList<HabitatTile> elkGroup) {
