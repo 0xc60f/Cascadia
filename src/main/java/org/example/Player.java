@@ -62,7 +62,7 @@ public class Player implements Comparable<Player>{
     }
 
     public void addTile(HabitatTile h){
-        return;
+        playerTiles.put(h, h.getWildlifeToken());
     }
 
     public boolean natureTokenUsed(){

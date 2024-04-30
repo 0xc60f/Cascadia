@@ -29,11 +29,16 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     private final Polygon[] leftArrowPolygons;
     private final Polygon[] rightArrowPolygons;
     private Graphics graphics;
+    private boolean uniqueToken;
+    private GameState gameState;
     private boolean shuffleUsed;
+    private int tileClicked, tokenClicked;
     private ArrayList<Polygon> potentialPlacements;
     private static ArrayList<Polygon> playerPlacedTiles;
     private int offsetx, offsety = 0;
     private Game game;
+
+
     private String turn = "Turn: 1", action = "Action Prompt";
 
     public MainBoardPanel() {
@@ -47,9 +52,11 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         potentialPlacements = new ArrayList<>();
         playerPlacedTiles = new ArrayList<>();
         shuffleUsed = false;
+        tileClicked = tokenClicked = 0;
         game = new Game();
         addMouseListener(this);
         importImages();
+        gameState = GameState.GAMESTART;
     }
 
     public void paint(Graphics g, int width, int height) {
@@ -84,9 +91,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, width / 90));
 
-        action = "Pick a tile";
         drawCenteredString(g, turn, turnAlign, defFont);
-        drawCenteredString(g, action, actionPromptAlign, defFont);
 
         drawScoring(g, width, height, div);
 
@@ -246,7 +251,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.drawPolygon(set3);
 
 
-
         g.setColor(Color.red);
         int debugRectWidth5 = 100;
         int debugRectHeight5 = 100;
@@ -310,6 +314,44 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         drawMainPlayerTiles(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
         //drawPotentialPlacement(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
         displayedTilesClickable = true;
+
+        if (gameState.equals(GameState.GAMESTART)) {
+            action = "Pick a tile";
+            drawCenteredString(g, action, actionPromptAlign, defFont);
+        }
+
+
+        if (gameState.equals(GameState.TILECLICKED)) {
+            Font smallFont = new Font("Arial", Font.BOLD, width / 180);
+            clearActionPrompt(g, width, height, div);
+            action = "Rotate your tile, then place it on the yellow tile.";
+            drawCenteredString(g, action, actionPromptAlign, smallFont);
+            drawArrows(width, height, div, tileClicked, g);
+            drawPotentialPlacement(g, boardCenterx, boardCentery, offsetX, offsetY, game.getCurrentPlayer());
+
+        }
+        if (gameState.equals(GameState.TILEPLACE)) {
+            clearTilesDownbar(g, width, height, div, tileClicked);
+            leftArrowClickable[tileClicked] = false;
+            rightArrowClickable[tileClicked] = false;
+            displayedTilesClickable = false;
+            clearArrows(g, width, height, div, tileClicked);
+
+            HabitatTile ht = game.getDisplayedTiles().remove(tileClicked);
+            ArrayList<HabitatTile> existingTiles = new ArrayList<>(game.getCurrentPlayer().getPlayerTiles().keySet());
+            for (HabitatTile h : existingTiles) {
+                //Check if h's polygon borders ht's polygon
+                if (h.getPolygon().intersects(ht.getPolygon().getBounds2D())) {
+                    game.getCurrentPlayer().addTile(ht);
+                    break;
+                }
+
+            }
+
+
+            game.getCurrentPlayer().addTile(ht);
+
+        }
 
 
     }
@@ -512,12 +554,12 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         int y = e.getY();
         for (int i = 0; i < 4; i++) {
             if (displayedTilesPolygons[i].contains(e.getPoint()) && displayedTilesClickable) {
-                action = "Click where you want to place the tile.";
-                HabitatTile ht = game.getDisplayedTiles().get(i);
+                action = "Rotate your tile, then click to place the tile.";
+                gameState = GameState.TILECLICKED;
                 leftArrowClickable[i] = true;
                 rightArrowClickable[i] = true;
-                drawArrows(this.getWidth(), this.getHeight(), 4, i, graphics);
-                drawPotentialPlacement(graphics, boardCenterx, boardCentery, offsetX, offsetY, game.getCurrentPlayer());
+                tileClicked = i;
+                repaint();
             }
         }
         for (int i = 0; i < 4; i++) {
@@ -529,24 +571,28 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             if (leftArrowPolygons[i].contains(e.getPoint()) && leftArrowClickable[i]) {
                 HabitatTile ht = game.getDisplayedTiles().get(i);
                 //Rotate the tile 60 degrees counterclockwise
-                BufferedImage temp = ht.getImage();
-                ht.setImage(CascadiaPanel.rotateImage(temp, -60));
-                clearTilesDownbar(graphics, this.getWidth(), this.getHeight(), 4, i);
-                drawTilesDownbar(graphics, this.getWidth(), this.getHeight(), 4, i, ht.getImage());
+                clearTilesDownbar(graphics, this.getWidth(), this.getHeight(), 5, i);
+                drawTilesDownbar(graphics, this.getWidth(), this.getHeight(), 5, i, ht.getImage());
+                ht.rotateCounterClockwise();
             }
             if (rightArrowPolygons[i].contains(e.getPoint()) && rightArrowClickable[i]) {
                 HabitatTile ht = game.getDisplayedTiles().get(i);
                 //Rotate the tile 60 degrees clockwise
-                BufferedImage temp = ht.getImage();
-                ht.setImage(CascadiaPanel.rotateImage(temp, 60));
-                clearTilesDownbar(graphics, this.getWidth(), this.getHeight(), 4, i);
-                drawTilesDownbar(graphics, this.getWidth(), this.getHeight(), 4, i, ht.getImage());
+                clearTilesDownbar(graphics, this.getWidth(), this.getHeight(), 5, i);
+                drawTilesDownbar(graphics, this.getWidth(), this.getHeight(), 5, i, ht.getImage());
+                ht.rotateClockwise();
             }
         }
         //Check which polygon in potentialPlacements contains e.getPoint()
         for (Polygon p : potentialPlacements) {
             if (p.contains(e.getPoint())) {
-                System.out.println("Potential placement clicked");
+                gameState = GameState.TILEPLACE;
+                game.getDisplayedTiles().get(tileClicked).setPolygon(p);
+                System.out.println("AMong us");
+                potentialPlacements.clear();
+                repaint();
+
+
             }
         }
         if (viewB1.contains(x, y)) {
