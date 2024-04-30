@@ -19,7 +19,6 @@ public class ScoringCharts {
     private ArrayList<HabitatTile> potentialBears;
     private ArrayList<HabitatTile> usedTokenIDs;
     private HashMap<Integer, Integer> foxScoringValues;
-    private ArrayList<Integer> elkscoringvals;
     private Map<Biome, Integer> habitatMatches;
     public Player p1 = new Player(1);
     public Player p2 = new Player(2);
@@ -31,6 +30,7 @@ public class ScoringCharts {
     public ArrayList<Integer> foxscoringVals;
     public ArrayList<Integer> hawkscoringVals;
     public ArrayList<Integer> salmonscoringVals;
+    public ArrayList<Integer> elkscoringvals;
 
     public ScoringCharts() {
         habitatMatches = new HashMap<>();
@@ -43,6 +43,7 @@ public class ScoringCharts {
         foxscoringVals = new ArrayList<Integer>();
         hawkscoringVals = new ArrayList<Integer>();
         salmonscoringVals = new ArrayList<Integer>();
+        elkscoringvals = new ArrayList<Integer>();
     }
     public void BearScoring() {
         bearScoringValues = new HashMap<>();
@@ -350,17 +351,21 @@ public class ScoringCharts {
         int elkGroupSize = elkGroup.size();
 
         if (elkGroupSize == 1) {
-            elkScore = 1;
+            elkScore = 2;
         } else if (elkGroupSize == 2) {
-            elkScore = 3;
+            elkScore = 4;
         } else if (elkGroupSize == 3) {
-            elkScore = 6;
+            elkScore = 7;
         } else if (elkGroupSize == 4) {
             elkScore = 10;
         } else if (elkGroupSize == 5) {
-            elkScore = 15;
-        } else if (elkGroupSize >= 6) {
-            elkScore = 21 + (elkGroupSize - 6) * 2;
+            elkScore = 14;
+        } else if (elkGroupSize == 6) {
+            elkScore = 18;
+        }else if (elkGroupSize == 7) {
+            elkScore = 23;
+        }else if (elkGroupSize >= 8) {
+            elkScore = 28;
         }
 
         return elkScore;

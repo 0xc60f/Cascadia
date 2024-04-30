@@ -233,7 +233,7 @@ public class Player implements Comparable<Player>{
         scoringCharts.calculateFoxTokenScoring(this);
         scoringCharts.calculateHawkTokenScoring(this);
         scoringCharts.calculateSalmonTokenScoring(this);
-        // scoringCharts.calculateElkTokenScoring(this);
+        scoringCharts.calculateElkTokenScoring(this);
 
 
         // Retrieve scores from ScoringCharts and sum them up
@@ -284,18 +284,15 @@ public class Player implements Comparable<Player>{
         return sScore;
     }
 
-    /*public int getELkTokenScore() {
+    public int getELkTokenScore() {
         ScoringCharts scoringCharts = new ScoringCharts();
-        scoringCharts.calculateElkTokenScoring(this.pNum); // Calculate elk token scoring for the player
+        scoringCharts.calculateElkTokenScoring(this); // Calculate elk token scoring for the player
         int eScore = 0;
-        for (Integer elkscoring : scoringCharts.elkscoringVals) {
+        for (Integer elkscoring : scoringCharts.elkscoringvals) {
             eScore += elkscoring;
         }
         return eScore;
     }
-
-     */
-
 
     public int totalScore(Player p){
         total += numNatureTokens + p.getWildlifeTokenScore() + p.getBiomeScore();
