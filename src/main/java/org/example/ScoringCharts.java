@@ -25,7 +25,7 @@ public class ScoringCharts {
     public Player p3 = new Player(3);
     public Player p4 = new Player(4);
     public ArrayList<Integer> scoringVals;
-
+    private int totalElkScore = 0;
     public ArrayList<Integer> bearscoringVals;
     public ArrayList<Integer> foxscoringVals;
     public ArrayList<Integer> hawkscoringVals;
@@ -220,7 +220,7 @@ public class ScoringCharts {
             salmonScoringValues.put(6, 20);
             salmonScoringValues.put(7, 26);
         }
-
+        //make sure u use used salmon tokens and also make sure to finish helper mehtods that accutalyy work
         public void calculateSalmonTokenScoring(Player p) {
             allPlacedTokens = p.getPlayerTiles();
             HashSet<HabitatTile> possibleSalmons = (HashSet<HabitatTile>) allPlacedTokens.keySet();
@@ -300,7 +300,69 @@ public class ScoringCharts {
             }
         }
 
+    public void calculateElkTokenScoring(Player p) {
+        allPlacedTokens = p.getPlayerTiles();
+        ArrayList<HabitatTile> tokenIDs = new ArrayList<>(allPlacedTokens.keySet());
 
+        HashMap<HabitatTile, Integer> elkScoring = new HashMap<>();
+        ArrayList<HabitatTile> usedElkTokenIDs = new ArrayList<>();
+
+        for (HabitatTile tokenID : tokenIDs) {
+            WildlifeToken token = allPlacedTokens.get(tokenID);
+            if (token == WildlifeToken.ELK && !usedElkTokenIDs.contains(tokenID)) {
+                int elkScore = 0;
+                ArrayList<HabitatTile> elkGroup = new ArrayList<>();
+                elkGroup.add(tokenID);
+                usedElkTokenIDs.add(tokenID);
+
+                ArrayList<HabitatTile> neighboringElk = Graph.searchNeighbourTilesForWildlife(allPlacedTokens, tokenID, WildlifeToken.ELK);
+                for (HabitatTile neighboringElkTile : neighboringElk) {
+                    if (!usedElkTokenIDs.contains(neighboringElkTile)) {
+                        elkGroup.add(neighboringElkTile);
+                        usedElkTokenIDs.add(neighboringElkTile);
+
+                        ArrayList<HabitatTile> neighboringElk2 = Graph.searchNeighbourTilesForWildlife(allPlacedTokens, neighboringElkTile, WildlifeToken.ELK);
+                        for (HabitatTile neighboringElkTile2 : neighboringElk2) {
+                            if (!usedElkTokenIDs.contains(neighboringElkTile2)) {
+                                elkGroup.add(neighboringElkTile2);
+                                usedElkTokenIDs.add(neighboringElkTile2);
+                            }
+                        }
+                    }
+                }
+
+                elkScore = calculateElkScore(elkGroup);
+                elkScoring.put(tokenID, elkScore);
+            }
+        }
+
+        for (Map.Entry<HabitatTile, Integer> entry : elkScoring.entrySet()) {
+            totalElkScore += entry.getValue();
+        }
+
+        scoringVals.add(totalElkScore);
+    }
+
+    private int calculateElkScore(ArrayList<HabitatTile> elkGroup) {
+        int elkScore = 0;
+        int elkGroupSize = elkGroup.size();
+
+        if (elkGroupSize == 1) {
+            elkScore = 1;
+        } else if (elkGroupSize == 2) {
+            elkScore = 3;
+        } else if (elkGroupSize == 3) {
+            elkScore = 6;
+        } else if (elkGroupSize == 4) {
+            elkScore = 10;
+        } else if (elkGroupSize == 5) {
+            elkScore = 15;
+        } else if (elkGroupSize >= 6) {
+            elkScore = 21 + (elkGroupSize - 6) * 2;
+        }
+
+        return elkScore;
+    }
     public int scoreHabitats(HashMap<HabitatTile, WildlifeToken> allPlacedTokens) {
         int score = 0;
 
@@ -328,9 +390,7 @@ public class ScoringCharts {
 
 
 
-        public void processAllHabitats(){
 
-        }
 
 
 

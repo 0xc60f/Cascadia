@@ -58,7 +58,16 @@ public abstract class Graph {
     }
 
     public static ArrayList<HabitatTile> searchNeighbourTilesForWildlife(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile tileID, WildlifeToken type) {
-        return new ArrayList<>();
+        ArrayList<HabitatTile> neighbourTiles = neighbourTiles(allPlacedTokens, tileID);
+        ArrayList<HabitatTile> matchingTiles = new ArrayList<>();
+
+        for (HabitatTile tile : neighbourTiles) {
+            if (allPlacedTokens.get(tile) == type && !matchingTiles.contains(tile)) {
+                matchingTiles.add(tile);
+            }
+        }
+
+        return matchingTiles;
     }
 
     public static ArrayList<HabitatTile> neighbourTiles(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile tileID) {
@@ -73,6 +82,8 @@ public abstract class Graph {
 
     public static ArrayList<HabitatTile> salmonTokensInRun(Map<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile startID, WildlifeToken thisWildlife) {
         return new ArrayList<>();
+
+
     }
 
     public static int getLargestConnectedComponentSize(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, HabitatTile startTile, Biome targetBiome) {
