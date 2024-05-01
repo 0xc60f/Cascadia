@@ -261,6 +261,8 @@ public class HabitatTile {
         return neighbors.contains(tileID);
     }
 
+
+
     /*function rotateTileClockwiseFunction() {
 	// find the currently chosen tile that is currently being placed, and store it's current rotation value into a variable
 	var currentRotation = parseInt($('.mapTileContainer .tileContainer.lockedIn').attr('tilerotation'));
