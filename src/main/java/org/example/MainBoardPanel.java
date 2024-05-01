@@ -31,7 +31,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     private Graphics graphics;
     private boolean uniqueToken;
     private GameState gameState;
-    private boolean shuffleUsed;
+    private boolean shuffleUsed, holdingToken;
     private int tileClicked, tokenClicked;
     private ArrayList<Polygon> potentialPlacements;
     private static ArrayList<Polygon> playerPlacedTiles;
@@ -606,9 +606,23 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         }
         for (int i = 0; i < 4; i++) {
             if (displayedAnimalPolygons[i].contains(e.getPoint())) {
-                System.out.println("Animal " + i + " clicked");
+                holdingToken = true;
+
             }
         }
+        if(holdingToken) {
+            ArrayList<HabitatTile> playerTiles = new ArrayList<>(game.getCurrentPlayer().getPlayerTiles().keySet());
+            for (int i = 0; i < playerTiles.size(); i++) {
+                if (playerTiles.get(i).getPolygon().contains(e.getPoint())) {
+                    System.out.println("Animal " + i + "placed on tile");
+                    WildlifeToken token = game.getDisplayedWildlife().get(i);
+                    System.out.println(token);
+                    holdingToken = false;
+
+                }
+            }
+        }
+
         for (int i = 0; i < 4; i++) {
             if (leftArrowPolygons[i].contains(e.getPoint()) && leftArrowClickable[i]) {
                 HabitatTile ht = game.getDisplayedTiles().get(i);
@@ -818,10 +832,8 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 double relativeX = polyCenter.getX() - existingCenter.getX();
                 double relativeY = polyCenter.getY() - existingCenter.getY();
 
-                existingCenter.
                 // Define the leeway
                 double leeway = 10.0;
-
                 // Check each edge case
                 if (Math.abs(relativeX) <= leeway && relativeY < -leeway) {
                     neighbors[0] = existingTile;
