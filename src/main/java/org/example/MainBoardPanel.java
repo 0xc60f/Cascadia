@@ -507,32 +507,35 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             ArrayList<HabitatTile> adjTiles = ht.getNeighbors();
             for (int i = 0; i < adjTiles.size(); i++) {
                 HabitatTile adjTile = adjTiles.get(i);
-                if (adjTile != null && !drawnTiles.contains(adjTile) && base != null) {
-
-                } else if (adjTile == null && base != null) {
+                if (adjTile == null && base != null) {
                     Point drawPoint = CascadiaPanel.getCoordsAdjacentHexagon(base, i, potentialPlacement);
                     Polygon potentialPlacementPolygon = CascadiaPanel.createHexagon(drawPoint.x, drawPoint.y, potentialPlacement);
-
-                    // Calculate the centers of the bounding boxes of the polygons
-                    double centerX1 = potentialPlacementPolygon.getBounds2D().getCenterX();
-                    double centerY1 = potentialPlacementPolygon.getBounds2D().getCenterY();
-                    double centerX2 = base.getBounds2D().getCenterX();
-                    double centerY2 = base.getBounds2D().getCenterY();
-
-
-                    // If the centers are at least 5 pixels away from each other
-                    if (Math.abs(centerX1 - centerX2) >= 5 && Math.abs(centerY1 - centerY2) >= 5) {
-                        g.drawImage(potentialPlacement, drawPoint.x, drawPoint.y, null);
-                        potentialPlacementSet.add(potentialPlacementPolygon);
-                    }
-                    else
-                        System.out.println((centerX1 - centerX2) + " " + (centerY1 - centerY2));
+                    potentialPlacementSet.add(potentialPlacementPolygon);
                 }
             }
         }
-        // Add the polygons to the potentialPlacements set
-        potentialPlacements.addAll(potentialPlacementSet);
-        System.out.println(potentialPlacements.size());
+
+        for (Polygon potentialPlacementPolygon : potentialPlacementSet) {
+            Point potPolyCenter = new Point((int) potentialPlacementPolygon.getBounds2D().getCenterX(), (int) potentialPlacementPolygon.getBounds2D().getCenterY());
+            boolean tooClose = false;
+
+            for (Polygon existingPolygon : potentialPlacements) {
+                Point existingCenter = new Point((int) existingPolygon.getBounds2D().getCenterX(), (int) existingPolygon.getBounds2D().getCenterY());
+                if (potPolyCenter.distance(existingCenter) <= 5.00) {
+                    tooClose = true;
+                    break;
+                }
+            }
+
+            if (!tooClose) {
+                // Adjust the coordinates to center the image
+                int imageX = potPolyCenter.x - potentialPlacement.getWidth() / 2;
+                int imageY = potPolyCenter.y - potentialPlacement.getHeight() / 2;
+                g.drawImage(potentialPlacement, imageX, imageY, null);
+                potentialPlacements.add(potentialPlacementPolygon);
+            }
+        }
+
     }
 
     /**
@@ -627,6 +630,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             boolean found = false;
             for (Polygon p : potentialPlacements) {
                 if (p.contains(e.getPoint())) {
+                    System.out.println(new Point((int) p.getBounds().getCenterX(), (int) p.getBounds().getCenterY()));
                     gameState = GameState.TILEPLACE;
                     game.getDisplayedTiles().get(tileClicked).setPolygon(p);
                     found = true;
@@ -800,8 +804,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         ArrayList<HabitatTile> existingTiles = new ArrayList<>(p.getPlayerTiles().keySet());
 
         // Calculate the center of the bounding box of the original polygon
-        double polyCenterX = poly.getBounds2D().getCenterX();
-        double polyCenterY = poly.getBounds2D().getCenterY();
+        Point polyCenter = new Point((int) poly.getBounds2D().getCenterX(), (int) poly.getBounds2D().getCenterY());
 
         for (HabitatTile existingTile : existingTiles) {
             Polygon existingPolygon = existingTile.getPolygon();
@@ -809,38 +812,34 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             // Check if the bounding boxes intersect
             if (poly.getBounds2D().intersects(existingPolygon.getBounds2D())) {
                 // Calculate the center of the bounding box of the existing tile
-                double existingCenterX = existingPolygon.getBounds2D().getCenterX();
-                double existingCenterY = existingPolygon.getBounds2D().getCenterY();
+                Point existingCenter = new Point((int) existingPolygon.getBounds2D().getCenterX(), (int) existingPolygon.getBounds2D().getCenterY());
 
                 // Calculate the relative position
-                double relativeX = polyCenterX - existingCenterX;
-                double relativeY = polyCenterY - existingCenterY;
+                double relativeX = polyCenter.getX() - existingCenter.getX();
+                double relativeY = polyCenter.getY() - existingCenter.getY();
 
+                existingCenter.
                 // Define the leeway
-                double leeway = 3.0;
-                System.out.println("Relative X: " + relativeX + " Relative Y: " + relativeY);
-                if (relativeX > leeway && relativeY > leeway) {
-                    // The potential tile is to the right and below the existing tile
-                    neighbors[1] = existingTile;
-                } else if (relativeX > leeway && relativeY < -leeway) {
-                    // The potential tile is to the right and above the existing tile
-                    neighbors[2] = existingTile;
-                } else if (relativeX < -leeway && relativeY > leeway) {
-                    // The potential tile is to the left and below the existing tile
-                    neighbors[5] = existingTile;
-                } else if (relativeX < -leeway && relativeY < -leeway) {
-                    // The potential tile is to the left and above the existing tile
-                    neighbors[4] = existingTile;
-                } else if (Math.abs(relativeX) <= leeway && relativeY > leeway) {
-                    // The potential tile is to the right of the existing tile
+                double leeway = 10.0;
+
+                // Check each edge case
+                if (Math.abs(relativeX) <= leeway && relativeY < -leeway) {
                     neighbors[0] = existingTile;
-                } else if (Math.abs(relativeX) <= leeway && relativeY < -leeway) {
-                    // The potential tile is to the left of the existing tile
+                } else if (relativeX > leeway && relativeY < -leeway) {
+                    neighbors[1] = existingTile;
+                } else if (relativeX > leeway && relativeY > leeway) {
+                    neighbors[2] = existingTile;
+                } else if (Math.abs(relativeX) <= leeway && relativeY > leeway) {
                     neighbors[3] = existingTile;
+                } else if (relativeX < -leeway && relativeY > leeway) {
+                    neighbors[4] = existingTile;
+                } else if (relativeX < -leeway && relativeY < -leeway) {
+                    neighbors[5] = existingTile;
                 }
             }
         }
 
+        // Convert the array to an ArrayList and return it
         return new ArrayList<>(Arrays.asList(neighbors));
     }
 
