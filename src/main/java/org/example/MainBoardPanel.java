@@ -29,16 +29,11 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     private final Polygon[] leftArrowPolygons;
     private final Polygon[] rightArrowPolygons;
     private Graphics graphics;
-    private boolean uniqueToken;
-    private GameState gameState;
     private boolean shuffleUsed;
-    private int tileClicked, tokenClicked;
     private ArrayList<Polygon> potentialPlacements;
     private static ArrayList<Polygon> playerPlacedTiles;
     private int offsetx, offsety = 0;
     private Game game;
-
-
     private String turn = "Turn: 1", action = "Action Prompt";
 
     public MainBoardPanel() {
@@ -52,11 +47,9 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         potentialPlacements = new ArrayList<>();
         playerPlacedTiles = new ArrayList<>();
         shuffleUsed = false;
-        tileClicked = tokenClicked = 0;
         game = new Game();
         addMouseListener(this);
         importImages();
-        gameState = GameState.GAMESTART;
     }
 
     public void paint(Graphics g, int width, int height) {
@@ -78,6 +71,42 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 //        BufferedImage test = CascadiaPanel.drawTiles(buffList);
 //        g.drawImage(test, boardCenterx + offsetx, boardCentery + offsety, null);
 
+
+        ArrayList<WildlifeToken> displayedWildlife = game.getDisplayedWildlife();
+        int bcount = 0;
+        int ecount = 0;
+        int fcount = 0;
+        int hcount = 0;
+        int scount = 0;
+
+
+        for (int i = 0; i < displayedWildlife.size(); i++) {
+            switch (displayedWildlife.get(i)) {
+                case BEAR -> bcount++;
+                case ELK -> ecount++;
+                case FOX -> fcount++;
+                case HAWK -> hcount++;
+                case SALMON -> scount++;
+            }
+            ;
+        }
+        if (bcount == 4 || ecount == 4 || fcount == 4 || hcount == 4 || scount == 4) {
+            game.shuffleDisplayedWildLife(null);
+        }
+        if (!shuffleUsed) {
+            if (bcount == 3) {
+                specialButtonString = "Shuffle";
+            } else if (ecount == 3) {
+                specialButtonString = "Shuffle";
+            } else if (fcount == 3) {
+                specialButtonString = "Shuffle";
+            } else if (hcount == 3) {
+                specialButtonString = "Shuffle";
+            } else if (scount == 3) {
+                specialButtonString = "Shuffle";
+            }
+        }
+
         Color beigeColor = new Color(255, 221, 122);
         g.setColor(beigeColor);
         g.fillRoundRect(width / 100, height / 100, width / 8, height / 14, 30, 30); // turn counter
@@ -91,7 +120,9 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, width / 90));
 
+        action = "Pick a tile";
         drawCenteredString(g, turn, turnAlign, defFont);
+        drawCenteredString(g, action, actionPromptAlign, defFont);
 
         drawScoring(g, width, height, div);
 
@@ -117,12 +148,15 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         Rectangle specialButtonDef = new Rectangle(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10);
         if (!specialButtonString.isEmpty()) {
+            g.setColor(beigeColor);
+            g.fillRoundRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10, 30, 30);
+            g.setColor(Color.black);
+            drawCenteredString(g, specialButtonString, specialButtonDef, defFont);
+            //g.drawRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10);
             g.fillRoundRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10, 30, 30);
             g.drawRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10);
         }
         specialButton = new Polygon(new int[]{width / 100, width / 100, width / 100 + width / 8, width / 100 + width / 8}, new int[]{playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100 + height / 10, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100 + height / 10}, 4);
-        g.setColor(beigeColor);
-        g.setColor(Color.BLACK);
 
         int debugRectWidth = width / 8;
         int debugRectHeight = height / 14;
@@ -302,7 +336,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             specialButtonString = "Shuffle";
         }
         displayedWildlife = game.getDisplayedWildlife();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < displayedWildlife.size(); i++) {
             Point drawPoint = switch (displayedWildlife.get(i)) {
                 case BEAR -> drawAnimalTiles(g, width, height, div, i, bear);
                 case ELK -> drawAnimalTiles(g, width, height, div, i, elk);
@@ -317,16 +351,11 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
 
         g.setColor(Color.BLACK);
-        drawCenteredString(g, specialButtonString, specialButtonDef, defFont);
 
         drawMainPlayerTiles(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
         //drawPotentialPlacement(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
         displayedTilesClickable = true;
 
-        if (gameState.equals(GameState.GAMESTART)) {
-            action = "Pick a tile";
-            drawCenteredString(g, action, actionPromptAlign, defFont);
-        }
 
 
         if (gameState.equals(GameState.TILECLICKED)) {
@@ -596,12 +625,12 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         int y = e.getY();
         for (int i = 0; i < 4; i++) {
             if (displayedTilesPolygons[i].contains(e.getPoint()) && displayedTilesClickable) {
-                action = "Rotate your tile, then click to place the tile.";
-                gameState = GameState.TILECLICKED;
+                action = "Click where you want to place the tile.";
+                HabitatTile ht = game.getDisplayedTiles().get(i);
                 leftArrowClickable[i] = true;
                 rightArrowClickable[i] = true;
-                tileClicked = i;
-                repaint();
+                drawArrows(this.getWidth(), this.getHeight(), 4, i, graphics);
+                drawPotentialPlacement(graphics, boardCenterx, boardCentery, offsetX, offsetY, game.getCurrentPlayer());
             }
         }
         for (int i = 0; i < 4; i++) {
@@ -653,9 +682,13 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         } else if (specialButton.contains(x, y)) {
             if (specialButtonString.equals("Shuffle") && !shuffleUsed) {
                 game.shuffleDisplayedWildLife(null);
+                specialButtonString = "";
                 shuffleUsed = true;
             }
-        } else {
+        } else if (set3.contains(x, y)) {
+
+            game.set3OfTheSame();
+        }else {
             if (upMove.contains(x, y)) {
                 offsety = offsety + 10;
                 this.offsetY = offsety;

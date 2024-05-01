@@ -74,17 +74,17 @@ public class Game {
     }
 
     public void shuffleDisplayedWildLife(WildlifeToken x) {
-        displayedWildlife = new ArrayList<WildlifeToken>();
         if (x == null) {
+            displayedWildlife = new ArrayList<WildlifeToken>();
             IntStream.range(0, 4).forEach(i -> displayedWildlife.add(possibleWildlife.remove((int) (Math.random() * possibleWildlife.size()))));
             IntStream.range(0, 4).forEach(i -> possibleWildlife.add(WildlifeToken.values()[(int) (Math.random() * WildlifeToken.values().length)]));
-            return;
-        }
-
-        for (int i = 0; i < displayedWildlife.size(); i++) {
-            if (displayedWildlife.get(i).equals(x)) {
-                possibleWildlife.add(displayedWildlife.remove(i));
-                displayedWildlife.add(possibleWildlife.remove((int) (Math.random() * possibleWildlife.size())));
+        } else {
+            displayedWildlife = new ArrayList<WildlifeToken>();
+            for (int i = 0; i < displayedWildlife.size(); i++) {
+                if (displayedWildlife.get(i).equals(x)) {
+                    possibleWildlife.add(displayedWildlife.remove(i));
+                    displayedWildlife.add(possibleWildlife.remove((int) (Math.random() * possibleWildlife.size())));
+                }
             }
         }
     }
@@ -92,6 +92,7 @@ public class Game {
     public void set3OfTheSame() {
         displayedWildlife = new ArrayList<WildlifeToken>();
         IntStream.range(0, 3).forEach(i -> displayedWildlife.add(WildlifeToken.SALMON));
+        displayedWildlife.add(WildlifeToken.values()[(int) (Math.random() * WildlifeToken.values().length)]);
 
     }
 
