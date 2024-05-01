@@ -308,50 +308,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             displayedTilesPolygons[i] = tempPoly;
         }
 
-        ArrayList<WildlifeToken> displayedWildlife = game.getDisplayedWildlife();
-        int bcount = 0;
-        int ecount = 0;
-        int fcount = 0;
-        int hcount = 0;
-        int scount = 0;
-        for (int i = 0; i < 4; i++) {
-            switch (displayedWildlife.get(i)) {
-                case BEAR -> bcount++;
-                case ELK -> ecount++;
-                case FOX -> fcount++;
-                case HAWK -> hcount++;
-                case SALMON -> scount++;
-            }
-            ;
-        }
-        if (bcount == 4) {
-            game.shuffleDisplayedWildLife(WildlifeToken.BEAR);
-        } else if (ecount == 4) {
-            game.shuffleDisplayedWildLife(WildlifeToken.ELK);
-        } else if (fcount == 4) {
-            game.shuffleDisplayedWildLife(WildlifeToken.FOX);
-        } else if (hcount == 4) {
-            game.shuffleDisplayedWildLife(WildlifeToken.HAWK);
-        } else if (scount == 4) {
-            game.shuffleDisplayedWildLife(WildlifeToken.SALMON);
-        }
-        if (bcount == 3 || ecount == 3 || fcount == 3 || hcount == 3 || scount == 3) {
-            specialButtonString = "Shuffle";
-        }
-        displayedWildlife = game.getDisplayedWildlife();
-        for (int i = 0; i < displayedWildlife.size(); i++) {
-            Point drawPoint = switch (displayedWildlife.get(i)) {
-                case BEAR -> drawAnimalTiles(g, width, height, div, i, bear);
-                case ELK -> drawAnimalTiles(g, width, height, div, i, elk);
-                case FOX -> drawAnimalTiles(g, width, height, div, i, fox);
-                case HAWK -> drawAnimalTiles(g, width, height, div, i, hawk);
-                case SALMON -> drawAnimalTiles(g, width, height, div, i, salmon);
-            };
-            //Create a square polygon that starts at drawPoint and is 60 pixels
-            Polygon tempPoly = new Polygon(new int[]{drawPoint.x, drawPoint.x, drawPoint.x + 40, drawPoint.x + 40}, new int[]{drawPoint.y + 40, drawPoint.y, drawPoint.y, drawPoint.y + 40}, 4);
-            displayedAnimalPolygons[i] = tempPoly;
-        }
-
 
         g.setColor(Color.BLACK);
 
