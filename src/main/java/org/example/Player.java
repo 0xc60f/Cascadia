@@ -76,6 +76,10 @@ public class Player implements Comparable<Player>{
         return numNatureTokens;
     }
 
+    public void addNatureTokens(){
+        numNatureTokens++;
+    }
+
     @Override
     public int compareTo(Player otherPlayer) {
         // Compare based on total score
@@ -92,7 +96,6 @@ public class Player implements Comparable<Player>{
 
     private int getBScore(Player player, Biome specificBiome) {
         int biomeScore = 0;
-
         for (HabitatTile tile : playerTiles.keySet()) {
             TreeMap<Integer, Biome> biomes = tile.getBiomes();
             if (biomes.containsValue(specificBiome)) {
