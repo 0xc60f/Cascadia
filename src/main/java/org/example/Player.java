@@ -51,7 +51,7 @@ public class Player implements Comparable<Player>{
         //biomes
     }
 
-    public HashMap<HabitatTile, WildlifeToken> getPlayerTiles(){
+    public HashMap<HabitatTile, WildlifeToken>getPlayerTiles(){
         return playerTiles;
     }
     //finish later
