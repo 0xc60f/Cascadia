@@ -818,7 +818,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 double relativeX = polyCenter.getX() - existingCenter.getX();
                 double relativeY = polyCenter.getY() - existingCenter.getY();
 
-                existingCenter.
                 // Define the leeway
                 double leeway = 10.0;
 
