@@ -11,7 +11,7 @@ import java.util.*;
 
 
 public class MainBoardPanel extends JPanel implements MouseListener {
-    private Polygon viewB1, viewB2, viewPage, downMove, upMove, leftMove, rightMove, endGame, set3, specialButton;
+    private Polygon viewB1, viewB2, viewPage, downMove, upMove, leftMove, rightMove, endGame, set3, specialButton, givent;
     private boolean viewVis = false;
     private BufferedImage backgroundImage, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring, natureToken, testingTile1, testingTile2, testBaseTile, testingTile3;
     private BufferedImage arrUp, arrDown, arrLeft, arrRight;
@@ -38,6 +38,8 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     private int offsetx, offsety = 0;
     private Game game;
     private String turn = "Turn: 1", action = "Action Prompt";
+    private boolean specLocked = false;
+    private Boolean[] swapRec = {true, true, true, true};
 
     public MainBoardPanel() {
         displayedTilesClickable = displayedAnimalClickable = false;
@@ -51,6 +53,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         playerPlacedTiles = new ArrayList<>();
         shuffleUsed = false;
         game = new Game();
+        gameState = GameState.ROUNDSTART;
         addMouseListener(this);
         importImages();
     }
@@ -76,37 +79,43 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
 
         ArrayList<WildlifeToken> displayedWildlife = game.getDisplayedWildlife();
-        int bcount = 0;
-        int ecount = 0;
-        int fcount = 0;
-        int hcount = 0;
-        int scount = 0;
+
+        if (!specLocked) {
+            int bcount = 0;
+            int ecount = 0;
+            int fcount = 0;
+            int hcount = 0;
+            int scount = 0;
 
 
-        for (int i = 0; i < displayedWildlife.size(); i++) {
-            switch (displayedWildlife.get(i)) {
-                case BEAR -> bcount++;
-                case ELK -> ecount++;
-                case FOX -> fcount++;
-                case HAWK -> hcount++;
-                case SALMON -> scount++;
+            for (int i = 0; i < displayedWildlife.size(); i++) {
+                switch (displayedWildlife.get(i)) {
+                    case BEAR -> bcount++;
+                    case ELK -> ecount++;
+                    case FOX -> fcount++;
+                    case HAWK -> hcount++;
+                    case SALMON -> scount++;
+                }
+                ;
             }
-            ;
-        }
-        if (bcount == 4 || ecount == 4 || fcount == 4 || hcount == 4 || scount == 4) {
-            game.shuffleDisplayedWildLife(null);
-        }
-        if (!shuffleUsed) {
-            if (bcount == 3) {
-                specialButtonString = "Shuffle";
-            } else if (ecount == 3) {
-                specialButtonString = "Shuffle";
-            } else if (fcount == 3) {
-                specialButtonString = "Shuffle";
-            } else if (hcount == 3) {
-                specialButtonString = "Shuffle";
-            } else if (scount == 3) {
-                specialButtonString = "Shuffle";
+            if (bcount == 4 || ecount == 4 || fcount == 4 || hcount == 4 || scount == 4) {
+                game.shuffleDisplayedWildLife(null);
+            }
+            if (game.getCurrentPlayer().numNatureTokens() > 0) {
+                specialButtonString = "Swap Tokens";
+            }
+            if (!shuffleUsed) {
+                if (bcount == 3) {
+                    specialButtonString = "Shuffle";
+                } else if (ecount == 3) {
+                    specialButtonString = "Shuffle";
+                } else if (fcount == 3) {
+                    specialButtonString = "Shuffle";
+                } else if (hcount == 3) {
+                    specialButtonString = "Shuffle";
+                } else if (scount == 3) {
+                    specialButtonString = "Shuffle";
+                }
             }
         }
 
@@ -156,8 +165,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             g.setColor(Color.black);
             drawCenteredString(g, specialButtonString, specialButtonDef, defFont);
             //g.drawRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10);
-            g.fillRoundRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10, 30, 30);
-            g.drawRect(width / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, width / 8, height / 10);
         }
         specialButton = new Polygon(new int[]{width / 100, width / 100, width / 100 + width / 8, width / 100 + width / 8}, new int[]{playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100 + height / 10, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100, playAreaHeight - height / 100 - height / 10 - height / 10 - height / 100 + height / 10}, 4);
 
@@ -202,7 +209,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.drawLine(width - width / div, 0, width - width / div, height);
         g.drawLine(width / div - 75, height - height / div, width / div - 75, height);
 
-        drawNatureTokenCount(g, 0, width, height, div);
+        drawNatureTokenCount(g, game.getCurrentPlayer().numNatureTokens(), width, height, div);
 
         g.drawLine(width / div + 240, height - height / div, width / div + 240, height);
         g.drawLine(width / div + 555, height - height / div, width / div + 555, height);
@@ -272,7 +279,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         this.boardCenterx = boardCenterx;
         this.boardCentery = boardCentery;
-        // Following Polygon is for debugging - clicking it ends the game automatically
+        // DEBUG/TESTING POLYGONS
 
         g.setColor(Color.green);
         int debugRectWidth6 = 100;
@@ -287,6 +294,18 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         g.drawPolygon(set3);
 
+        g.setColor(Color.yellow);
+        int debugRectWidth7 = 100;
+        int debugRectHeight7 = 100;
+        int debugXPos7 = 1000;
+        int debugYPos7 = 200;
+
+        int[] xPoints10 = {debugXPos7, debugXPos7, debugXPos7 + debugRectWidth7, debugXPos7 + debugRectWidth7};
+        int[] yPoints10 = {debugYPos7 + debugRectHeight7, debugYPos7, debugYPos7, debugYPos7 + debugRectHeight7};
+
+        givent = new Polygon(xPoints10, yPoints10, 4);
+
+        g.drawPolygon(givent);
 
         g.setColor(Color.red);
         int debugRectWidth5 = 100;
@@ -307,51 +326,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             Polygon tempPoly = CascadiaPanel.createHexagon(tempPoint.x, tempPoint.y, displayedTiles.get(i).getImage());
             displayedTilesPolygons[i] = tempPoly;
         }
-
-        ArrayList<WildlifeToken> displayedWildlife = game.getDisplayedWildlife();
-        int bcount = 0;
-        int ecount = 0;
-        int fcount = 0;
-        int hcount = 0;
-        int scount = 0;
-        for (int i = 0; i < 4; i++) {
-            switch (displayedWildlife.get(i)) {
-                case BEAR -> bcount++;
-                case ELK -> ecount++;
-                case FOX -> fcount++;
-                case HAWK -> hcount++;
-                case SALMON -> scount++;
-            }
-            ;
-        }
-        if (bcount == 4) {
-            game.shuffleDisplayedWildLife(WildlifeToken.BEAR);
-        } else if (ecount == 4) {
-            game.shuffleDisplayedWildLife(WildlifeToken.ELK);
-        } else if (fcount == 4) {
-            game.shuffleDisplayedWildLife(WildlifeToken.FOX);
-        } else if (hcount == 4) {
-            game.shuffleDisplayedWildLife(WildlifeToken.HAWK);
-        } else if (scount == 4) {
-            game.shuffleDisplayedWildLife(WildlifeToken.SALMON);
-        }
-        if (bcount == 3 || ecount == 3 || fcount == 3 || hcount == 3 || scount == 3) {
-            specialButtonString = "Shuffle";
-        }
-        displayedWildlife = game.getDisplayedWildlife();
-        for (int i = 0; i < displayedWildlife.size(); i++) {
-            Point drawPoint = switch (displayedWildlife.get(i)) {
-                case BEAR -> drawAnimalTiles(g, width, height, div, i, bear);
-                case ELK -> drawAnimalTiles(g, width, height, div, i, elk);
-                case FOX -> drawAnimalTiles(g, width, height, div, i, fox);
-                case HAWK -> drawAnimalTiles(g, width, height, div, i, hawk);
-                case SALMON -> drawAnimalTiles(g, width, height, div, i, salmon);
-            };
-            //Create a square polygon that starts at drawPoint and is 60 pixels
-            Polygon tempPoly = new Polygon(new int[]{drawPoint.x, drawPoint.x, drawPoint.x + 40, drawPoint.x + 40}, new int[]{drawPoint.y + 40, drawPoint.y, drawPoint.y, drawPoint.y + 40}, 4);
-            displayedAnimalPolygons[i] = tempPoly;
-        }
-
 
         g.setColor(Color.BLACK);
 
@@ -628,6 +602,17 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         int y = e.getY();
         for (int i = 0; i < 4; i++) {
             if (displayedTilesPolygons[i].contains(e.getPoint()) && displayedTilesClickable) {
+
+                if (specialButtonString.equals("Finish Swapping")) {
+
+                    if(swapRec[i]) {
+                        game.swapWildLifeToken(i);
+                        swapRec[i] = false;
+                    }
+
+                    return;
+                }
+
                 action = "Click where you want to place the tile.";
                 HabitatTile ht = game.getDisplayedTiles().get(i);
                 leftArrowClickable[i] = true;
@@ -636,12 +621,12 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 drawPotentialPlacement(graphics, boardCenterx, boardCentery, offsetX, offsetY, game.getCurrentPlayer());
             }
         }
-        for (int i = 0; i < 4; i++) {
+        /*for (int i = 0; i < 4; i++) {
             if (displayedAnimalPolygons[i].contains(e.getPoint())) {
                 holdingToken = true;
 
             }
-        }
+        }*/
         if(holdingToken) {
             ArrayList<HabitatTile> playerTiles = new ArrayList<>(game.getCurrentPlayer().getPlayerTiles().keySet());
             for (int i = 0; i < playerTiles.size(); i++) {
@@ -701,10 +686,18 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 game.shuffleDisplayedWildLife(null);
                 specialButtonString = "";
                 shuffleUsed = true;
+            } else if (specialButtonString.equals("Swap Tokens")) {
+                specLocked = true;
+                specialButtonString = "Finish Swapping";
+                game.getCurrentPlayer().subtractNatureTokens();
+            } else if (specialButtonString.equals("Finish Swapping")) {
+                specLocked = false;
+                specialButtonString = "";
             }
         } else if (set3.contains(x, y)) {
-
             game.set3OfTheSame();
+        } else if (givent.contains(x, y)) {
+            game.getCurrentPlayer().addNatureTokens();
         }else {
             if (upMove.contains(x, y)) {
                 offsety = offsety + 10;

@@ -73,6 +73,12 @@ public class Game {
 
     }
 
+
+    public void swapWildLifeToken(int i) {
+        possibleWildlife.add(displayedWildlife.remove(i));
+        displayedWildlife.add(possibleWildlife.remove((int) (Math.random() * possibleWildlife.size())));
+    }
+
     public void shuffleDisplayedWildLife(WildlifeToken x) {
         if (x == null) {
             displayedWildlife = new ArrayList<WildlifeToken>();
