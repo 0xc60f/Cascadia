@@ -75,8 +75,18 @@ public class Game {
 
 
     public void swapWildLifeToken(int i) {
-        possibleWildlife.add(displayedWildlife.remove(i));
-        displayedWildlife.add(possibleWildlife.remove((int) (Math.random() * possibleWildlife.size())));
+        possibleWildlife.add(displayedWildlife.get(i));
+
+        WildlifeToken swap = possibleWildlife.remove((int) (Math.random() * possibleWildlife.size()));
+
+        while (swap.equals(displayedWildlife.get(i))) {
+            System.out.println("WEEWEEOOOWEEWEOOO");
+            possibleWildlife.add(swap);
+            swap = possibleWildlife.remove((int) (Math.random() * possibleWildlife.size()));
+        }
+
+        displayedWildlife.set(i, swap);
+        System.out.println("HE");
     }
     public void addNewTile(int i){
         displayedTiles.add(i, possibleHabitatTiles.remove((int) (Math.random() * possibleHabitatTiles.size())));
