@@ -78,6 +78,12 @@ public class Game {
         possibleWildlife.add(displayedWildlife.remove(i));
         displayedWildlife.add(possibleWildlife.remove((int) (Math.random() * possibleWildlife.size())));
     }
+    public void addNewTile(int i){
+        displayedTiles.add(i, possibleHabitatTiles.remove((int) (Math.random() * possibleHabitatTiles.size())));
+    }
+    public void addNewWildlifeToken(int i){
+        displayedWildlife.add(i, possibleWildlife.remove((int) (Math.random() * possibleWildlife.size())));
+    }
 
     public void shuffleDisplayedWildLife(WildlifeToken x) {
         if (x == null) {

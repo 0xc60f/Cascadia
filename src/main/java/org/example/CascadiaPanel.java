@@ -87,7 +87,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
      * @param animalTile The <code>BufferedImage</code> of the animal tile that will be placed on top of the habitat tile
      * @return A <code>BufferedImage</code> that is the result of drawing the animal tile on top of the habitat tile.
      */
-    public BufferedImage drawOccupiedTile(BufferedImage habitatTile, BufferedImage animalTile) {
+    public static BufferedImage drawOccupiedTile(BufferedImage habitatTile, BufferedImage animalTile) {
         BufferedImage combined = new BufferedImage(habitatTile.getWidth(), habitatTile.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = combined.createGraphics();
         g2d.drawImage(habitatTile, 0, 0, null);

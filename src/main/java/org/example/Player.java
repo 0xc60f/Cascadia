@@ -33,15 +33,14 @@ public class Player implements Comparable<Player>{
             playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken());
         }
         totalScore = 0;
-        List<Biome> biomes = new ArrayList<>();
-        biomes.addAll(Arrays.asList(Biome.values()));
+        List<Biome> biomes = new ArrayList<>(Arrays.asList(Biome.values()));
     }
     public Player (int p, ArrayList<HabitatTile> firstThree){
         pNum = p;
         initialThree = firstThree;
         numBiomes = new HashMap<String, Integer>();
         numNatureTokens = 0; // Initialize to zero, assuming start of game, nature tokens need to be added.
-        natureTokenUsed = (Boolean) false;
+        natureTokenUsed = false;
         playerTiles = new HashMap<>();
         IntStream.range(0, 3).forEach(i -> playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken()));
         totalScore = 0;
@@ -51,7 +50,7 @@ public class Player implements Comparable<Player>{
         //biomes
     }
 
-    public HashMap<HabitatTile, WildlifeToken>getPlayerTiles(){
+    public HashMap<HabitatTile, WildlifeToken> getPlayerTiles(){
         return playerTiles;
     }
     //finish later

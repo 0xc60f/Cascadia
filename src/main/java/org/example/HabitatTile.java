@@ -21,7 +21,7 @@ public class HabitatTile {
     public Biome habitat2;
     private TreeMap<Integer, Biome> biomes;
     //Constructor for the Biomes of the HabitatTile
-    private ArrayList<HabitatTile> neighbors;
+    private ArrayList neighbors;
     private int value;
     private List<Edge> edges;
 
@@ -42,10 +42,10 @@ public class HabitatTile {
     }
 
     public HabitatTile(String h1, String h2, int animal1, int animal2, int animal3) {
+        neighbors = new ArrayList<>(Arrays.asList(null, null, null, null, null, null));
         possibleAnimals = new ArrayList<>();
         biomes = new TreeMap<>();
         edges = new LinkedList<>();
-        neighbors = new ArrayList<>();
         switch (h1) {
             case "d" -> habitat1 = Biome.DESERT;
             case "l" -> habitat1 = Biome.LAKE;
