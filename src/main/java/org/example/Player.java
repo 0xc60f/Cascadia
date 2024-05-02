@@ -76,8 +76,12 @@ public class Player implements Comparable<Player>{
         return numNatureTokens;
     }
 
-    public void addNatureTokens(){
+    public void addNatureTokens() {
         numNatureTokens++;
+    }
+
+    public void subtractNatureTokens() {
+        numNatureTokens--;
     }
 
     @Override
@@ -232,7 +236,6 @@ public class Player implements Comparable<Player>{
         scoringCharts.calculateFoxTokenScoring(this);
         scoringCharts.calculateHawkTokenScoring(this);
         scoringCharts.calculateSalmonTokenScoring(this);
-        scoringCharts.calculateElkTokenScoring(this);
 
 
         // Retrieve scores from ScoringCharts and sum them up
