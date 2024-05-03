@@ -40,6 +40,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     private String turn = "Turn: 1", action = "Action Prompt";
     private boolean specLocked = false;
     private Boolean[] swapRec = {true, true, true, true};
+    private int otherView = 0;
 
     public MainBoardPanel() {
         displayedTilesClickable = displayedAnimalClickable = false;
@@ -401,8 +402,10 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         drawCenteredString(g, action, actionPromptAlign, smallFont);
         if (viewVis) {
+            ArrayList<Player> plr = game.getPlayers();
             g.setColor(beigeColor);
             g.fillPolygon(viewPage);
+            drawOtherPlayTiles(g, playAreaWidth/2, playAreaHeight/2, plr.get(otherView-1));
         }
     }
 
@@ -487,7 +490,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.drawImage(foxScoring, x, y, null);
     }
 
-    public static void drawMainPlayerTiles(Graphics g, int boardCenterX, int boardCenterY, int offsetx, int offsety, Player p) {
+    public void drawOtherPlayTiles(Graphics g, int boardCenterx, int boardCentery, Player p) {
         playerPlacedTiles.clear();
         HashMap<HabitatTile, WildlifeToken> playerDraw = p.getPlayerTiles();
         // Get all the HabitatTiles in playerDraw
@@ -517,6 +520,36 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         }
     }
 
+    public static void drawMainPlayerTiles(Graphics g, int boardCenterX, int boardCenterY, int offsetx, int offsety, Player p) {
+        playerPlacedTiles.clear();
+        HashMap<HabitatTile, WildlifeToken> playerDraw = p.getPlayerTiles();
+        // Get all the HabitatTiles in playerDraw
+        ArrayList<HabitatTile> playerTiles = new ArrayList<>(playerDraw.keySet());
+        // Create a set to store drawn tiles
+        Set<HabitatTile> drawnTiles = new HashSet<>();
+        for (HabitatTile ht : playerTiles) {
+            if (!drawnTiles.contains(ht)) {
+                int topLeftX = (int) ht.getPolygon().getBounds2D().getX();
+                int topLeftY = (int) ht.getPolygon().getBounds2D().getY();
+                g.drawImage(ht.getImage(), topLeftX+offsetx, topLeftY+offsety, null);
+                drawnTiles.add(ht);
+                playerPlacedTiles.add(ht.getPolygon());
+            }
+            ArrayList<HabitatTile> adjTiles = ht.getNeighbors();
+            adjTiles.stream().filter(Objects::nonNull).map(HabitatTile::getPossibleAnimals).forEach(System.out::println);
+            for (HabitatTile adjTile : adjTiles) {
+                if (adjTile != null && adjTile.getPolygon() != null && !drawnTiles.contains(adjTile) && ht.getPolygon() != null) {
+                    // Draw adjTile if it hasn't been drawn yet
+                    int topLeftX = (int) adjTile.getPolygon().getBounds2D().getX();
+                    int topLeftY = (int) adjTile.getPolygon().getBounds2D().getY();
+                    drawnTiles.add(adjTile); // Add adjTile to the set of drawn tiles
+                    g.drawImage(adjTile.getImage(), topLeftX+offsetx, topLeftY+offsety, null);
+                    playerPlacedTiles.add(adjTile.getPolygon());
+                }
+            }
+        }
+    }
+
     private void drawPotentialPlacement(Graphics g, int boardCenterX, int boardCenterY, int offsetx, int offsety, Player p) {
         potentialPlacements.clear();
         HashMap<HabitatTile, WildlifeToken> playerDraw = p.getPlayerTiles();
@@ -538,7 +571,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         }
 
         for (Polygon potentialPlacementPolygon : potentialPlacementSet) {
-            Point potPolyCenter = new Point((int) potentialPlacementPolygon.getBounds2D().getCenterX(), (int) potentialPlacementPolygon.getBounds2D().getCenterY());
+            Point potPolyCenter = new Point((int) potentialPlacementPolygon.getBounds2D().getCenterX()+offsetx, (int) potentialPlacementPolygon.getBounds2D().getCenterY()+offsety);
             boolean tooClose = false;
 
             for (Polygon existingPolygon : potentialPlacements) {
@@ -638,7 +671,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         }*/
         for (int i = 0; i < 4; i++) {
             if (displayedAnimalPolygons[i].contains(e.getPoint()) && displayedAnimalClickable) {
-                System.out.println("HWHAAA|||||||||||||||||||||||||||||||||||||||||||||||||");
                 if (specialButtonString.equals("Finish Swapping")) {
 
                     if (swapRec[i]) {
@@ -716,10 +748,13 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         }
         if (viewB1.contains(x, y)) {
             viewVis = true;
+            otherView = 2;
         } else if (viewB2.contains(x, y)) {
             viewVis = true;
+            otherView = 3;
         } else if (viewPage.contains(x, y) && viewVis) {
             viewVis = false;
+            otherView = 0;
         } else if (endGame.contains(x, y)) {
             setVisible(false);
         } else if (specialButton.contains(x, y)) {
