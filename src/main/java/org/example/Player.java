@@ -53,6 +53,127 @@ public class Player implements Comparable<Player>{
     public HashMap<HabitatTile, WildlifeToken> getPlayerTiles(){
         return playerTiles;
     }
+
+    public int getpNum() {
+        return pNum;
+    }
+
+    public void setpNum(int pNum) {
+        this.pNum = pNum;
+    }
+
+    public ArrayList<HabitatTile> getInitialThree() {
+        return initialThree;
+    }
+
+    public void setInitialThree(ArrayList<HabitatTile> initialThree) {
+        this.initialThree = initialThree;
+    }
+
+    public int getNumNatureTokens() {
+        return numNatureTokens;
+    }
+
+    public void setNumNatureTokens(int numNatureTokens) {
+        this.numNatureTokens = numNatureTokens;
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(String winner) {
+        this.winner = winner;
+    }
+
+    public Boolean getNatureTokenUsed() {
+        return natureTokenUsed;
+    }
+
+    public void setNatureTokenUsed(Boolean natureTokenUsed) {
+        this.natureTokenUsed = natureTokenUsed;
+    }
+
+    public void setNumBiomes(HashMap<String, Integer> numBiomes) {
+        this.numBiomes = numBiomes;
+    }
+
+    public void setPlayerTiles(HashMap<HabitatTile, WildlifeToken> playerTiles) {
+        this.playerTiles = playerTiles;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public int getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(int totalScore) {
+        this.totalScore = totalScore;
+    }
+
+    public ArrayList<Integer> getPlayerHabitatScores() {
+        return playerHabitatScores;
+    }
+
+    public void setPlayerHabitatScores(ArrayList<Integer> playerHabitatScores) {
+        this.playerHabitatScores = playerHabitatScores;
+    }
+
+    public ArrayList<String> getBiomes() {
+        return Biomes;
+    }
+
+    public void setBiomes(ArrayList<String> biomes) {
+        Biomes = biomes;
+    }
+
+    public int getLakeBonusScore() {
+        return lakeBonusScore;
+    }
+
+    public void setLakeBonusScore(int lakeBonusScore) {
+        this.lakeBonusScore = lakeBonusScore;
+    }
+
+    public int getMountainBonusScore() {
+        return mountainBonusScore;
+    }
+
+    public void setMountainBonusScore(int mountainBonusScore) {
+        this.mountainBonusScore = mountainBonusScore;
+    }
+
+    public int getDesertBonusScore() {
+        return desertBonusScore;
+    }
+
+    public void setDesertBonusScore(int desertBonusScore) {
+        this.desertBonusScore = desertBonusScore;
+    }
+
+    public int getSwampBonusScore() {
+        return swampBonusScore;
+    }
+
+    public void setSwampBonusScore(int swampBonusScore) {
+        this.swampBonusScore = swampBonusScore;
+    }
+
+    public int getForestBonusScore() {
+        return forestBonusScore;
+    }
+
+    public void setForestBonusScore(int forestBonusScore) {
+        this.forestBonusScore = forestBonusScore;
+    }
+
     //finish later
     public void calcNumBiomes(){ return;}
 

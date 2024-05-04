@@ -170,15 +170,15 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         for (Player p : game.getPlayers()) {
             //Set the polygons of the first 3 tiles manually
-            ArrayList<HabitatTile> playerTiles = new ArrayList<>(p.getPlayerTiles().keySet());
-            Polygon poly1 = CascadiaPanel.createHexagon(boardCenterx, boardCentery, playerTiles.get(0).getImage());
-            playerTiles.getFirst().setPolygon(poly1);
-            Point coords1 = CascadiaPanel.getCoordsAdjacentHexagon(poly1, 1, playerTiles.get(1).getImage());
-            Polygon poly2 = CascadiaPanel.createHexagon(coords1.x, coords1.y, playerTiles.get(1).getImage());
-            playerTiles.get(1).setPolygon(poly2);
-            Point coords2 = CascadiaPanel.getCoordsAdjacentHexagon(poly1, 2, playerTiles.get(2).getImage());
-            Polygon poly3 = CascadiaPanel.createHexagon(coords2.x, coords2.y, playerTiles.get(2).getImage());
-            playerTiles.get(2).setPolygon(poly3);
+            ArrayList<HabitatTile> firstThree = p.getInitialThree();
+            Polygon poly1 = CascadiaPanel.createHexagon(boardCenterx , boardCentery, firstThree.getFirst().getImage());
+            firstThree.getFirst().setPolygon(poly1);
+            Point coords1 = CascadiaPanel.getCoordsAdjacentHexagon(poly1, 1, firstThree.get(1).getImage());
+            Polygon poly2 = CascadiaPanel.createHexagon(coords1.x, coords1.y, firstThree.get(1).getImage());
+            firstThree.get(1).setPolygon(poly2);
+            Point coords2 = CascadiaPanel.getCoordsAdjacentHexagon(poly1, 2, firstThree.getLast().getImage());
+            Polygon poly3 = CascadiaPanel.createHexagon(coords2.x, coords2.y, firstThree.getLast().getImage());
+            firstThree.getLast().setPolygon(poly3);
         }
 
         int debugRectWidth = width / 8;
