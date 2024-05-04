@@ -197,6 +197,10 @@ public class Game {
         ScoringCharts sc = new ScoringCharts();
 
     }
+
+    public void setNextPlayer(){
+        currentPlayer = players.indexOf(currentPlayer) == players.size() - 1 ? players.getFirst() : players.get(players.indexOf(currentPlayer) + 1);
+    }
     //need to add more to this
 
 
