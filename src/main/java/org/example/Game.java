@@ -68,16 +68,26 @@ public class Game {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        IntStream.range(0, 3).forEach(i -> players.add(new Player(i, groupedTiles.get((int) (Math.random() * groupedTiles.size())))));
+        IntStream.range(1, 4).forEach(i -> players.add(new Player(i, groupedTiles.get((int) (Math.random() * groupedTiles.size())))));
         currentPlayer = players.getFirst();
 
     }
 
 
     public void swapWildLifeToken(int i) {
-        possibleWildlife.add(displayedWildlife.remove(i));
-        displayedWildlife.add(possibleWildlife.remove((int) (Math.random() * possibleWildlife.size())));
+
+        WildlifeToken current = displayedWildlife.get(i);
+        int rand = (int) (Math.random() * possibleWildlife.size());
+        WildlifeToken swap = (possibleWildlife.get(rand));
+
+        while (swap.equals(current)) {
+            rand = (int) (Math.random() * possibleWildlife.size());
+            swap = (possibleWildlife.get(rand));
+        }
+        possibleWildlife.add(displayedWildlife.get(i));
+        displayedWildlife.set(i, swap);
     }
+
     public void addNewTile(int i){
         displayedTiles.add(i, possibleHabitatTiles.remove((int) (Math.random() * possibleHabitatTiles.size())));
     }
@@ -184,13 +194,18 @@ public class Game {
         return false;
     }
 
-    public void cntTurns() {
-        if (numTurns <= 19) {
+    public void cntTurns(Player p) {
+        if (numTurns < 20 && p.getpNum() == 3) {
             numTurns++;
-        } else {
+        } else if(numTurns >= 20){
             endGame();
         }
     }
+
+    public int numTurns(){
+        return numTurns;
+    }
+
 
     //GOTTA FIX THIS TO MAKE IT COMPARE
     public void endGame() {
@@ -205,7 +220,7 @@ public class Game {
 
 
     public void updateTurn(Player p){
-        cntTurns();
+        cntTurns(p);
     }
 
 
