@@ -18,6 +18,7 @@ public class ScorePanel extends JPanel implements MouseListener  {
     private BufferedImage backgroundImage, scoringTable, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
     private boolean boardVisible = false;
     private boolean isVisible = true;
+    public Player p1, p2, p3;
     public ScorePanel() {
         addMouseListener(this);
     }
@@ -70,16 +71,49 @@ public class ScorePanel extends JPanel implements MouseListener  {
         g.drawImage(scoringTable, width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
 
         ArrayList<Integer> test = new ArrayList<Integer>();
+
+
+        test.add(p1.getNumNatureTokens());
+        test.add(1);
+        test.add(1);
+        test.add(1);
         test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1);
-        test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1);
+
+        /*test arraylist in order
+        bear
+        elk
+        fox
+        hawk
+        salom
+        totalWildLifeToken
+         */
+
 
         drawScores(g,width/3 - scorexdis,height/40 + height/20 + height/8, scoreWidth, height/2, test);
 
         g.fillRoundRect(2 * width/3 - xdis, height/20, labelWidth, height/15, 30, 30);
         g.drawImage(scoringTable, 2 * width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
+
+        test = new ArrayList<Integer>();
+
+        test.add(p2.getNumNatureTokens());
+        test.add(1);
+        test.add(1);
+        test.add(1);
+        test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1);
+
         drawScores(g,2 * width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, test);
         g.fillRoundRect(width - xdis, height/20, labelWidth, height/15, 30, 30);
         g.drawImage(scoringTable, width - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
+
+        test = new ArrayList<Integer>();
+
+        test.add(p3.getNumNatureTokens());
+        test.add(1);
+        test.add(1);
+        test.add(1);
+        test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1);
+
         drawScores(g,width - scorexdis,height/40 + height/20 + height/8, scoreWidth, height/2, test);
 
         int labelWidth2 = width/9;
@@ -227,6 +261,7 @@ public class ScorePanel extends JPanel implements MouseListener  {
             boardVisible = false;
         }
     }
+
 
     @Override
     public void mousePressed(MouseEvent e) {

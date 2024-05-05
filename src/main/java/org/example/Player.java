@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 public class Player implements Comparable<Player>{
     private int pNum;
     private ArrayList<HabitatTile> initialThree;
-    private int numNatureTokens;
+    private static int numNatureTokens;
     private String winner;
     private Boolean natureTokenUsed;
     private HashMap<String, Integer> numBiomes;
@@ -70,7 +70,7 @@ public class Player implements Comparable<Player>{
         this.initialThree = initialThree;
     }
 
-    public int getNumNatureTokens() {
+    public static int getNumNatureTokens() {
         return numNatureTokens;
     }
 
@@ -240,11 +240,6 @@ public class Player implements Comparable<Player>{
         }
 
         return biomeScore;
-    }
-
-    public int getScoreForBiome(Player p, Biome biome){
-        int score = getBScore(p, biome);
-        return score;
     }
 
     public int getLakeScore(Player p){
