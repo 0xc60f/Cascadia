@@ -37,6 +37,7 @@ public class Player implements Comparable<Player>{
         firstThree.get(1).setNeighbors(new ArrayList<>(Arrays.asList(null, null, null, firstThree.getLast(), firstThree.getFirst(), null)));
         firstThree.getLast().setNeighbors(new ArrayList<>(Arrays.asList(firstThree.get(1), null, null, null, null, firstThree.getFirst())));
         //biomes
+
     }
     public boolean isPossibleToPlace(WildlifeToken w){
         for (HabitatTile h : playerTiles.keySet()){

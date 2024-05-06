@@ -63,7 +63,8 @@ public class ScoringCharts {
         for (HabitatTile tokenID : HabitatTiles) {
 
             if (!(allPlacedTokens.get(tokenID) == null)) {
-                if (allPlacedTokens.get(tokenID).equals(WildlifeToken.BEAR) && !usedTokenIDs.contains(tokenID)) {
+                // && !usedTokenIDs.contains(tokenID)
+                if (allPlacedTokens.get(tokenID).equals(WildlifeToken.BEAR)) {
 
                     List<HabitatTile> neighboringTiles = Graph.getNeighbors(tokenID);
 
