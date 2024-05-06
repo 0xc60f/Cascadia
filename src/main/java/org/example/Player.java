@@ -10,6 +10,7 @@ public class Player implements Comparable<Player>{
     private int numNatureTokens;
     private String winner;
     private Boolean natureTokenUsed;
+    private int numTurns;
     private HashMap<String, Integer> numBiomes;
     private HashMap<HabitatTile, WildlifeToken> playerTiles;
     private int total;
@@ -23,18 +24,6 @@ public class Player implements Comparable<Player>{
     public int forestBonusScore = 0;
 
 
-    public Player(int p){
-        pNum = p;
-        numBiomes = new HashMap<String, Integer>();
-        numNatureTokens = 0; // Initialize to zero, assuming start of game, nature tokens need to be added.
-        natureTokenUsed = (Boolean) false;
-        playerTiles = new HashMap<>();
-        for(int i = 0; i < 3; i++){
-            playerTiles.put(initialThree.get(i), initialThree.get(i).getWildlifeToken());
-        }
-        totalScore = 0;
-        List<Biome> biomes = new ArrayList<>(Arrays.asList(Biome.values()));
-    }
     public Player (int p, ArrayList<HabitatTile> firstThree){
         pNum = p;
         initialThree = firstThree;
@@ -48,6 +37,14 @@ public class Player implements Comparable<Player>{
         firstThree.get(1).setNeighbors(new ArrayList<>(Arrays.asList(null, null, null, firstThree.getLast(), firstThree.getFirst(), null)));
         firstThree.getLast().setNeighbors(new ArrayList<>(Arrays.asList(firstThree.get(1), null, null, null, null, firstThree.getFirst())));
         //biomes
+    }
+    public boolean isPossibleToPlace(WildlifeToken w){
+        for (HabitatTile h : playerTiles.keySet()){
+            if(h.getWildlifeToken() == null && h.canPlace(w)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public HashMap<HabitatTile, WildlifeToken> getPlayerTiles(){
@@ -170,6 +167,14 @@ public class Player implements Comparable<Player>{
         return forestBonusScore;
     }
 
+    public int getNumTurns() {
+        return numTurns;
+    }
+
+    public void setNumTurns(int numTurns) {
+        this.numTurns = numTurns;
+    }
+
     public void setForestBonusScore(int forestBonusScore) {
         this.forestBonusScore = forestBonusScore;
     }
@@ -240,11 +245,6 @@ public class Player implements Comparable<Player>{
         }
 
         return biomeScore;
-    }
-
-    public int getScoreForBiome(Player p, Biome biome){
-        int score = getBScore(p, biome);
-        return score;
     }
 
     public int getLakeScore(Player p){
@@ -352,7 +352,7 @@ public class Player implements Comparable<Player>{
         int wildlifeTokenScore = 0;
 
         // Calculate scores for each wildlife token type
-        scoringCharts.calculateBearTokenScoring(this.pNum);
+        scoringCharts.calculateBearTokenScoring(this);
         scoringCharts.calculateFoxTokenScoring(this);
         scoringCharts.calculateHawkTokenScoring(this);
         scoringCharts.calculateSalmonTokenScoring(this);
@@ -367,7 +367,7 @@ public class Player implements Comparable<Player>{
     }
     public int getBearTokenScore() {
         ScoringCharts scoringCharts = new ScoringCharts();
-        scoringCharts.calculateBearTokenScoring(this.pNum); // Calculate bear token scoring for the player
+        scoringCharts.calculateBearTokenScoring(this); // Calculate bear token scoring for the player
         // Sum up the scores
         int bScore = 0;
         for (Integer bearscoring : scoringCharts.bearscoringVals) {
@@ -389,11 +389,7 @@ public class Player implements Comparable<Player>{
     public int getHawkTokenScore() {
         ScoringCharts scoringCharts = new ScoringCharts();
         scoringCharts.calculateHawkTokenScoring(this); // Calculate hawk token scoring for the player
-        int hScore = 0;
-        for (Integer hawkscoring : scoringCharts.hawkscoringVals) {
-            hScore += hawkscoring;
-        }
-        return hScore;
+        return scoringCharts.hawkscoringVals.stream().filter(Objects::nonNull).mapToInt(hawkscoring -> hawkscoring).sum();
     }
 
     public int getSalmonTokenScore() {
