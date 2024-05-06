@@ -406,7 +406,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             drawMainPlayerTiles(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
             gameState = GameState.TILEDONE;
             clearActionPrompt(g, width, height, div);
-            action = "Pick an animal token to place on your tile.";
+            action = "Pick an animal token to place on your tile (you can spend a nature token to pick from another pair.";
             Font smallFont = new Font("Arial", Font.BOLD, width / 180);
             drawCenteredString(g, action, actionPromptAlign, smallFont);
 
