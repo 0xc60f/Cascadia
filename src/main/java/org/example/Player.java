@@ -382,7 +382,9 @@ public class Player implements Comparable<Player>{
         scoringCharts.calculateFoxTokenScoring(this); // Calculate fox token scoring for the player
         int fScore = 0;
         for (Integer foxscoring : scoringCharts.foxscoringVals) {
-            fScore += foxscoring;
+            if(foxscoring != null){
+                 fScore += foxscoring;
+            }
         }
         return fScore;
     }
@@ -398,7 +400,9 @@ public class Player implements Comparable<Player>{
         scoringCharts.calculateSalmonTokenScoring(this); // Calculate salmon token scoring for the player
         int sScore = 0;
         for (Integer salmonscoring : scoringCharts.salmonscoringVals) {
-            sScore += salmonscoring;
+            if(salmonscoring !=null) {
+                sScore += salmonscoring;
+            }
         }
         return sScore;
     }
