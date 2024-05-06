@@ -741,7 +741,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                         if (ht != null){
                             WildlifeToken wt = game.getDisplayedWildlife().get(tokenClicked);
                             if (ht.canPlace(wt)) {
-
+                                game.getCurrentPlayer().getPlayerTiles().put(ht, wt);
                                 ht.setWildlifeToken(wt);
                                 game.getDisplayedWildlife().remove(tokenClicked);
                                 game.addNewWildlifeToken(tokenClicked);
