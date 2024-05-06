@@ -169,7 +169,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         drawCenteredString(g, turn, turnAlign, defFont);
         drawCenteredString(g, action, actionPromptAlign, defFont);
 
-        drawScoring(g, width, height, div);
+
 
         //Draw the Player 2 and Player 3 buttons
         g.fillRoundRect(width / 2 + width / 6, height / 100, width / 8, height / 14, 10, 10);
@@ -505,15 +505,28 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         g.drawRect(width - width / div, 0, width / div, height);
         int x = width - width / div + width / div / 2 - bearScoring.getWidth() / 2;
         int y = height / div / 2 - bearScoring.getHeight() / 2;
+        int ydis = height/8;
+        int xdis = width/25;
+        g.setFont(new Font("Arial", Font.BOLD, 12));
         g.drawImage(bearScoring, x, y, null);
+        int curTokens = game.getTokens(WildlifeToken.BEAR);
+        g.drawString("remaining: " + curTokens, x-xdis, y+ydis);
         y += height / div;
         g.drawImage(hawkScoring, x, y, null);
+        curTokens = game.getTokens(WildlifeToken.HAWK);
+        g.drawString("remaining: " + curTokens, x-xdis, y+ydis);
         y += height / div;
         g.drawImage(salmonScoring, x, y, null);
+        curTokens = game.getTokens(WildlifeToken.SALMON);
+        g.drawString("remaining: " + curTokens, x-xdis, y+ydis);
         y += height / div;
         g.drawImage(elkScoring, x, y, null);
+        curTokens = game.getTokens(WildlifeToken.ELK);
+        g.drawString("remaining: " + curTokens, x-xdis, y+ydis);
         y += height / div;
         g.drawImage(foxScoring, x, y, null);
+        curTokens = game.getTokens(WildlifeToken.FOX);
+        g.drawString("remaining: " + curTokens, x-xdis, y+ydis);
     }
 
     public void drawOtherPlayTiles(Graphics g, int boardCenterx, int boardCentery, Player p) {

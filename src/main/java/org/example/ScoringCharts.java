@@ -40,6 +40,8 @@ public class ScoringCharts {
         hawkscoringVals = new ArrayList<Integer>();
         salmonscoringVals = new ArrayList<Integer>();
         elkscoringvals = new ArrayList<Integer>();
+        SalmonScoring();
+        HawkScoring();
     }
     public void calculateBearTokenScoring(Player p) {
         Map<HabitatTile, WildlifeToken> allPlacedTokens = p.getPlayerTiles();
@@ -283,6 +285,7 @@ public class ScoringCharts {
             }
             salmonscoringVals.add(salmonScoringValues.get(uniqueSalmonIDsSize));
             salmonInRunNum = uniqueSalmonIDsSize;
+            System.out.println(salmonscoringVals.get(0));
             System.out.println(salmonInRunNum + "SALMONDSNSDLFNSDFJ");
         }
     }

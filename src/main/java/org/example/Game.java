@@ -73,6 +73,19 @@ public class Game {
 
     }
 
+    public int getTokens(WildlifeToken x) {
+
+        int cnt = 0;
+
+        for (int i = 0; i < possibleWildlife.size(); i++) {
+            if (possibleWildlife.get(i).equals(x)) {
+                cnt++;
+            };
+        }
+
+        return cnt;
+    }
+
 
     public void swapWildLifeToken(int i) {
 
