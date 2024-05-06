@@ -122,6 +122,10 @@ public class Game {
         return displayedTiles;
     }
 
+    public void printhtlist(){
+        System.out.println(possibleHabitatTiles);
+    }
+
     public void setDisplayedTiles(ArrayList<HabitatTile> displayedTiles) {
         this.displayedTiles = displayedTiles;
     }
@@ -196,14 +200,14 @@ public class Game {
 
     public void cntTurns(Player p) {
         if (numTurns < 20 && p.getpNum() == 3) {
-            System.out.println("huh");
+            //System.out.println("huh");
             numTurns++;
         } else if(numTurns >= 20){
             endGame();
 
         }
         else{
-            System.out.println("bruh");
+            //System.out.println("bruh");
         }
     }
 

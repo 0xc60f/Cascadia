@@ -262,6 +262,10 @@ public class HabitatTile {
     }
 
 
+    public String toString(){
+        return "HabitatTile: " + habitat1 + habitat2 + possibleAnimals;
+    }
+
 
     /*function rotateTileClockwiseFunction() {
 	// find the currently chosen tile that is currently being placed, and store it's current rotation value into a variable
