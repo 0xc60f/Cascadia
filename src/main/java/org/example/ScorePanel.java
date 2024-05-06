@@ -7,9 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class ScorePanel extends JPanel implements MouseListener  {
 
@@ -18,7 +16,8 @@ public class ScorePanel extends JPanel implements MouseListener  {
     private BufferedImage backgroundImage, scoringTable, bearScoring, hawkScoring, salmonScoring, elkScoring, foxScoring;
     private boolean boardVisible = false;
     private boolean isVisible = true;
-    public Player p1, p2, p3;
+    private int curView = 0;
+    private Game game = null;
     public ScorePanel() {
         addMouseListener(this);
     }
@@ -70,51 +69,106 @@ public class ScorePanel extends JPanel implements MouseListener  {
         g.fillRoundRect(width/3 - xdis, height/20, labelWidth, height/15, 30, 30);
         g.drawImage(scoringTable, width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
 
-        ArrayList<Integer> test = new ArrayList<Integer>();
+        ArrayList<Integer> p1score = new ArrayList<Integer>();
+        Player p1 = game.getPlayers().get(0);
+        p1score.add(p1.numNatureTokens());
+        p1score.add(p1.getBearTokenScore());
+        p1score.add(p1.getELkTokenScore());
+        p1score.add(p1.getFoxTokenScore());
+        p1score.add(p1.getHawkTokenScore());
+        p1score.add(p1.getSalmonTokenScore());
 
 
-        test.add(p1.getNumNatureTokens());
-        test.add(1);
-        test.add(1);
-        test.add(1);
-        test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1);
+        p1score.add(p1.numNatureTokens() + p1.getBearTokenScore() + p1.getELkTokenScore() + p1.getFoxTokenScore() + p1.getHawkTokenScore() + p1.getSalmonTokenScore()); ;
 
-        /*test arraylist in order
-        bear
-        elk
-        fox
-        hawk
-        salom
-        totalWildLifeToken
-         */
+        p1score.add(p1.getTotalScore());
+
+        p1score.add(p1.getMountainScore(p1));
+        p1score.add(p1.getForestScore(p1));
+        p1score.add(p1.getDesertScore(p1));
+        p1score.add(p1.getSwampScore(p1));
+        p1score.add(p1.getLakeScore(p1));
+
+        p1score.add(p1.getMountainScore(p1) + p1.getForestScore(p1) + p1.getDesertScore(p1) + p1.getSwampScore(p1) + p1.getLakeScore(p1)); ;
+
+        p1score.add(p1.getMountainBonusScore());
+        p1score.add(p1.getForestBonusScore());
+        p1score.add(p1.getDesertBonusScore());
+        p1score.add(p1.getSwampBonusScore());
+        p1score.add(p1.getLakeBonusScore());
+
+        p1score.add(p1.getMountainBonusScore() + p1.getForestBonusScore() + p1.getDesertBonusScore() + p1.getSwampBonusScore() + p1.getLakeBonusScore()); ;
+
+        drawScores(g,width/3 - scorexdis,height/40 + height/20 + height/8, scoreWidth, height/2, p1score);
+
+        p1 = game.getPlayers().get(1);
+        p1score = new ArrayList<Integer>();
+        p1score.add(p1.numNatureTokens());
+        p1score.add(p1.getBearTokenScore());
+        p1score.add(p1.getELkTokenScore());
+        p1score.add(p1.getFoxTokenScore());
+        p1score.add(p1.getHawkTokenScore());
+        p1score.add(p1.getSalmonTokenScore());
 
 
-        drawScores(g,width/3 - scorexdis,height/40 + height/20 + height/8, scoreWidth, height/2, test);
+        p1score.add(p1.numNatureTokens() + p1.getBearTokenScore() + p1.getELkTokenScore() + p1.getFoxTokenScore() + p1.getHawkTokenScore() + p1.getSalmonTokenScore()); ;
+
+        p1score.add(p1.getTotalScore());
+
+        p1score.add(p1.getMountainScore(p1));
+        p1score.add(p1.getForestScore(p1));
+        p1score.add(p1.getDesertScore(p1));
+        p1score.add(p1.getSwampScore(p1));
+        p1score.add(p1.getLakeScore(p1));
+
+        p1score.add(p1.getMountainScore(p1) + p1.getForestScore(p1) + p1.getDesertScore(p1) + p1.getSwampScore(p1) + p1.getLakeScore(p1)); ;
+
+        p1score.add(p1.getMountainBonusScore());
+        p1score.add(p1.getForestBonusScore());
+        p1score.add(p1.getDesertBonusScore());
+        p1score.add(p1.getSwampBonusScore());
+        p1score.add(p1.getLakeBonusScore());
+
+        p1score.add(p1.getMountainBonusScore() + p1.getForestBonusScore() + p1.getDesertBonusScore() + p1.getSwampBonusScore() + p1.getLakeBonusScore()); ;
+
 
         g.fillRoundRect(2 * width/3 - xdis, height/20, labelWidth, height/15, 30, 30);
         g.drawImage(scoringTable, 2 * width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
-
-        test = new ArrayList<Integer>();
-
-        test.add(p2.getNumNatureTokens());
-        test.add(1);
-        test.add(1);
-        test.add(1);
-        test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1);
-
-        drawScores(g,2 * width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, test);
+        drawScores(g,2 * width/3 - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, p1score);
         g.fillRoundRect(width - xdis, height/20, labelWidth, height/15, 30, 30);
         g.drawImage(scoringTable, width - scorexdis,   height/40 + height/20 + height/8, scoreWidth, height/2, null);
 
-        test = new ArrayList<Integer>();
+        p1 = game.getPlayers().get(2);
+        p1score = new ArrayList<Integer>();
+        p1score.add(p1.numNatureTokens());
+        p1score.add(p1.getBearTokenScore());
+        p1score.add(p1.getELkTokenScore());
+        p1score.add(p1.getFoxTokenScore());
+        p1score.add(p1.getHawkTokenScore());
+        p1score.add(p1.getSalmonTokenScore());
 
-        test.add(p3.getNumNatureTokens());
-        test.add(1);
-        test.add(1);
-        test.add(1);
-        test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1); test.add(1);
 
-        drawScores(g,width - scorexdis,height/40 + height/20 + height/8, scoreWidth, height/2, test);
+        p1score.add(p1.numNatureTokens() + p1.getBearTokenScore() + p1.getELkTokenScore() + p1.getFoxTokenScore() + p1.getHawkTokenScore() + p1.getSalmonTokenScore()); ;
+
+        p1score.add(p1.getTotalScore());
+
+        p1score.add(p1.getMountainScore(p1));
+        p1score.add(p1.getForestScore(p1));
+        p1score.add(p1.getDesertScore(p1));
+        p1score.add(p1.getSwampScore(p1));
+        p1score.add(p1.getLakeScore(p1));
+
+        p1score.add(p1.getMountainScore(p1) + p1.getForestScore(p1) + p1.getDesertScore(p1) + p1.getSwampScore(p1) + p1.getLakeScore(p1)); ;
+
+        p1score.add(p1.getMountainBonusScore());
+        p1score.add(p1.getForestBonusScore());
+        p1score.add(p1.getDesertBonusScore());
+        p1score.add(p1.getSwampBonusScore());
+        p1score.add(p1.getLakeBonusScore());
+
+        p1score.add(p1.getMountainBonusScore() + p1.getForestBonusScore() + p1.getDesertBonusScore() + p1.getSwampBonusScore() + p1.getLakeBonusScore()); ;
+
+        drawScores(g,width - scorexdis,height/40 + height/20 + height/8, scoreWidth, height/2, p1score);
 
         int labelWidth2 = width/9;
         int xdis2 = width/6 + labelWidth2/2;
@@ -161,6 +215,13 @@ public class ScorePanel extends JPanel implements MouseListener  {
         if (boardVisible) {
             g.setColor(beigeColor);
             g.fillPolygon(viewPage);
+            if (curView == 1) {
+                drawOtherPlayTiles(g, width/2, height/2, game.getPlayers().get(0));
+            } else if (curView == 2) {
+                drawOtherPlayTiles(g, width/2, height/2, game.getPlayers().get(1));
+            } else if (curView == 3) {
+                drawOtherPlayTiles(g, width/2, height/2, game.getPlayers().get(2));
+            }
         }
 
         vb1 = new Polygon(xPoints, yPoints, 4);
@@ -247,21 +308,29 @@ public class ScorePanel extends JPanel implements MouseListener  {
         g.setColor(beigeColor);
     }
 
+
+    public void sendScore(Game ggame) {
+        game = ggame;
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
         if (vb1.contains(x, y)) {
             boardVisible = true;
+            curView = 1;
         } else if (vb2.contains(x, y)) {
             boardVisible = true;
+            curView = 2;
         } else if(vb3.contains(x, y)) {
             boardVisible = true;
+            curView = 3;
         } else if (viewPage.contains(x, y)) {
             boardVisible = false;
+            curView = 0;
         }
     }
-
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -281,5 +350,34 @@ public class ScorePanel extends JPanel implements MouseListener  {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    public void drawOtherPlayTiles(Graphics g, int boardCenterx, int boardCentery, Player p) {
+        //playerPlacedTiles.clear();
+        HashMap<HabitatTile, WildlifeToken> playerDraw = p.getPlayerTiles();
+        // Get all the HabitatTiles in playerDraw
+        ArrayList<HabitatTile> playerTiles = new ArrayList<>(playerDraw.keySet());
+        // Create a set to store drawn tiles
+        Set<HabitatTile> drawnTiles = new HashSet<>();
+        for (HabitatTile ht : playerTiles) {
+            if (!drawnTiles.contains(ht)) {
+                int topLeftX = (int) ht.getPolygon().getBounds2D().getX();
+                int topLeftY = (int) ht.getPolygon().getBounds2D().getY();
+                g.drawImage(ht.getImage(), topLeftX, topLeftY, null);
+                drawnTiles.add(ht);
+                //playerPlacedTiles.add(ht.getPolygon());
+            }
+            ArrayList<HabitatTile> adjTiles = ht.getNeighbors();
+            for (HabitatTile adjTile : adjTiles) {
+                if (adjTile != null && adjTile.getPolygon() != null && !drawnTiles.contains(adjTile) && ht.getPolygon() != null) {
+                    // Draw adjTile if it hasn't been drawn yet
+                    int topLeftX = (int) adjTile.getPolygon().getBounds2D().getX();
+                    int topLeftY = (int) adjTile.getPolygon().getBounds2D().getY();
+                    drawnTiles.add(adjTile); // Add adjTile to the set of drawn tiles
+                    g.drawImage(adjTile.getImage(), topLeftX, topLeftY, null);
+                    //playerPlacedTiles.add(adjTile.getPolygon());
+                }
+            }
+        }
     }
 }
