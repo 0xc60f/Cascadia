@@ -50,53 +50,51 @@ public class ScoringCharts {
         bearScoringValues.put(4, 27);
 
         int confirmedBearPairs = 0;
-        List<HabitatTile> potentialBears = new ArrayList<>();
         List<HabitatTile> usedTokenIDs = new ArrayList<>();
 
         List<HabitatTile> tokenIDs = new ArrayList<>(allPlacedTokens.keySet());
 
         for (HabitatTile tokenID : tokenIDs) {
-            potentialBears.clear();
-
-            if (allPlacedTokens.get(tokenID) == WildlifeToken.BEAR && usedTokenIDs.indexOf(tokenID) == -1) {
+            if (allPlacedTokens.get(tokenID) != null && allPlacedTokens.get(tokenID).equals(WildlifeToken.BEAR) && !usedTokenIDs.contains(tokenID)) {
 
                 List<HabitatTile> neighbourTiles = Graph.getNeighbors(tokenID);
 
                 for (HabitatTile neighbourTile : neighbourTiles) {
                     if (allPlacedTokens.containsKey(neighbourTile)) {
-                        if (allPlacedTokens.get(neighbourTile) == WildlifeToken.BEAR && !potentialBears.contains(neighbourTile)) {
-                            potentialBears.add(neighbourTile);
+                        if (allPlacedTokens.get(neighbourTile) != null && allPlacedTokens.get(neighbourTile).equals(WildlifeToken.BEAR) && !usedTokenIDs.contains(neighbourTile)) {
+                            usedTokenIDs.add(neighbourTile);
                         }
                     }
                 }
 
-                if (potentialBears.size() == 1) {
-                    List<HabitatTile> potentialBearPairNeighborTiles = Graph.getNeighbors(potentialBears.get(0));
+                if (usedTokenIDs.size() == 1) {
+                    List<HabitatTile> potentialBearPairNeighborTiles = Graph.getNeighbors(usedTokenIDs.get(0));
 
                     for (HabitatTile potentialBearPairNeighborTile : potentialBearPairNeighborTiles) {
                         if (allPlacedTokens.containsKey(potentialBearPairNeighborTile)) {
-                            if (allPlacedTokens.get(potentialBearPairNeighborTile) == WildlifeToken.BEAR && !potentialBears.contains(potentialBearPairNeighborTile)) {
-                                potentialBears.add(potentialBearPairNeighborTile);
+                            if (allPlacedTokens.get(potentialBearPairNeighborTile) != null && allPlacedTokens.get(potentialBearPairNeighborTile).equals(WildlifeToken.BEAR) && !usedTokenIDs.contains(potentialBearPairNeighborTile)) {
+                                usedTokenIDs.add(potentialBearPairNeighborTile);
                             }
                         }
                     }
 
-                    if (potentialBears.size() == 2) {
+                    if (usedTokenIDs.size() == 2) {
                         if (confirmedBearPairs <= 4) {
                             confirmedBearPairs++;
                         }
                     }
                 }
 
-                usedTokenIDs.addAll(potentialBears);
             }
         }
+        usedTokenIDs.clear();
 
         if (confirmedBearPairs != 0) {
             bearscoringVals.add(bearScoringValues.get(confirmedBearPairs));
         }
 
         System.out.println("confirmed bear pairs: " + confirmedBearPairs);
+
     }
     public void calculateFoxTokenScoring(Player p) {
         foxScoringValues = new HashMap<>();
