@@ -175,16 +175,15 @@ public class ScoringCharts {
     public void calculateHawkTokenScoring(Player p) {
         allPlacedTokens = p.getPlayerTiles();
         ArrayList<HabitatTile> tokenIDs = new ArrayList<>(allPlacedTokens.keySet());
-        System.out.println("num Size" + allPlacedTokens.keySet().size());
+
         int numIsolatedHawks = 0;
 
         for (HabitatTile tokenID : tokenIDs) {
-            WildlifeToken token = tokenID.getWildlifeToken();
-            System.out.println(token + "TEHKASDUKOHASDFJKHASDJUIKHASDOPUI");
+            WildlifeToken token = allPlacedTokens.get(tokenID);
             if (token == WildlifeToken.HAWK) {
 
                 List<HabitatTile> neighbourTiles = Graph.getNeighbors(tokenID);
-                System.out.println("nieghborTiles size" + neighbourTiles.size());
+
                 boolean neighbouringHawks = false;
 
                 for (HabitatTile neighbourTile : neighbourTiles) {

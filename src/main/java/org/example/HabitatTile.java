@@ -224,7 +224,7 @@ public class HabitatTile {
     }
 
     public boolean canPlace(WildlifeToken w) {
-        return possibleAnimals.contains(w);
+        return possibleAnimals.contains(w) && this.w == null;
     }
 
     public WildlifeToken getWildlifeToken() {

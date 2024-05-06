@@ -69,7 +69,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     }
 
     public void paint(Graphics g, int width, int height) {
-        playerPlacedTiles = new ArrayList<>();
         int div = 5;
 
         int playAreaWidth = (width - width / div);
@@ -140,7 +139,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             ArrayList<HabitatTile> firstThree = p.getInitialThree();
             Polygon poly1 = CascadiaPanel.createHexagon(boardCenterx + offsetx, boardCentery + offsety, firstThree.getFirst().getImage());
             if (firstThree.get(0).getPolygon() == null) {
-                firstThree.get(0).setPolygon(poly1);
+                firstThree.getFirst().setPolygon(poly1);
             }
             Point coords1 = CascadiaPanel.getCoordsAdjacentHexagon(poly1, 1, firstThree.get(1).getImage());
             Polygon poly2 = CascadiaPanel.createHexagon(coords1.x + offsetx, coords1.y + offsety, firstThree.get(1).getImage());
@@ -150,7 +149,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             Point coords2 = CascadiaPanel.getCoordsAdjacentHexagon(poly1, 2, firstThree.getLast().getImage());
             Polygon poly3 = CascadiaPanel.createHexagon(coords2.x + offsetx, coords2.y + offsety, firstThree.getLast().getImage());
             if (firstThree.get(2).getPolygon() == null) {
-                firstThree.get(2).setPolygon(poly3);
+                firstThree.getLast().setPolygon(poly3);
             }
         }
         Color beigeColor = new Color(255, 221, 122);
@@ -384,8 +383,10 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         g.setColor(Color.BLACK);
         displayedTilesClickable = true;
+        updatePlayerPlacedTiles(game.getCurrentPlayer());
         drawMainPlayerTiles(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
         if (gameState.equals(GameState.TILECLICKED)){ //&& (playerPlacedTiles.size()) - 2 == game.numTurns()) {
+            updatePlayerPlacedTiles(game.getCurrentPlayer());
             drawMainPlayerTiles(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
             Font smallFont = new Font("Arial", Font.BOLD, width / 180);
             clearActionPrompt(g, width, height, div);
@@ -401,6 +402,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             rightArrowClickable[tileClicked] = false;
             displayedTilesClickable = false;
             clearArrows(g, width, height, div, tileClicked);
+            updatePlayerPlacedTiles(game.getCurrentPlayer());
             drawMainPlayerTiles(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
             gameState = GameState.TILEDONE;
             clearActionPrompt(g, width, height, div);
@@ -416,6 +418,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 action = "Place your token on a tile";
                 Font smallFontNew = new Font("Arial", Font.BOLD, width / 180);
                 drawCenteredString(g, action, actionPromptAlign, smallFontNew);
+                updatePlayerPlacedTiles(game.getCurrentPlayer());
                 drawMainPlayerTiles(g, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
             }
         }
@@ -544,7 +547,8 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         playerPlacedTiles = new ArrayList<>();
         HashMap<HabitatTile, WildlifeToken> playerDraw = p.getPlayerTiles();
         // Get all the HabitatTiles in playerDraw
-        ArrayList<HabitatTile> playerTiles = new ArrayList<>(playerDraw.keySet());
+        ArrayList<HabitatTile> playerTiles = new ArrayList<>();
+        playerTiles = new ArrayList<>(playerDraw.keySet());
         // Create a set to store drawn tiles
         Set<HabitatTile> drawnTiles = new HashSet<>();
         for (HabitatTile ht : playerTiles) {
@@ -677,9 +681,9 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 displayedAnimalClickable = true;
                 gameState = GameState.TILECLICKED;
                 drawArrows(this.getWidth(), this.getHeight(), 5, tileClicked, graphics);
+                updatePlayerPlacedTiles(game.getCurrentPlayer());
                 drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
                 drawPotentialPlacement(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
-                repaint();
 
             }
         }
@@ -704,7 +708,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                     game.getCurrentPlayer().subtractNatureTokens();
                 }
                 tileClicked = 0;
-                repaint();
+
             }
         }
         if (gameState.equals(GameState.TOKENCLICKED)) {
@@ -723,50 +727,52 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 displayedAnimalClickable = false;
                 turn = "Turn: " + (game.numTurns());
                 gameState = GameState.ROUNDSTART;
+                updatePlayerPlacedTiles(game.getCurrentPlayer());
                 drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
-                repaint();
                 playerPlacedTiles = new ArrayList<>();
-                return;
-            }
-            for (Polygon p : playerPlacedTiles) {
-                Point theP = e.getPoint();
-                theP.translate(offsetx, offsety);
-                if (p.contains(theP)) {
-                    HabitatTile ht = game.getCurrentPlayer().getPlayerTiles().keySet().stream().filter(h -> h.getPolygon().equals(p)).findFirst().orElse(null);
-                    if (ht != null){
-                        WildlifeToken wt = game.getDisplayedWildlife().get(tokenClicked);
-                        if (ht.canPlace(wt)) {
 
-                            ht.setWildlifeToken(wt);
-                            game.getDisplayedWildlife().remove(tokenClicked);
-                            game.addNewWildlifeToken(tokenClicked);
-                            BufferedImage animalImage = switch (wt) {
-                                case BEAR -> bear;
-                                case ELK -> elk;
-                                case FOX -> fox;
-                                case HAWK -> hawk;
-                                case SALMON -> salmon;
-                            };
-                            BufferedImage occupiedImage = CascadiaPanel.drawOccupiedTile(ht.getImage(), animalImage);
-                            ht.setImage(occupiedImage);
-                            if (ht.isKeystone())
-                                game.getCurrentPlayer().addNatureTokens();
-                            game.updateTurn(game.getCurrentPlayer());
-                            game.setNextPlayer();
-                            swapUsed = false;
-                            shuffleUsed = false;
-                            swapRec[0] = true;
-                            swapRec[1] = true;
-                            swapRec[2] = true;
-                            swapRec[3] = true;
-                            displayedTilesClickable = true;
-                            displayedAnimalClickable = false;
-                            turn = "Turn: " + (game.numTurns());
-                            gameState = GameState.ROUNDSTART;
-                            drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
-                            repaint();
-                            playerPlacedTiles = new ArrayList<>();
-                            break;
+            }
+            else{
+                for (Polygon p : playerPlacedTiles) {
+                    Point theP = e.getPoint();
+                    theP.translate(offsetx, offsety);
+                    if (p.contains(theP)) {
+                        HabitatTile ht = game.getCurrentPlayer().getPlayerTiles().keySet().stream().filter(h -> h.getPolygon().equals(p)).findFirst().orElse(null);
+                        if (ht != null){
+                            WildlifeToken wt = game.getDisplayedWildlife().get(tokenClicked);
+                            if (ht.canPlace(wt)) {
+                                game.getCurrentPlayer().getPlayerTiles().put(ht, wt);
+                                ht.setWildlifeToken(wt);
+                                game.getDisplayedWildlife().remove(tokenClicked);
+                                game.addNewWildlifeToken(tokenClicked);
+                                BufferedImage animalImage = switch (wt) {
+                                    case BEAR -> bear;
+                                    case ELK -> elk;
+                                    case FOX -> fox;
+                                    case HAWK -> hawk;
+                                    case SALMON -> salmon;
+                                };
+                                BufferedImage occupiedImage = CascadiaPanel.drawOccupiedTile(ht.getImage(), animalImage);
+                                ht.setImage(occupiedImage);
+                                if (ht.isKeystone())
+                                    game.getCurrentPlayer().addNatureTokens();
+                                game.updateTurn(game.getCurrentPlayer());
+                                game.setNextPlayer();
+                                swapUsed = false;
+                                shuffleUsed = false;
+                                swapRec[0] = true;
+                                swapRec[1] = true;
+                                swapRec[2] = true;
+                                swapRec[3] = true;
+                                displayedTilesClickable = true;
+                                displayedAnimalClickable = false;
+                                turn = "Turn: " + (game.numTurns());
+                                gameState = GameState.ROUNDSTART;
+                                updatePlayerPlacedTiles(game.getCurrentPlayer());
+                                drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
+                                playerPlacedTiles = new ArrayList<>();
+                                break;
+                            }
                         }
                     }
                 }
@@ -807,12 +813,12 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                     game.addNewTile(tileClicked);
                     findNeighborsFromPotentialPolygon(ht, game.getCurrentPlayer());
                     game.getCurrentPlayer().addTile(ht);
-                    drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
                     break;
                 }
             }
             if (found) {
                 gameState = GameState.TILEPLACE;
+                updatePlayerPlacedTiles(game.getCurrentPlayer());
                 drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
                 repaint();
             }
@@ -877,6 +883,10 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             }
         }
 
+
+    }
+    public void updatePlayerPlacedTiles(Player p) {
+        playerPlacedTiles = new ArrayList<>();
 
     }
 
