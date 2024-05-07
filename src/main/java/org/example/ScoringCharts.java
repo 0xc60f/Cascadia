@@ -359,6 +359,7 @@ public class ScoringCharts {
         for (HabitatTile tile : allPlacedTokens.keySet()) {
             System.out.println(" - " + tile);
             TreeMap<Integer, Biome> biomes = tile.getBiomes();
+            System.out.println("Biomes: " + biomes);
             if (biomes.containsValue(specificBiome)) {
                 System.out.println("  - Contains specificBiome: " + specificBiome);
             }
@@ -367,14 +368,18 @@ public class ScoringCharts {
         for (HabitatTile tile : allPlacedTokens.keySet()) {
             TreeMap<Integer, Biome> biomes = tile.getBiomes();
             if (biomes.containsValue(specificBiome)) {
+                System.out.println("IF STATEMENT TRIGGERED 2");
                 for (Map.Entry<Integer, Biome> entry : biomes.entrySet()) {
-                    if (entry.getValue() == specificBiome) {
+                    if (entry.getValue().equals(specificBiome)) {
+                        System.out.println("IF STATEMENT TRIGGERED 3");
                         int side = entry.getKey();
                         HabitatTile neighbor = Graph.getNeighborWithSideBiome(tile, side, specificBiome);
                         if (neighbor != null) {
+                            System.out.println("IF STATEMENT TRIGGERED 4");
                             int neighborSide = Graph.getOppositeSide(side);
                             Biome neighborBiome = neighbor.getBiome(neighborSide);
-                            if (specificBiome == neighborBiome) {
+                            if (specificBiome.equals(neighborBiome)) {
+                                System.out.println("IF STATEMENT TRIGGERED 5");
                                 score++;
                             }
                         }
@@ -383,9 +388,11 @@ public class ScoringCharts {
                         for (int i = 0; i < 6; i++) {
                             HabitatTile neighbour = Graph.getNeighborWithSideBiome(tile, i, biomes.get(i));
                             if (neighbour != null) {
+                                System.out.println("IF STATEMENT TRIGGERED 6");
                                 Biome neighbourBiome = neighbour.getBiome(Graph.getOppositeSide(i));
-                                if (biomes.get(i) == neighbourBiome) {
+                                if (biomes.get(i).equals(neighbourBiome)) {
                                     score++;
+                                    System.out.println("IF STATEMENT TRIGGERED 7");
                                 }
                             }
                         }
