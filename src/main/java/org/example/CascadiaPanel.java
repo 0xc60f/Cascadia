@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
  * In addition, the panel also holds many utility static methods that are used to draw the hexagons and tiles in the game.
  * This is so that the functions can be called in multiple panels without the need to rewrite the logic.
  * @author 0xc60f
- * @see MainBoardPanel
+ * @see
  * @see StartPanel
  */
 

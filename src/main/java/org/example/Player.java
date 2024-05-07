@@ -22,7 +22,7 @@ public class Player implements Comparable<Player>{
     public int desertBonusScore = 0;
     public int swampBonusScore = 0;
     public int forestBonusScore = 0;
-
+    private boolean placedTileForTurn;
 
     public Player (int p, ArrayList<HabitatTile> firstThree){
         pNum = p;
@@ -39,6 +39,15 @@ public class Player implements Comparable<Player>{
         //biomes
 
     }
+
+    public boolean isPlacedTileForTurn() {
+        return placedTileForTurn;
+    }
+
+    public void setPlacedTileForTurn(boolean placedTileForTurn) {
+        this.placedTileForTurn = placedTileForTurn;
+    }
+
     public boolean isPossibleToPlace(WildlifeToken w){
         for (HabitatTile h : playerTiles.keySet()){
             if(h.getWildlifeToken() == null && h.canPlace(w)){
@@ -226,18 +235,29 @@ public class Player implements Comparable<Player>{
 
     private int getBScore(Player player, Biome specificBiome) {
         int biomeScore = 0;
-        ScoringCharts sc = new ScoringCharts();
-        System.out.println("getBScore CALLED");
-        HashMap<HabitatTile, WildlifeToken> allPlacedTokens = new HashMap<>();
-        for (HabitatTile tile : player.getPlayerTiles().keySet()) {
-            allPlacedTokens.put(tile, player.getPlayerTiles().get(tile));
+        for (HabitatTile tile : playerTiles.keySet()) {
+            TreeMap<Integer, Biome> biomes = tile.getBiomes();
+            if (biomes.containsValue(specificBiome)) {
+                for (Map.Entry<Integer, Biome> entry : biomes.entrySet()) {
+                    if (entry.getValue() == specificBiome) {
+                        int side = entry.getKey();
+                        HabitatTile neighbor = Graph.getNeighborWithSideBiome(tile, side, specificBiome);
+                        if (neighbor != null) {
+                            int neighborSide = Graph.getOppositeSide(side);
+                            Biome neighborBiome = neighbor.getBiome(neighborSide);
+                            if (specificBiome == neighborBiome) {
+                                biomeScore++;
+                            }
+                        }
+                    }
+                }
+            }
         }
-        biomeScore = sc.scoreHabitats(allPlacedTokens, specificBiome);
+
         return biomeScore;
     }
 
     public int getLakeScore(Player p){
-        System.out.println("getLakeScore called");
         int ls = getBScore(p,Biome.LAKE);
         return ls;
     }
@@ -326,12 +346,10 @@ public class Player implements Comparable<Player>{
     }
 
     // Method to calculate the biome score using the stored ScoringCharts instance
-
-    //FIX THIS FOR DEBUGGING
     public int getBiomeScore() {
         ScoringCharts scoringCharts = new ScoringCharts();
 
-        int biomeScore = 0;
+        int biomeScore = scoringCharts.scoreHabitats(playerTiles);
 
         return biomeScore;
         // fix for each biome, the method in scoringCharts only gives total
@@ -374,7 +392,7 @@ public class Player implements Comparable<Player>{
         int fScore = 0;
         for (Integer foxscoring : scoringCharts.foxscoringVals) {
             if(foxscoring != null){
-                 fScore += foxscoring;
+                fScore += foxscoring;
             }
         }
         return fScore;
@@ -395,6 +413,7 @@ public class Player implements Comparable<Player>{
                 sScore += salmonscoring;
             }
         }
+
         return sScore;
     }
 

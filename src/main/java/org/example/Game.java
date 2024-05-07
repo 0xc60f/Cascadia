@@ -73,6 +73,19 @@ public class Game {
 
     }
 
+    public int getTokens(WildlifeToken x) {
+
+        int cnt = 0;
+
+        for (int i = 0; i < possibleWildlife.size(); i++) {
+            if (possibleWildlife.get(i).equals(x)) {
+                cnt++;
+            };
+        }
+
+        return cnt;
+    }
+
 
     public void swapWildLifeToken(int i) {
 
@@ -120,10 +133,6 @@ public class Game {
 
     public ArrayList<HabitatTile> getDisplayedTiles() {
         return displayedTiles;
-    }
-
-    public void printhtlist(){
-        System.out.println(possibleHabitatTiles);
     }
 
     public void setDisplayedTiles(ArrayList<HabitatTile> displayedTiles) {
@@ -200,14 +209,14 @@ public class Game {
 
     public void cntTurns(Player p) {
         if (numTurns < 20 && p.getpNum() == 3) {
-            //System.out.println("huh");
+            System.out.println("huh");
             numTurns++;
         } else if(numTurns >= 20){
             endGame();
 
         }
         else{
-            //System.out.println("bruh");
+            System.out.println("bruh");
         }
     }
 
