@@ -404,6 +404,7 @@ public class Player implements Comparable<Player>{
                 sScore += salmonscoring;
             }
         }
+
         return sScore;
     }
 

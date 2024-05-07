@@ -81,7 +81,7 @@ public class ScorePanel extends JPanel implements MouseListener  {
 
         p1score.add(p1.numNatureTokens() + p1.getBearTokenScore() + p1.getELkTokenScore() + p1.getFoxTokenScore() + p1.getHawkTokenScore() + p1.getSalmonTokenScore()); ;
 
-        p1score.add(p1.getTotalScore());
+        p1score.add(p1.numNatureTokens() + p1.getBearTokenScore() + p1.getELkTokenScore() + p1.getFoxTokenScore() + p1.getHawkTokenScore() + p1.getSalmonTokenScore() + p1.getMountainScore(p1) + p1.getForestScore(p1) + p1.getDesertScore(p1) + p1.getSwampScore(p1) + p1.getLakeScore(p1) + p1.getMountainBonusScore() + p1.getForestBonusScore() + p1.getDesertBonusScore() + p1.getSwampBonusScore() + p1.getLakeBonusScore());
 
         p1score.add(p1.getMountainScore(p1));
         p1score.add(p1.getForestScore(p1));
@@ -113,7 +113,7 @@ public class ScorePanel extends JPanel implements MouseListener  {
 
         p1score.add(p1.numNatureTokens() + p1.getBearTokenScore() + p1.getELkTokenScore() + p1.getFoxTokenScore() + p1.getHawkTokenScore() + p1.getSalmonTokenScore()); ;
 
-        p1score.add(p1.getTotalScore());
+        p1score.add(p1.numNatureTokens() + p1.getBearTokenScore() + p1.getELkTokenScore() + p1.getFoxTokenScore() + p1.getHawkTokenScore() + p1.getSalmonTokenScore() + p1.getMountainScore(p1) + p1.getForestScore(p1) + p1.getDesertScore(p1) + p1.getSwampScore(p1) + p1.getLakeScore(p1) + p1.getMountainBonusScore() + p1.getForestBonusScore() + p1.getDesertBonusScore() + p1.getSwampBonusScore() + p1.getLakeBonusScore());
 
         p1score.add(p1.getMountainScore(p1));
         p1score.add(p1.getForestScore(p1));
@@ -150,7 +150,7 @@ public class ScorePanel extends JPanel implements MouseListener  {
 
         p1score.add(p1.numNatureTokens() + p1.getBearTokenScore() + p1.getELkTokenScore() + p1.getFoxTokenScore() + p1.getHawkTokenScore() + p1.getSalmonTokenScore()); ;
 
-        p1score.add(p1.getTotalScore());
+        p1score.add(p1.numNatureTokens() + p1.getBearTokenScore() + p1.getELkTokenScore() + p1.getFoxTokenScore() + p1.getHawkTokenScore() + p1.getSalmonTokenScore() + p1.getMountainScore(p1) + p1.getForestScore(p1) + p1.getDesertScore(p1) + p1.getSwampScore(p1) + p1.getLakeScore(p1) + p1.getMountainBonusScore() + p1.getForestBonusScore() + p1.getDesertBonusScore() + p1.getSwampBonusScore() + p1.getLakeBonusScore());
 
         p1score.add(p1.getMountainScore(p1));
         p1score.add(p1.getForestScore(p1));
