@@ -18,10 +18,10 @@ import java.awt.image.BufferedImage;
  */
 
 public class CascadiaPanel extends JPanel implements MouseListener {
-    private final StartPanel Menu;
-    private final MainBoardPanel MainBoard;
-    private final WinnerPanel WinnerScreen;
-    private final ScorePanel ScoreScreen;
+    public final StartPanel Menu;
+    public final MainBoardPanel MainBoard;
+    public final WinnerPanel WinnerScreen;
+    public final ScorePanel ScoreScreen;
     private boolean first = true;
     public CascadiaPanel() {
         addMouseListener(this);
@@ -39,6 +39,7 @@ public class CascadiaPanel extends JPanel implements MouseListener {
         } else if (MainBoard.getVisible()) {
             MainBoard.paint(g, getWidth(), getHeight());
         } else if (WinnerScreen.getVisible()) {
+            WinnerScreen.sendScore(MainBoard.getGame());
             WinnerScreen.paint(g, getWidth(), getHeight());
         } else if (ScoreScreen.getVisible()) {
             ScoreScreen.paint(g, getWidth(), getHeight());
@@ -55,10 +56,12 @@ public class CascadiaPanel extends JPanel implements MouseListener {
             MainBoard.mouseClicked(e);
         } else if (WinnerScreen.getVisible()) {
             WinnerScreen.mouseClicked(e);
+            WinnerScreen.sendScore(MainBoard.getGame());
             if (first) {
                 first = false;
                 ScoreScreen.sendScore(MainBoard.getGame());
             }
+
         } else if (ScoreScreen.getVisible()) {
             ScoreScreen.mouseClicked(e);
         }
