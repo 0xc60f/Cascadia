@@ -22,7 +22,7 @@ public class Player implements Comparable<Player>{
     public int desertBonusScore = 0;
     public int swampBonusScore = 0;
     public int forestBonusScore = 0;
-
+    private boolean placedTileForTurn;
 
     public Player (int p, ArrayList<HabitatTile> firstThree){
         pNum = p;
@@ -39,6 +39,15 @@ public class Player implements Comparable<Player>{
         //biomes
 
     }
+
+    public boolean isPlacedTileForTurn() {
+        return placedTileForTurn;
+    }
+
+    public void setPlacedTileForTurn(boolean placedTileForTurn) {
+        this.placedTileForTurn = placedTileForTurn;
+    }
+
     public boolean isPossibleToPlace(WildlifeToken w){
         for (HabitatTile h : playerTiles.keySet()){
             if(h.getWildlifeToken() == null && h.canPlace(w)){
