@@ -60,6 +60,12 @@ public class HabitatTile {
             case "f" -> habitat2 = Biome.FOREST;
             case "m" -> habitat2 = Biome.MOUNTAIN;
         }
+        biomes.put(0, habitat1);
+        biomes.put(1, habitat1);
+        biomes.put(2, habitat2);
+        biomes.put(3, habitat2);
+        biomes.put(4, habitat2);
+        biomes.put(5, habitat1);
         isKeystone = h1.equals(h2);
         switch (animal1) {
             case 1 -> possibleAnimals.add(WildlifeToken.ELK);
