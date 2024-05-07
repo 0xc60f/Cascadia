@@ -353,7 +353,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         int debugRectHeight5 = 100;
         int debugXPos5 = 800;
         int debugYPos5 = 200;
-        out.println(gameState);
         int[] xPoints8 = {debugXPos5, debugXPos5, debugXPos5 + debugRectWidth5, debugXPos5 + debugRectWidth5};
         int[] yPoints8 = {debugYPos5 + debugRectHeight5, debugYPos5, debugYPos5, debugYPos5 + debugRectHeight5};
 
@@ -584,6 +583,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 }
             }
         }
+        drawnTiles = new HashSet<>();
     }
 
     private void drawPotentialPlacement(Graphics g, int boardCenterX, int boardCenterY, int offsetx, int offsety, Player p) {
@@ -694,7 +694,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 displayedAnimalClickable = true;
                 gameState = GameState.TILECLICKED;
                 drawArrows(this.getWidth(), this.getHeight(), 5, tileClicked, graphics);
-                updatePlayerPlacedTiles(game.getCurrentPlayer());
                 drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
                 drawPotentialPlacement(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
 
@@ -728,8 +727,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 game.addNewWildlifeToken(tokenClicked);
                 game.updateTurn(game.getCurrentPlayer());
                 game.setNextPlayer();
-                playerPlacedTiles = new ArrayList<>();
-                updatePlayerPlacedTiles(game.getCurrentPlayer());
                 drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
                 gameState = GameState.ROUNDSTART;
                 turn = "Turn: " + (game.numTurns());
