@@ -684,14 +684,13 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
+        out.println(gameState);
         for (int i = 0; i < 4; i++) {
-            if (displayedTilesPolygons[i].contains(e.getPoint()) && displayedTilesClickable && (gameState.equals(GameState.ROUNDSTART) || gameState.equals(GameState.GAMESTART))) {
+            if (displayedTilesPolygons[i].contains(e.getPoint()) && displayedTilesClickable && (gameState.equals(GameState.ROUNDSTART) || gameState.equals(GameState.GAMESTART) || gameState.equals(GameState.TILECLICKED))) {
                 tileClicked = i;
                 action = "Click where you want to place the tile.";
                 leftArrowClickable[i] = true;
                 rightArrowClickable[i] = true;
-                displayedTilesClickable = false;
-                displayedAnimalClickable = true;
                 gameState = GameState.TILECLICKED;
                 drawArrows(this.getWidth(), this.getHeight(), 5, tileClicked, graphics);
                 drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
@@ -824,6 +823,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             if (found) {
                 gameState = GameState.TILEPLACE;
                 displayedTilesClickable = false;
+                displayedAnimalClickable = true;
                 updatePlayerPlacedTiles(game.getCurrentPlayer());
                 drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
             }
