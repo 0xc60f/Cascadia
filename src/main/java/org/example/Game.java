@@ -46,7 +46,7 @@ public class Game {
         }
 
         IntStream.range(0, 4).forEach(i -> displayedTiles.add(possibleHabitatTiles.remove((int) (Math.random() * possibleHabitatTiles.size()))));
-        IntStream.range(0, 13).forEach(i -> Collections.addAll(possibleWildlife, WildlifeToken.values()));
+        IntStream.range(0, 20).forEach(i -> Collections.addAll(possibleWildlife, WildlifeToken.values()));
         Collections.shuffle(possibleWildlife);
         IntStream.range(0, 4).forEach(i -> displayedWildlife.add(possibleWildlife.remove((int) (Math.random() * possibleWildlife.size()))));
 
@@ -68,9 +68,22 @@ public class Game {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        IntStream.range(1, 4).forEach(i -> players.add(new Player(i, groupedTiles.get((int) (Math.random() * groupedTiles.size())))));
+        IntStream.range(1, 4).forEach(i -> players.add(new Player(i, groupedTiles.remove((int) (Math.random() * groupedTiles.size())))));
         currentPlayer = players.getFirst();
 
+    }
+
+    public int getTokens(WildlifeToken x) {
+
+        int cnt = 0;
+
+        for (int i = 0; i < possibleWildlife.size(); i++) {
+            if (possibleWildlife.get(i).equals(x)) {
+                cnt++;
+            };
+        }
+
+        return cnt;
     }
 
 
@@ -196,9 +209,14 @@ public class Game {
 
     public void cntTurns(Player p) {
         if (numTurns < 20 && p.getpNum() == 3) {
+            System.out.println("huh");
             numTurns++;
         } else if(numTurns >= 20){
             endGame();
+
+        }
+        else{
+            System.out.println("bruh");
         }
     }
 
@@ -214,12 +232,18 @@ public class Game {
     }
 
     public void setNextPlayer(){
-        currentPlayer = players.indexOf(currentPlayer) == players.size() - 1 ? players.getFirst() : players.get(players.indexOf(currentPlayer) + 1);
+        int currentNum = currentPlayer.getpNum();
+        switch (currentNum) {
+            case 1 -> currentPlayer = players.get(1);
+            case 2 -> currentPlayer = players.get(2);
+            case 3 -> currentPlayer = players.getFirst();
+        }
     }
     //need to add more to this
 
 
     public void updateTurn(Player p){
+        p.setNumTurns(p.getNumTurns() + 1);
         cntTurns(p);
     }
 
