@@ -226,29 +226,18 @@ public class Player implements Comparable<Player>{
 
     private int getBScore(Player player, Biome specificBiome) {
         int biomeScore = 0;
-        for (HabitatTile tile : playerTiles.keySet()) {
-            TreeMap<Integer, Biome> biomes = tile.getBiomes();
-            if (biomes.containsValue(specificBiome)) {
-                for (Map.Entry<Integer, Biome> entry : biomes.entrySet()) {
-                    if (entry.getValue() == specificBiome) {
-                        int side = entry.getKey();
-                        HabitatTile neighbor = Graph.getNeighborWithSideBiome(tile, side, specificBiome);
-                        if (neighbor != null) {
-                            int neighborSide = Graph.getOppositeSide(side);
-                            Biome neighborBiome = neighbor.getBiome(neighborSide);
-                            if (specificBiome == neighborBiome) {
-                                biomeScore++;
-                            }
-                        }
-                    }
-                }
-            }
+        ScoringCharts sc = new ScoringCharts();
+        System.out.println("getBScore CALLED");
+        HashMap<HabitatTile, WildlifeToken> allPlacedTokens = new HashMap<>();
+        for (HabitatTile tile : player.getPlayerTiles().keySet()) {
+            allPlacedTokens.put(tile, player.getPlayerTiles().get(tile));
         }
-
+        biomeScore = sc.scoreHabitats(allPlacedTokens, specificBiome);
         return biomeScore;
     }
 
     public int getLakeScore(Player p){
+        System.out.println("getLakeScore called");
         int ls = getBScore(p,Biome.LAKE);
         return ls;
     }
@@ -337,10 +326,12 @@ public class Player implements Comparable<Player>{
     }
 
     // Method to calculate the biome score using the stored ScoringCharts instance
+
+    //FIX THIS FOR DEBUGGING
     public int getBiomeScore() {
         ScoringCharts scoringCharts = new ScoringCharts();
 
-        int biomeScore = scoringCharts.scoreHabitats(playerTiles);
+        int biomeScore = 0;
 
         return biomeScore;
         // fix for each biome, the method in scoringCharts only gives total

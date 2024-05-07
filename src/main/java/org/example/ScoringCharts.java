@@ -350,26 +350,51 @@ public class ScoringCharts {
 
         return elkScore;
     }
-    public int scoreHabitats(HashMap<HabitatTile, WildlifeToken> allPlacedTokens) {
+    public int scoreHabitats(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, Biome specificBiome) {
         int score = 0;
+        System.out.println("SCORE HABITATS CALLED!!!!");
+
+        // Check the contents of the allPlacedTokens parameter
+        System.out.println("allPlacedTokens contains:");
+        for (HabitatTile tile : allPlacedTokens.keySet()) {
+            System.out.println(" - " + tile);
+            TreeMap<Integer, Biome> biomes = tile.getBiomes();
+            if (biomes.containsValue(specificBiome)) {
+                System.out.println("  - Contains specificBiome: " + specificBiome);
+            }
+        }
 
         for (HabitatTile tile : allPlacedTokens.keySet()) {
             TreeMap<Integer, Biome> biomes = tile.getBiomes();
-            for (Map.Entry<Integer, Biome> entry : biomes.entrySet()) {
-                Biome biome = entry.getValue();
-                int side = entry.getKey();
-                HabitatTile neighbor = Graph.getNeighborWithSideBiome(tile, side, biome);
-                if (neighbor != null) {
-                    int neighborSide = Graph.getOppositeSide(side);
-                    Biome neighborBiome = neighbor.getBiome(neighborSide);
-                    if (biome == neighborBiome) {
-                        score++;
+            if (biomes.containsValue(specificBiome)) {
+                for (Map.Entry<Integer, Biome> entry : biomes.entrySet()) {
+                    if (entry.getValue() == specificBiome) {
+                        int side = entry.getKey();
+                        HabitatTile neighbor = Graph.getNeighborWithSideBiome(tile, side, specificBiome);
+                        if (neighbor != null) {
+                            int neighborSide = Graph.getOppositeSide(side);
+                            Biome neighborBiome = neighbor.getBiome(neighborSide);
+                            if (specificBiome == neighborBiome) {
+                                score++;
+                            }
+                        }
+
+                        // Check neighbouring tiles in all directions
+                        for (int i = 0; i < 6; i++) {
+                            HabitatTile neighbour = Graph.getNeighborWithSideBiome(tile, i, biomes.get(i));
+                            if (neighbour != null) {
+                                Biome neighbourBiome = neighbour.getBiome(Graph.getOppositeSide(i));
+                                if (biomes.get(i) == neighbourBiome) {
+                                    score++;
+                                }
+                            }
+                        }
                     }
                 }
             }
-            System.out.println(biomes);
         }
 
+        System.out.println("Final score: " + specificBiome + ": " + score);
         return score;
     }
 
