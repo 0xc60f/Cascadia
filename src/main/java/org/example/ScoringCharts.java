@@ -4,9 +4,11 @@ import java.util.stream.*;
 
 public class ScoringCharts {
     private int totalScore;
-    public int calcWildlifeScore(Player p){
+
+    public int calcWildlifeScore(Player p) {
         return 0;
     }
+
     public int calcTotalScore(Player p) {
         //return totalScore;
         return 0;
@@ -28,6 +30,8 @@ public class ScoringCharts {
     public ArrayList<Integer> salmonscoringVals;
     public ArrayList<Integer> elkscoringvals;
 
+    private Graph graph;
+
     public ScoringCharts() {
         habitatMatches = new HashMap<>();
         bearScoringValues = new HashMap<>();
@@ -43,6 +47,7 @@ public class ScoringCharts {
         SalmonScoring();
         HawkScoring();
     }
+
     public void calculateBearTokenScoring(Player p) {
         Map<HabitatTile, WildlifeToken> allPlacedTokens = p.getPlayerTiles();
         Map<Integer, Integer> bearScoringValues = new HashMap<>();
@@ -100,6 +105,7 @@ public class ScoringCharts {
 
         System.out.println("confirmed bear pairs: " + confirmedBearPairs);
     }
+
     public void calculateFoxTokenScoring(Player p) {
         foxScoringValues = new HashMap<>();
         foxScoringValues.put(1, 1);
@@ -206,6 +212,7 @@ public class ScoringCharts {
         salmonScoringValues.put(6, 20);
         salmonScoringValues.put(7, 26);
     }
+
     //make sure u use used salmon tokens and also make sure to finish helper mehtods that accutalyy work
     public void calculateSalmonTokenScoring(Player p) {
         int salmonInRunNum = 0;
@@ -326,7 +333,6 @@ public class ScoringCharts {
         }
 
 
-
         scoringVals.add(elkScore);
         elkscoringvals.add(elkScore);
     }
@@ -347,57 +353,86 @@ public class ScoringCharts {
             elkScore = 14;
         } else if (elkGroupSize == 6) {
             elkScore = 18;
-        }else if (elkGroupSize == 7) {
+        } else if (elkGroupSize == 7) {
             elkScore = 23;
-        }else if (elkGroupSize >= 8) {
+        } else if (elkGroupSize >= 8) {
             elkScore = 28;
         }
 
         return elkScore;
     }
-    public int scoreHabitats(HashMap<HabitatTile, WildlifeToken> allPlacedTokens) {
+
+    public int scoreHabitats(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, Biome specificBiome) {
         int score = 0;
+        List<HabitatTile> habitatTiles = new ArrayList<>();
 
         for (HabitatTile tile : allPlacedTokens.keySet()) {
-            TreeMap<Integer, Biome> biomes = tile.getBiomes();
-            for (Map.Entry<Integer, Biome> entry : biomes.entrySet()) {
-                Biome biome = entry.getValue();
-                int side = entry.getKey();
-                HabitatTile neighbor = Graph.getNeighborWithSideBiome(tile, side, biome);
-                if (neighbor != null) {
-                    int neighborSide = Graph.getOppositeSide(side);
-                    Biome neighborBiome = neighbor.getBiome(neighborSide);
-                    if (biome == neighborBiome) {
-                        score++;
-                    }
+            for (int i = 0; i < 6; i++) {
+                if (tile.getBiome(i) == specificBiome) {
+                    habitatTiles.add(tile);
+                    break;
                 }
             }
-            System.out.println(biomes);
+        }
+
+        for (HabitatTile tile : habitatTiles) {
+            tile.setChecked(false);
+        }
+
+        for (HabitatTile tile : habitatTiles) {
+            if (!tile.isChecked()) {
+                score += getConnectedComponentSize(tile, allPlacedTokens, specificBiome);
+            }
         }
 
         return score;
     }
 
+    private int getConnectedComponentSize(HabitatTile tile, HashMap<HabitatTile, WildlifeToken> allPlacedTokens, Biome specificBiome) {
+        int size = 1;
+        Queue<HabitatTile> queue = new LinkedList<>();
+        queue.add(tile);
+        tile.setChecked(true);
 
-    // Helper method to find the largest connected component size of a specific biome
+        while (!queue.isEmpty()) {
+            HabitatTile currentTile = queue.poll();
 
+            for (int i = 0; i < 6; i++) {
+                HabitatTile adjacentTile = currentTile.getNeighbors().get(i);
+                if (adjacentTile != null) {
+                    int oppositeSide = currentTile.getOppositeSide(i);
+                    if (allPlacedTokens.get(adjacentTile) == null && currentTile.getBiome(i) == specificBiome && currentTile.getBiome(oppositeSide) == specificBiome) {
+                        queue.add(adjacentTile);
+                        adjacentTile.setChecked(true);
+                        size++;
+                    }
+                }
+            }
+        }
 
-
-
-
-
-
-
-
-    // Assuming neighbourTileIDs is a method that returns a list of neighbouring tile IDs
-    private List<String> neighbourTileIDs(String tokenID) {
-        // Implement this method based on your requirements
-        return new ArrayList<>();
+        return size;
     }
 
-    public int getTotalScore(){
-        return totalScore;
-    }
+
+
+
+
+
+
+
+
+        // Helper method to find the largest connected component size of a specific biome
+
+
+        // Assuming neighbourTileIDs is a method that returns a list of neighbouring tile IDs
+        private List<String> neighbourTileIDs (String tokenID){
+            // Implement this method based on your requirements
+            return new ArrayList<>();
+        }
+
+        public int getTotalScore () {
+            return totalScore;
+        }
     /*function setupFinalScoring() {
 
 	$('#natureTokensScoringInput').html(natureCubesNum);
@@ -450,4 +485,5 @@ public class FoxScoring {
 }
 
 */
-}
+    }
+
