@@ -333,7 +333,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         set3 = new Polygon(xPoints9, yPoints9, 4);
 
-        g.drawPolygon(set3);
+        //g.drawPolygon(set3);
 
         g.setColor(Color.yellow);
         int debugRectWidth7 = 100;
@@ -346,7 +346,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         givent = new Polygon(xPoints10, yPoints10, 4);
 
-        g.drawPolygon(givent);
+        //g.drawPolygon(givent);
 
         g.setColor(Color.red);
         int debugRectWidth5 = 100;
@@ -358,7 +358,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         endGame = new Polygon(xPoints8, yPoints8, 4);
 
-        g.drawPolygon(endGame);
+        //g.drawPolygon(endGame);
         ArrayList<HabitatTile> displayedTiles = game.getDisplayedTiles();
         for (int i = 0; i < 4; i++) {
             Point tempPoint = drawTilesDownbar(g, width, height, div, i, displayedTiles.get(i).getImage());
@@ -684,7 +684,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
-        out.println(gameState);
         for (int i = 0; i < 4; i++) {
             if (displayedTilesPolygons[i].contains(e.getPoint()) && displayedTilesClickable && (gameState.equals(GameState.ROUNDSTART) || gameState.equals(GameState.GAMESTART) || gameState.equals(GameState.TILECLICKED))) {
                 tileClicked = i;
@@ -849,8 +848,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         } else if (viewPage.contains(x, y) && viewVis) {
             viewVis = false;
             otherView = 0;
-        } else if (endGame.contains(x, y)) {
-            setVisible(false);
         } else if (specialButton.contains(x, y)) {
             if (specialButtonString.equals("Shuffle") && !shuffleUsed) {
                 game.shuffleDisplayedWildLife(null);
