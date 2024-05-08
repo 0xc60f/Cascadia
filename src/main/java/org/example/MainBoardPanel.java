@@ -719,11 +719,14 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             if (displayedAnimalPolygons[i].contains(e.getPoint()) && displayedAnimalClickable) {
                 if (specialButtonString.equals("Finish Swapping")) {
 
-                    if (swapRec[i] && game.getCurrentPlayer().getNumNatureTokens() > 0) {
+                    System.out.println(game.getCurrentPlayer().numNatureTokens());
+
+                    if (swapRec[i] && game.getCurrentPlayer().numNatureTokens() > 0) {
                         game.swapWildLifeToken(i);
                         System.out.println("whT");
                         swapRec[i] = false;
                     }
+                    break;
                 }
                 tokenClicked = i;
                 if (tileClicked == tokenClicked) {
@@ -884,6 +887,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 specialButtonString = "";
                 displayedAnimalClickable = false;
                 displayedTilesClickable = true;
+                gameState = gameState.ROUNDSTART;
             }
         } else if (set3.contains(x, y)) {
             game.set3OfTheSame();
