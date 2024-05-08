@@ -238,6 +238,7 @@ public class Game {
             case 2 -> currentPlayer = players.get(2);
             case 3 -> currentPlayer = players.getFirst();
         }
+        //currentPlayer.setNumNatureTokens();
     }
     //need to add more to this
 
