@@ -85,12 +85,12 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         ArrayList<WildlifeToken> displayedWildlife = game.getDisplayedWildlife();
 
         boolean check = false;
-        if (gameState == GameState.TILECLICKED) {
+        if (gameState == GameState.TILECLICKED && !specialButtonString.equals("Finish Swapping")) {
             check = true;
             specialButtonString = "";
         }
 
-        if (gameState == GameState.TOKENCLICKED) {
+        if (gameState == GameState.TOKENCLICKED && !specialButtonString.equals("Finish Swapping")) {
             check = true;
             specialButtonString = "";
         }
@@ -721,6 +721,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
                     if (swapRec[i] && game.getCurrentPlayer().getNumNatureTokens() > 0) {
                         game.swapWildLifeToken(i);
+                        System.out.println("whT");
                         swapRec[i] = false;
                     }
                 }
@@ -728,7 +729,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 if (tileClicked == tokenClicked) {
                     gameState = GameState.TOKENCLICKED;
                     action = "Click where you want to place the token.";
-                } else if (tileClicked != tokenClicked && game.getCurrentPlayer().numNatureTokens() > 0) {
+                } else if (tileClicked != tokenClicked && game.getCurrentPlayer().numNatureTokens() > 0 && !specialButtonString.equals("Finish Swapping")) {
                     gameState = GameState.TOKENCLICKED;
                     action = "Click where you want to place the token.";
                     game.getCurrentPlayer().subtractNatureTokens();
