@@ -247,22 +247,27 @@ public class Player implements Comparable<Player>{
 
     public int getLakeScore(Player p){
         int ls = getBScore(p,Biome.LAKE);
+        System.out.println("LAKE" + ls);
         return ls;
     }
     public int getMountainScore(Player p){
         int ms = getBScore(p,Biome.MOUNTAIN);
+        System.out.println("MS" + ms);
         return ms;
     }
     public int getDesertScore(Player p){
         int ds = getBScore(p,Biome.DESERT);
+        System.out.println("DS" + ds);
         return ds;
     }
     public int getSwampScore(Player p){
         int ss = getBScore(p,Biome.SWAMP);
+        System.out.println("SS" + ss);
         return ss;
     }
     public int getForestScore(Player p){
         int fs = getBScore(p,Biome.FOREST);
+        System.out.println("FS" + fs);
         return fs;
     }
 

@@ -144,8 +144,10 @@ public abstract class Graph {
     }
     public static HabitatTile getNeighborWithSideBiome(HabitatTile tile, int side, Biome biome) {
         for (HabitatTile neighbor : tile.getNeighbors()) {
-            if (neighbor.getBiome(side) == biome) {
-                return neighbor;
+            if (neighbor != null){
+                if (neighbor.getBiome(side) == biome) {
+                    return neighbor;
+                }
             }
         }
         return null;
@@ -154,5 +156,6 @@ public abstract class Graph {
     public static int getOppositeSide(int side) {
         return (side + 3) % 6;
     }
+
 
 }

@@ -4,9 +4,11 @@ import java.util.stream.*;
 
 public class ScoringCharts {
     private int totalScore;
-    public int calcWildlifeScore(Player p){
+
+    public int calcWildlifeScore(Player p) {
         return 0;
     }
+
     public int calcTotalScore(Player p) {
         //return totalScore;
         return 0;
@@ -28,6 +30,8 @@ public class ScoringCharts {
     public ArrayList<Integer> salmonscoringVals;
     public ArrayList<Integer> elkscoringvals;
 
+    private Graph graph;
+
     public ScoringCharts() {
         habitatMatches = new HashMap<>();
         bearScoringValues = new HashMap<>();
@@ -43,6 +47,7 @@ public class ScoringCharts {
         SalmonScoring();
         HawkScoring();
     }
+
     public void calculateBearTokenScoring(Player p) {
         Map<HabitatTile, WildlifeToken> allPlacedTokens = p.getPlayerTiles();
         Map<Integer, Integer> bearScoringValues = new HashMap<>();
@@ -100,6 +105,7 @@ public class ScoringCharts {
 
         System.out.println("confirmed bear pairs: " + confirmedBearPairs);
     }
+
     public void calculateFoxTokenScoring(Player p) {
         foxScoringValues = new HashMap<>();
         foxScoringValues.put(1, 1);
@@ -206,6 +212,7 @@ public class ScoringCharts {
         salmonScoringValues.put(6, 20);
         salmonScoringValues.put(7, 26);
     }
+
     //make sure u use used salmon tokens and also make sure to finish helper mehtods that accutalyy work
     public void calculateSalmonTokenScoring(Player p) {
         int salmonInRunNum = 0;
@@ -326,7 +333,6 @@ public class ScoringCharts {
         }
 
 
-
         scoringVals.add(elkScore);
         elkscoringvals.add(elkScore);
     }
@@ -347,71 +353,67 @@ public class ScoringCharts {
             elkScore = 14;
         } else if (elkGroupSize == 6) {
             elkScore = 18;
-        }else if (elkGroupSize == 7) {
+        } else if (elkGroupSize == 7) {
             elkScore = 23;
-        }else if (elkGroupSize >= 8) {
+        } else if (elkGroupSize >= 8) {
             elkScore = 28;
         }
 
         return elkScore;
     }
+
     public int scoreHabitats(HashMap<HabitatTile, WildlifeToken> allPlacedTokens, Biome specificBiome) {
         int score = 0;
-        System.out.println("SCORE HABITATS CALLED!!!!");
+        List<HabitatTile> habitatTiles = new ArrayList<>();
 
-        // Check the contents of the allPlacedTokens parameter
-        System.out.println("allPlacedTokens contains:");
         for (HabitatTile tile : allPlacedTokens.keySet()) {
-            System.out.println(" - " + tile);
-            TreeMap<Integer, Biome> biomes = tile.getBiomes();
-            System.out.println("Biomes: " + biomes);
-            if (biomes.containsValue(specificBiome)) {
-                System.out.println("  - Contains specificBiome: " + specificBiome);
+            for (int i = 0; i < 6; i++) {
+                if (tile.getBiome(i) == specificBiome) {
+                    habitatTiles.add(tile);
+                    break;
+                }
             }
         }
 
-        for (HabitatTile tile : allPlacedTokens.keySet()) {
-            TreeMap<Integer, Biome> biomes = tile.getBiomes();
-            if (biomes.containsValue(specificBiome)) {
-                System.out.println("IF STATEMENT TRIGGERED 2");
-                for (Map.Entry<Integer, Biome> entry : biomes.entrySet()) {
-                    if (entry.getValue().equals(specificBiome)) {
-                        System.out.println("IF STATEMENT TRIGGERED 3");
-                        int side = entry.getKey();
-                        HabitatTile neighbor = Graph.getNeighborWithSideBiome(tile, side, specificBiome);
-                        if (neighbor != null) {
-                            System.out.println("IF STATEMENT TRIGGERED 4");
-                            int neighborSide = Graph.getOppositeSide(side);
-                            Biome neighborBiome = neighbor.getBiome(neighborSide);
-                            if (specificBiome.equals(neighborBiome)) {
-                                System.out.println("IF STATEMENT TRIGGERED 5");
-                                score++;
-                            }
-                        }
+        for (HabitatTile tile : habitatTiles) {
+            tile.setChecked(false);
+        }
 
-                        // Check neighbouring tiles in all directions
-                        for (int i = 0; i < 6; i++) {
-                            HabitatTile neighbour = Graph.getNeighborWithSideBiome(tile, i, biomes.get(i));
-                            if (neighbour != null) {
-                                System.out.println("IF STATEMENT TRIGGERED 6");
-                                Biome neighbourBiome = neighbour.getBiome(Graph.getOppositeSide(i));
-                                if (biomes.get(i).equals(neighbourBiome)) {
-                                    score++;
-                                    System.out.println("IF STATEMENT TRIGGERED 7");
-                                }
-                            }
-                        }
+        for (HabitatTile tile : habitatTiles) {
+            if (!tile.isChecked()) {
+                score += getConnectedComponentSize(tile, allPlacedTokens, specificBiome);
+            }
+        }
+
+        return score;
+    }
+
+    private int getConnectedComponentSize(HabitatTile tile, HashMap<HabitatTile, WildlifeToken> allPlacedTokens, Biome specificBiome) {
+        int size = 1;
+        Queue<HabitatTile> queue = new LinkedList<>();
+        queue.add(tile);
+        tile.setChecked(true);
+
+        while (!queue.isEmpty()) {
+            HabitatTile currentTile = queue.poll();
+
+            for (int i = 0; i < 6; i++) {
+                HabitatTile adjacentTile = currentTile.getNeighbors().get(i);
+                if (adjacentTile != null) {
+                    int oppositeSide = currentTile.getOppositeSide(i);
+                    if (allPlacedTokens.get(adjacentTile) == null && currentTile.getBiome(i) == specificBiome && currentTile.getBiome(oppositeSide) == specificBiome) {
+                        queue.add(adjacentTile);
+                        adjacentTile.setChecked(true);
+                        size++;
                     }
                 }
             }
         }
 
-        System.out.println("Final score: " + specificBiome + ": " + score);
-        return score;
+        return size;
     }
 
 
-    // Helper method to find the largest connected component size of a specific biome
 
 
 
@@ -419,17 +421,18 @@ public class ScoringCharts {
 
 
 
+        // Helper method to find the largest connected component size of a specific biome
 
 
-    // Assuming neighbourTileIDs is a method that returns a list of neighbouring tile IDs
-    private List<String> neighbourTileIDs(String tokenID) {
-        // Implement this method based on your requirements
-        return new ArrayList<>();
-    }
+        // Assuming neighbourTileIDs is a method that returns a list of neighbouring tile IDs
+        private List<String> neighbourTileIDs (String tokenID){
+            // Implement this method based on your requirements
+            return new ArrayList<>();
+        }
 
-    public int getTotalScore(){
-        return totalScore;
-    }
+        public int getTotalScore () {
+            return totalScore;
+        }
     /*function setupFinalScoring() {
 
 	$('#natureTokensScoringInput').html(natureCubesNum);
@@ -482,4 +485,5 @@ public class FoxScoring {
 }
 
 */
-}
+    }
+
