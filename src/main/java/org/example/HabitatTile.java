@@ -15,15 +15,17 @@ public class HabitatTile {
     private BufferedImage image;
     private boolean isKeystone;
     private Polygon polygon;
+    private Boolean checked = false;
     private int x;
     private int y;
     public Biome habitat1;
     public Biome habitat2;
-    private TreeMap<Integer, Biome> biomes;
+    public TreeMap<Integer, Biome> biomes;
     //Constructor for the Biomes of the HabitatTile
     private ArrayList neighbors;
     private int value;
     private List<Edge> edges;
+    private Graph graph;
 
     public int getX() {
         return x;
@@ -131,6 +133,14 @@ public class HabitatTile {
             throw new RuntimeException(e);
         }
     }
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
 
     public WildlifeToken getW() {
         return w;
@@ -267,6 +277,51 @@ public class HabitatTile {
         return neighbors.contains(tileID);
     }
 
+
+    public String toString(){
+        return "HabitatTile: " + habitat1 + habitat2 + possibleAnimals;
+    }
+
+    public boolean isNeighbor(HabitatTile t) {
+        if(graph.getNeighbors(this).contains(t)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public boolean isTouchingBiome(HabitatTile tile, Biome biome) {
+        for (int i = 0; i < 6; ++i) {
+            if (tile.getBiome(i) == biome) {
+                for (HabitatTile neighbor : tile.getNeighbors()) {
+                    if (neighbor != null && neighbor.getBiome(getOppositeSide(i)) == biome) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isOppositeBiome(HabitatTile tile, Biome biome) {
+        for (int i = 0; i < 6; ++i) {
+            if (tile.getBiome(i) == biome) {
+                int oppositeIndex = getOppositeSide(i);
+                Biome oppositeBiome = tile.getBiome(oppositeIndex);
+                if (oppositeBiome == biome) {
+                    return false;
+                }
+                for (HabitatTile neighbor : tile.getNeighbors()) {
+                    if (neighbor != null && neighbor.getBiome(oppositeIndex) == biome) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public int getOppositeSide(int side) {
+        return (side + 3) % 6;
+    }
 
 
     /*function rotateTileClockwiseFunction() {

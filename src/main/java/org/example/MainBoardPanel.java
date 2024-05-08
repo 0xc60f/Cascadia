@@ -333,7 +333,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         set3 = new Polygon(xPoints9, yPoints9, 4);
 
-        g.drawPolygon(set3);
+        //g.drawPolygon(set3);
 
         g.setColor(Color.yellow);
         int debugRectWidth7 = 100;
@@ -346,20 +346,19 @@ public class MainBoardPanel extends JPanel implements MouseListener {
 
         givent = new Polygon(xPoints10, yPoints10, 4);
 
-        g.drawPolygon(givent);
+        //g.drawPolygon(givent);
 
         g.setColor(Color.red);
         int debugRectWidth5 = 100;
         int debugRectHeight5 = 100;
         int debugXPos5 = 800;
         int debugYPos5 = 200;
-        out.println(gameState);
         int[] xPoints8 = {debugXPos5, debugXPos5, debugXPos5 + debugRectWidth5, debugXPos5 + debugRectWidth5};
         int[] yPoints8 = {debugYPos5 + debugRectHeight5, debugYPos5, debugYPos5, debugYPos5 + debugRectHeight5};
 
         endGame = new Polygon(xPoints8, yPoints8, 4);
 
-        g.drawPolygon(endGame);
+        //g.drawPolygon(endGame);
         ArrayList<HabitatTile> displayedTiles = game.getDisplayedTiles();
         for (int i = 0; i < 4; i++) {
             Point tempPoint = drawTilesDownbar(g, width, height, div, i, displayedTiles.get(i).getImage());
@@ -585,6 +584,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 }
             }
         }
+        drawnTiles = new HashSet<>();
     }
 
     private void drawPotentialPlacement(Graphics g, int boardCenterX, int boardCenterY, int offsetx, int offsety, Player p) {
@@ -703,16 +703,13 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         int x = e.getX();
         int y = e.getY();
         for (int i = 0; i < 4; i++) {
-            if (displayedTilesPolygons[i].contains(e.getPoint()) && displayedTilesClickable && (gameState.equals(GameState.ROUNDSTART) || gameState.equals(GameState.GAMESTART))) {
+            if (displayedTilesPolygons[i].contains(e.getPoint()) && displayedTilesClickable && (gameState.equals(GameState.ROUNDSTART) || gameState.equals(GameState.GAMESTART) || gameState.equals(GameState.TILECLICKED))) {
                 tileClicked = i;
                 action = "Click where you want to place the tile.";
                 leftArrowClickable[i] = true;
                 rightArrowClickable[i] = true;
-                displayedTilesClickable = false;
-                displayedAnimalClickable = true;
                 gameState = GameState.TILECLICKED;
                 drawArrows(this.getWidth(), this.getHeight(), 5, tileClicked, graphics);
-                updatePlayerPlacedTiles(game.getCurrentPlayer());
                 drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
                 drawPotentialPlacement(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
 
@@ -746,8 +743,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 game.addNewWildlifeToken(tokenClicked);
                 game.updateTurn(game.getCurrentPlayer());
                 game.setNextPlayer();
-                playerPlacedTiles = new ArrayList<>();
-                updatePlayerPlacedTiles(game.getCurrentPlayer());
                 drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
                 gameState = GameState.ROUNDSTART;
                 turn = "Turn: " + (game.numTurns());
@@ -845,6 +840,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             if (found) {
                 gameState = GameState.TILEPLACE;
                 displayedTilesClickable = false;
+                displayedAnimalClickable = true;
                 updatePlayerPlacedTiles(game.getCurrentPlayer());
                 drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
             }
@@ -870,8 +866,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
         } else if (viewPage.contains(x, y) && viewVis) {
             viewVis = false;
             otherView = 0;
-        } else if (endGame.contains(x, y)) {
-            setVisible(false);
         } else if (specialButton.contains(x, y)) {
             if (specialButtonString.equals("Shuffle") && !shuffleUsed) {
                 game.shuffleDisplayedWildLife(null);

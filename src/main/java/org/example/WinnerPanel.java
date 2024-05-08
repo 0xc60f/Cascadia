@@ -9,6 +9,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class WinnerPanel extends JPanel implements MouseListener {
@@ -17,6 +19,7 @@ public class WinnerPanel extends JPanel implements MouseListener {
     private Polygon viewWinner;
     private BufferedImage backgroundImage;
     private boolean isVisible = true;
+    private Game game = null;
     private String winnerText = "Player X Wins!";
 
     public WinnerPanel() {
@@ -52,6 +55,24 @@ public class WinnerPanel extends JPanel implements MouseListener {
 
         int widthmult = 2;
         int heightmult = 2;
+
+        Player p1 = game.getPlayers().getFirst();
+        int p1score = p1.numNatureTokens() + p1.getBearTokenScore() + p1.getELkTokenScore() + p1.getFoxTokenScore() + p1.getHawkTokenScore() + p1.getSalmonTokenScore() + p1.getMountainScore(p1) + p1.getForestScore(p1) + p1.getDesertScore(p1) + p1.getSwampScore(p1) + p1.getLakeScore(p1) + p1.getMountainBonusScore() + p1.getForestBonusScore() + p1.getDesertBonusScore() + p1.getSwampBonusScore() + p1.getLakeBonusScore();
+        Player p2 = game.getPlayers().get(1);
+        int p2score = p2.numNatureTokens() + p2.getBearTokenScore() + p2.getELkTokenScore() + p2.getFoxTokenScore() + p2.getHawkTokenScore() + p2.getSalmonTokenScore() + p2.getMountainScore(p2) + p2.getForestScore(p2) + p2.getDesertScore(p2) + p2.getSwampScore(p2) + p2.getLakeScore(p2) + p2.getMountainBonusScore() + p2.getForestBonusScore() + p2.getDesertBonusScore() + p2.getSwampBonusScore() + p2.getLakeBonusScore();
+        Player p3 = game.getPlayers().getLast();
+        int p3score = p3.numNatureTokens() + p3.getBearTokenScore() + p3.getELkTokenScore() + p3.getFoxTokenScore() + p3.getHawkTokenScore() + p3.getSalmonTokenScore() + p3.getMountainScore(p3) + p3.getForestScore(p3) + p3.getDesertScore(p3) + p3.getSwampScore(p3) + p3.getLakeScore(p3) + p3.getMountainBonusScore() + p3.getForestBonusScore() + p3.getDesertBonusScore() + p3.getSwampBonusScore() + p3.getLakeBonusScore();
+
+        //Compare the players using a comparator and print out which player has the highest score based on the score
+        int highestScore = Math.max(Math.max(p1score, p2score), p3score);
+        if (highestScore == p1score) {
+            winnerText = "Player 1 Wins!";
+        } else if (highestScore == p2score) {
+            winnerText = "Player 2 Wins!";
+        } else {
+            winnerText = "Player 3 Wins!";
+        }
+
 
         g.fillRoundRect(debugXPos - (debugRectWidth * widthmult) / (2 * widthmult), debugYPos - debugRectHeight * heightmult - height / 8, debugRectWidth * widthmult, debugRectHeight * heightmult, 30, 30);
 
@@ -127,5 +148,9 @@ public class WinnerPanel extends JPanel implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    public void sendScore(Game game) {
+        this.game = game;
     }
 }
