@@ -368,16 +368,14 @@ public class ScoringCharts {
 
         for (HabitatTile tile : allPlacedTokens.keySet()) {
             for (int i = 0; i < 6; i++) {
-                if (tile.getBiome(i) == specificBiome) {
+                if (tile.getBiome(i).equals(specificBiome)) {
                     habitatTiles.add(tile);
                     break;
                 }
             }
         }
 
-        for (HabitatTile tile : habitatTiles) {
-            tile.setChecked(false);
-        }
+        habitatTiles.forEach(tile -> tile.setChecked(false));
 
         for (HabitatTile tile : habitatTiles) {
             if (!tile.isChecked()) {
@@ -401,7 +399,7 @@ public class ScoringCharts {
                 HabitatTile adjacentTile = currentTile.getNeighbors().get(i);
                 if (adjacentTile != null) {
                     int oppositeSide = currentTile.getOppositeSide(i);
-                    if (allPlacedTokens.get(adjacentTile) == null && currentTile.getBiome(i) == specificBiome && currentTile.getBiome(oppositeSide) == specificBiome) {
+                    if (currentTile.getBiome(i).equals(specificBiome) && adjacentTile.getBiome(oppositeSide).equals(specificBiome)) {
                         queue.add(adjacentTile);
                         adjacentTile.setChecked(true);
                         size++;

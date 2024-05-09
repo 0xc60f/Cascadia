@@ -757,6 +757,11 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 swapRec[3] = true;
                 displayedTilesClickable = true;
                 displayedAnimalClickable = false;
+                if (game.numTurns() == 20){
+                    setVisible(false);
+                    return;
+                }
+                return;
             }
             else{
                 for (int i = 0; i < playerPlacedTiles.size(); i++) {
@@ -797,6 +802,10 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                                 swapRec[3] = true;
                                 displayedTilesClickable = true;
                                 displayedAnimalClickable = false;
+                                if (game.numTurns() == 20){
+                                    setVisible(false);
+                                    return;
+                                }
                                 break;
                             }
                         }

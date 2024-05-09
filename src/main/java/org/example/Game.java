@@ -209,7 +209,6 @@ public class Game {
 
     public void cntTurns(Player p) {
         if (numTurns < 20 && p.getpNum() == 3) {
-            System.out.println("huh");
             numTurns++;
         } else if(numTurns >= 20){
             endGame();
