@@ -884,6 +884,10 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 displayedAnimalClickable = false;
                 displayedTilesClickable = true;
                 gameState = gameState.ROUNDSTART;
+                swapRec[0] = true;
+                swapRec[1] = true;
+                swapRec[2] = true;
+                swapRec[3] = true;
             }
         } else if (set3.contains(x, y)) {
             game.set3OfTheSame();
