@@ -719,9 +719,8 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             if (displayedAnimalPolygons[i].contains(e.getPoint()) && displayedAnimalClickable) {
                 if (specialButtonString.equals("Finish Swapping")) {
 
-                    System.out.println(game.getCurrentPlayer().numNatureTokens());
 
-                    if (swapRec[i] && game.getCurrentPlayer().numNatureTokens() > 0) {
+                    if (swapRec[i]) {
                         game.swapWildLifeToken(i);
                         System.out.println("whT");
                         swapRec[i] = false;
