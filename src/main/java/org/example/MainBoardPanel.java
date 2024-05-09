@@ -40,7 +40,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
     protected static ArrayList<Polygon> playerPlacedTiles;
     private int offsetx, offsety = 0;
     public Game game;
-    private boolean swapUsed = false;
+    //private boolean swapUsed = false;
     private String turn = "Turn: 1", action = "Action Prompt";
     private boolean specLocked = false;
     private Boolean[] swapRec = {true, true, true, true};
@@ -116,7 +116,7 @@ public class MainBoardPanel extends JPanel implements MouseListener {
             if (bcount == 4 || ecount == 4 || fcount == 4 || hcount == 4 || scount == 4) {
                 game.shuffleDisplayedWildLife(null);
             }
-            if (game.getCurrentPlayer().numNatureTokens() > 0 && !swapUsed) {
+            if (game.getCurrentPlayer().numNatureTokens() > 0) {
                 specialButtonString = "Swap Tokens";
             }
             if (!shuffleUsed) {
@@ -749,7 +749,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 drawMainPlayerTiles(graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
                 gameState = GameState.ROUNDSTART;
                 turn = "Turn: " + (game.numTurns());
-                swapUsed = false;
                 shuffleUsed = false;
                 swapRec[0] = true;
                 swapRec[1] = true;
@@ -794,7 +793,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                                 playerPlacedTiles = new ArrayList<>();
                                 drawMainPlayerTiles(this.graphics, boardCenterx, boardCentery, offsetx, offsety, game.getCurrentPlayer());
                                 gameState = GameState.ROUNDSTART;
-                                swapUsed = false;
                                 shuffleUsed = false;
                                 swapRec[0] = true;
                                 swapRec[1] = true;
@@ -888,7 +886,6 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 specialButtonString = "Finish Swapping";
                 displayedAnimalClickable = true;
                 displayedTilesClickable = false;
-                swapUsed = true;
                 game.getCurrentPlayer().subtractNatureTokens();
             } else if (specialButtonString.equals("Finish Swapping")) {
                 specLocked = false;
@@ -896,6 +893,10 @@ public class MainBoardPanel extends JPanel implements MouseListener {
                 displayedAnimalClickable = false;
                 displayedTilesClickable = true;
                 gameState = gameState.ROUNDSTART;
+                swapRec[0] = true;
+                swapRec[1] = true;
+                swapRec[2] = true;
+                swapRec[3] = true;
             }
         } else if (set3.contains(x, y)) {
             game.set3OfTheSame();
