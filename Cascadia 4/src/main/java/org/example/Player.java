@@ -23,7 +23,6 @@ public class Player implements Comparable<Player>{
     public int swampBonusScore = 0;
     public int forestBonusScore = 0;
     private boolean placedTileForTurn;
-    private ScoringCharts scoringCharts = new ScoringCharts();
 
     public Player (int p, ArrayList<HabitatTile> firstThree){
         pNum = p;
@@ -151,7 +150,6 @@ public class Player implements Comparable<Player>{
     }
 
     public int getMountainBonusScore() {
-
         return mountainBonusScore;
     }
 
@@ -341,21 +339,18 @@ public class Player implements Comparable<Player>{
     }
 
     // Method to calculate the biome score using the stored ScoringCharts instance
-    private int getBiomeScore() {
-        int score = 0;
-        // Calculate the score based on the biomes of the player's tiles
-        // You can use the ScoringCharts class to calculate the score for each biome
-        // For example:
-        score += getLakeScore(this);
-        score += getMountainScore(this);
-        score += getDesertScore(this);
-        score += getSwampScore(this);
-        score += getForestScore(this);
-        return score;
+    public int getBiomeScore() {
+        ScoringCharts scoringCharts = new ScoringCharts();
+
+        //int biomeScore = scoringCharts.scoreHabitats(playerTiles);
+
+        return 0;
+        // fix for each biome, the method in scoringCharts only gives total
+
     }
 
     public int getWildlifeTokenScore() {
-
+        ScoringCharts scoringCharts = new ScoringCharts();
 
         int wildlifeTokenScore = 0;
 

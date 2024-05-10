@@ -375,6 +375,8 @@ public class ScoringCharts {
             }
         }
 
+        habitatTiles.forEach(tile -> tile.setChecked(false));
+
         for (HabitatTile tile : habitatTiles) {
             if (!tile.isChecked()) {
                 score += getConnectedComponentSize(tile, allPlacedTokens, specificBiome);
@@ -385,12 +387,10 @@ public class ScoringCharts {
     }
 
     private int getConnectedComponentSize(HabitatTile tile, HashMap<HabitatTile, WildlifeToken> allPlacedTokens, Biome specificBiome) {
-        int size = 0;
+        int size = 1;
         Queue<HabitatTile> queue = new LinkedList<>();
-        Set<HabitatTile> visited = new HashSet<>();
-
         queue.add(tile);
-        visited.add(tile);
+        tile.setChecked(true);
 
         while (!queue.isEmpty()) {
             HabitatTile currentTile = queue.poll();
@@ -399,23 +399,13 @@ public class ScoringCharts {
                 HabitatTile adjacentTile = currentTile.getNeighbors().get(i);
                 if (adjacentTile != null) {
                     int oppositeSide = currentTile.getOppositeSide(i);
-                    if (!visited.contains(adjacentTile) && adjacentTile.getBiome(oppositeSide).equals(specificBiome) && currentTile.getBiome(i).equals(specificBiome)) {
-                        if (currentTile.isKeystone() && adjacentTile.isKeystone()) {
-                            size++;
-                        } else if (!currentTile.isKeystone() && adjacentTile.isKeystone()) {
-                            size++;
-                        } else if (currentTile.getBiome(i).equals(specificBiome)) {
-                            size++;
-                        }
+                    if (currentTile.getBiome(i).equals(specificBiome) && adjacentTile.getBiome(oppositeSide).equals(specificBiome)) {
                         queue.add(adjacentTile);
-                        visited.add(adjacentTile);
+                        adjacentTile.setChecked(true);
+                        size++;
                     }
                 }
             }
-        }
-
-        for (HabitatTile tile1 : visited) {
-            tile1.setChecked(false);
         }
 
         return size;

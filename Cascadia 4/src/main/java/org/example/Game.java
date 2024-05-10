@@ -25,7 +25,7 @@ public class Game {
     public Game() {
         players = new ArrayList<>();
         check = new TreeSet<>();
-        numTurns = 19;
+        numTurns = 1;
         displayedTiles = new ArrayList<>();
         possibleWildlife = new ArrayList<>();
         possibleHabitatTiles = new ArrayList<>();

@@ -102,7 +102,7 @@ public class StartPanel extends JPanel implements MouseListener {
         String home = System.getProperty("user.home");
         System.out.println("Downloading Rules");
         try {
-            Desktop.getDesktop().browse(java.net.URI.create("https://www.alderac.com/wp-content/uploads/2021/08/Cascadia-Rules.pdf"));
+            java.awt.Desktop.getDesktop().browse(java.net.URI.create("https://www.alderac.com/wp-content/uploads/2021/08/Cascadia-Rules.pdf"));
         } catch (IOException e) {
             e.printStackTrace();
         }
