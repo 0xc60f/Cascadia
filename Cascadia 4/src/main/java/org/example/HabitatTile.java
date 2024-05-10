@@ -103,7 +103,6 @@ public class HabitatTile {
      * Initializes the image of the habitat tile. Uses helper methods in the CascadiaPanel class to draw the image.
      * @return A {@code BufferedImage} object that represents the image of the habitat tile
      */
-
     private BufferedImage initializeImage() {
         try {
             String h1, h2;
