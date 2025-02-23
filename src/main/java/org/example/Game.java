@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 public class Game {
-    //holds the habitatTile and wildlifeToken that are currently displayed in relation to each other.
+    //holds the habitatTile and wildlifeToken that are currently displayed in relation to each other..
     private ArrayList<HabitatTile> displayedTiles;
     private ArrayList<WildlifeToken> displayedWildlife;
     private ArrayList<WildlifeToken> possibleWildlife;
